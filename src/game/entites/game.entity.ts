@@ -12,7 +12,7 @@ export class Game {
     score2: number;
     @Column({ default: false})
     isRunning: boolean;
-    @Column()
+    @Column({ nullable: true })
     roomGame: string;
     @ManyToOne(()=> User, (user) => user.games)
     player1: User;
