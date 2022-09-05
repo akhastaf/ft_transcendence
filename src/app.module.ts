@@ -9,6 +9,8 @@ import { AchievmentModule } from './achievment/achievment.module';
 import { GameModule } from './game/game.module';
 import { RoomModule } from './room/room.module';
 import { ChatModule } from './chat/chat.module';
+import { CaslModule } from './casl/casl.module';
+import { RoomGateway } from './room/room.gateway';
 
 @Module({
   imports: [
@@ -19,7 +21,8 @@ import { ChatModule } from './chat/chat.module';
     AchievmentModule,
     GameModule,
     RoomModule,
-    ChatModule
+    ChatModule,
+    CaslModule
    ],
   controllers: [],
   providers: [],

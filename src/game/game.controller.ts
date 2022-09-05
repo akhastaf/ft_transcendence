@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UseFilters, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { JWTGuard } from "src/auth/guards/jwt.guard";
 import { Game } from "./entites/game.entity";
 import { GameService } from "./game.service";
 
 @ApiTags('Game')
+@ApiBearerAuth()
 @Controller('game')
+@UseGuards(JWTGuard)
 export class GameController {
     constructor (private gameService: GameService) {}
     @Get('user/:userId')

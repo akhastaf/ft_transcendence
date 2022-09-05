@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Achievment } from 'src/achievment/entities/achievment.entity';
+import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { Game } from 'src/game/entites/game.entity';
 import { GameState } from 'src/gamestate/entities/gamestate.entity';
 import { Message } from 'src/message/entities/message.entity';

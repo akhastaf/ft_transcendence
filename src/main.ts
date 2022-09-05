@@ -2,14 +2,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { JWTGuard } from './auth/guards/jwt.guard';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true
   }));
+  // app.useGlobalGuards(new JWTGuard());
   const config = new DocumentBuilder()
                     .setTitle('Pong API Docs')
                     .setDescription('This is the documentation of Pong API')
@@ -17,6 +18,7 @@ async function bootstrap() {
                     .addTag('Pong')
                     .addBearerAuth()
                     .build();
+                    
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
   await app.listen(3000);

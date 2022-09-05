@@ -7,7 +7,7 @@ import { FtStrategy } from "./strategies/ft.strategy";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JWTStrategy } from "./strategies/jwt.strategy";
 
 @Module({
@@ -15,11 +15,19 @@ import { JWTStrategy } from "./strategies/jwt.strategy";
         ConfigModule.forRoot(),
         UserModule,
         PassportModule,
-        JwtModule.register({
-            secret: 'SECRET',//process.env.SECRET,
-            signOptions: { expiresIn: '10m'},
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => ({
+                secret: 'SECRET',//configService.get('SECRET'),
+                signOptions: { expiresIn: '1200s'},  
+            }),
+            inject: [ConfigService],
         }),
         HttpModule
+        // register({
+        //     secret: ,//process.env.SECRET,
+        //     signOptions: { expiresIn: '1200s'},
+        // })
     ],
     controllers: [AuthController],
     providers: [AuthService,LocalStrategy, FtStrategy, JWTStrategy],

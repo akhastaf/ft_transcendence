@@ -19,7 +19,7 @@ export class Room {
     @JoinTable()
     adminstartors: User[];
     @OneToMany(() => UserToRoom, (userToRoom) => userToRoom.room ,{ onDelete: 'SET NULL'})
-    userToRoom: UserToRoom[];
+    userToRoom!: UserToRoom[];
     @OneToMany(() => Message, (message) => message.room, {onDelete: 'SET NULL'})
     messages: Message[];
     @CreateDateColumn()
@@ -27,3 +27,5 @@ export class Room {
     @UpdateDateColumn()
     updatedAt: Date;
 }
+
+// select * from user where user.username = $1 and user.password = $2, test 1=1'

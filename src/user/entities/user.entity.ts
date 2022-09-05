@@ -24,7 +24,7 @@ export class User {
     @Column({ unique: true })
     email: string;
     @Column({nullable: true})
-    password: string;
+    password?: string;
     @Column({
         type: "enum",
         enum: UserProvider,
@@ -33,6 +33,8 @@ export class User {
     provider: string;
     @Column({default: false})
     twofa: boolean;
+    @Column({nullable: true})
+    secret_tmp: string;
     @Column({nullable: true})
     secret: string;
     @Column({nullable: true})
@@ -68,7 +70,7 @@ export class User {
     @OneToMany(() => Game, (game) =>game.player1)
     games: Game[];
     @OneToMany(() => UserToRoom, (userToRoom) => userToRoom.user)
-    userToRoom: UserToRoom[];
+    userToRoom!: UserToRoom[];
     @OneToMany(() => Room, (room) => room.createdBy)
     rooms: Room[];
     @CreateDateColumn()
