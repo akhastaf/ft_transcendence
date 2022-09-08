@@ -10,16 +10,16 @@ export class UserToRoom {
     userId: number;
     @Column()
     roomId: number;
-    @Column()
+    @Column({default: false})
     isbaned: boolean;
-    @Column()
+    @Column({default: false})
     ismuted: boolean;
-    @Column()
+    @Column({nullable: true})
     untill: Date;
 
     @ManyToOne(() => User, (user) => user.userToRoom)
     user: User;
-    @ManyToOne(() => Room, (room) => room.userToRoom)
+    @ManyToOne(() => Room, (room) => room.userToRoom, {onDelete: 'CASCADE'})
     room: Room;
     @CreateDateColumn()
     createdAt: Date;

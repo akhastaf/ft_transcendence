@@ -11,6 +11,7 @@ import { RoomModule } from './room/room.module';
 import { ChatModule } from './chat/chat.module';
 import { CaslModule } from './casl/casl.module';
 import { RoomGateway } from './room/room.gateway';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { RoomGateway } from './room/room.gateway';
     GameModule,
     RoomModule,
     ChatModule,
-    CaslModule
+    CaslModule,
+    MessageModule,
    ],
   controllers: [],
   providers: [],

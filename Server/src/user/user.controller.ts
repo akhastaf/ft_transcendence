@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiHeader, ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
-import { RequestWithUser } from './dto/request-with-user.interface';
+import { RequestWithUser } from 'src/types';
 import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
 // import { ApiFile } from './decorators/apifile.decorator';
 import { UpdateUserDTO } from './dto/update-user.dto';

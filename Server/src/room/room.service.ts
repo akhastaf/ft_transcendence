@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateRoomDTO } from "./dto/create-room.dto";
@@ -7,6 +7,7 @@ import * as bcrypt from "bcrypt"
 import { UserService } from "src/user/user.service";
 import { User } from "src/user/entities/user.entity";
 import { UserToRoom } from "./entities/userToRoom.entity";
+import { RoomGateway } from "./room.gateway";
 
 @Injectable()
 export class RoomService {
@@ -17,6 +18,9 @@ export class RoomService {
 
     async getAll() : Promise<Room[]> {
         return await this.roomRepository.find({
+            where: {
+                private: false,
+            },
             relations: {
                 userToRoom: true,
                 createdBy: true,
@@ -55,5 +59,38 @@ export class RoomService {
         this.userToroomRepository.save(userToroom);
         // room.userToRoom = [userToroom];
         return room;
+    }
+
+    async leave(userId: number, id: number): Promise<any> {
+        const userTorooms = await this.userToroomRepository.find({
+            where: {
+                userId : userId,
+                roomId: id
+            }
+        });
+        await this.userToroomRepository.remove(userTorooms);
+        return await this.roomRepository.findOneBy({id});
+    }
+
+    async delete(user: User, id: number) : Promise<any> {
+        try {
+            const room = await this.roomRepository.findOneOrFail({
+                where: {
+                    id: id,
+                },
+                relations: {
+                    createdBy: true,
+                }
+            });
+            if (room.createdBy.id === user.id)
+            {
+                const deletedRoom = await this.roomRepository.remove(room);
+                return deletedRoom;
+            }
+            throw new ForbiddenException(`you don't have permission to delete this room : ${room.name}`);
+        }
+        catch {
+            throw new NotFoundException(`the room dosen't exist`);
+        }
     }
 }

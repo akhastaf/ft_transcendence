@@ -18,10 +18,6 @@ import { jwtModule } from "./jwt.module";
         PassportModule,
         jwtModule,
         HttpModule
-        // register({
-        //     secret: ,//process.env.SECRET,
-        //     signOptions: { expiresIn: '1200s'},
-        // })
     ],
     controllers: [AuthController],
     providers: [AuthService,LocalStrategy, FtStrategy, JWTStrategy],
