@@ -36,7 +36,6 @@ export class AuthController {
     async ftcallback(@Req() req : any)
     {
         const user = await this.authService.register(req.user);
-        console.log(user);
         if (!user.twofa)
             return this.authService.login(user);
         return { userid: user.id}

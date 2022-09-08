@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { RoomService } from './room.service';
 
-@WebSocketGateway({ namespace: 'room', cors: true})
+@WebSocketGateway({ namespace: 'room'})
 export class RoomGateway implements OnGatewayInit {
   private readonly logger: Logger = new Logger(RoomGateway.name);
   constructor (private readonly roomService: RoomService) {}
