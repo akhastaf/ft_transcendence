@@ -4,11 +4,11 @@ import { Room } from "src/room/entities/room.entity";
 import { UserToRoom } from "src/room/entities/userToRoom.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-// export enum Userstatus {
-//     ONLINE = "online",
-//     OFFLINE = "offline",
-//     PLAYING = "playing",
-// }
+export enum Userstatus {
+    ONLINE = "online",
+    OFFLINE = "offline",
+    PLAYING = "playing",
+}
 export enum UserProvider {
     GOOGLE = "google",
     FT = "42",
@@ -41,18 +41,21 @@ export class User {
     recoveryCode: string;
     @Column({ default: "/avatar.png"})
     avatar: string;
-    // @Column( {
-    //     type: "enum",
-    //     enum: Userstatus,
-    //     default: Userstatus.OFFLINE,
-    // })
-    // status: Userstatus;
+    @Column( {
+        type: "enum",
+        enum: Userstatus,
+        default: Userstatus.OFFLINE,
+    })
+    status: string;
     @Column({default: 0})
     win: number;
     @Column({default: 0})
     loss: number;
     @Column({default: 0})
     level: number;
+
+    @Column({nullable: true})
+    coalition: string;
     
     @ManyToMany(() => Achievment, (achievment) => achievment.users)
     @JoinTable()
@@ -68,7 +71,9 @@ export class User {
     
     //@OneToMany(() => Game, (game) =>game.player1)
     @OneToMany(() => Game, (game) =>game.player1)
-    games: Game[];
+    gamesAsFirst: Game[];
+    @OneToMany(() => Game, (game) =>game.player2)
+    gamesAsSecond: Game[];
     @OneToMany(() => UserToRoom, (userToRoom) => userToRoom.user)
     userToRoom!: UserToRoom[];
     @OneToMany(() => Room, (room) => room.createdBy)

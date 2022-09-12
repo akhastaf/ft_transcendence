@@ -30,6 +30,11 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
             const { data } = await this.http.axiosRef.get('https://api.intra.42.fr/v2/me', {
 				headers: { Authorization: `Bearer ${ accessToken }` },
 			});
+            const coalition : any = await this.http.axiosRef.get(`https://api.intra.42.fr//v2/users/${data.id}/coalitions`, {
+                headers: { Authorization: `Bearer ${ accessToken }` },
+            });
+            data.coalition = coalition.color;
+            console.log(accessToken);
             return data;
         }
 }

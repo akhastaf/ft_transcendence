@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Namespace } from 'socket.io';
 
-@WebSocketGateway({ namespace: 'message'})
+@WebSocketGateway()
 export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger: Logger = new Logger(MessageGateway.name);
   constructor () {}

@@ -9,3 +9,6 @@ export interface RequestWithUser extends Request {
 export interface SocketWithUserId extends Socket {
     userId: number;
 }
+export interface SocketWithUser extends Socket {
+    user: User,
+}

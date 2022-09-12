@@ -1,7 +1,8 @@
-import { INestApplicationContext } from "@nestjs/common";
+import { INestApplicationContext, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { IoAdapter } from "@nestjs/platform-socket.io";
+import { WsException } from "@nestjs/websockets";
 import { ServerOptions, Server, Socket,  } from "socket.io";
 import { JWTGuard } from "src/auth/guards/jwt.guard";
 import { SocketWithUserId } from "src/types";
@@ -12,9 +13,11 @@ export class SocketIoAdapter extends IoAdapter {
         private configService: ConfigService,
     ) {
         super(app);
-    }
 
+    }
+    private logger : Logger = new Logger(SocketIoAdapter.name);
     createIOServer(port: number, options?: ServerOptions) {
+        this.logger.log('socketIOAdapter');
         const clientPort = parseInt(this.configService.get('CLIENT_PORT'));
         const cors = {
             origin: [
@@ -29,24 +32,26 @@ export class SocketIoAdapter extends IoAdapter {
         };
         const jwtService = this.app.get(JwtService);
         const server : Server = super.createIOServer(port, optionsWithCors);
-        server.use(createTokenMiddleware(jwtService));
+        server.use(createTokenMiddleware(jwtService, this.configService, this.logger));
         return server;
     }
     
 }
 
 
-const createTokenMiddleware = (jwtSercise: JwtService) => (
+const createTokenMiddleware = (jwtService: JwtService, configService: ConfigService, logger : Logger) => (
     (socket: SocketWithUserId, next:any) => {
         const token = socket.handshake.auth.token || socket.handshake.headers['token'];
-
+        logger.log(token);
         try {
-            const payload = jwtSercise.verify(token);
-            console.log(payload);
+            const payload = jwtService.verify(token, {
+                secret: configService.get('JWT_SECRET'),
+                ignoreExpiration: false,
+            });
             socket.userId = payload.sub;
             next();
         } catch {
-            next(new Error('Forbbiden'));
+            throw new WsException('Forbbiden');
         }
     }
 )

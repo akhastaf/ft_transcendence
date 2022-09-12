@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDTO } from 'src/auth/dto/register-user.dto';
 import { Repository } from 'typeorm';
-import { User, UserProvider } from './entities/user.entity';
+import { User, UserProvider, Userstatus } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as speakeasy from "speakeasy";
@@ -21,7 +21,8 @@ export class UserService {
             relations: {
                 friends: true,
                 bloked: true,
-                games: true,
+                gamesAsFirst: true,
+                gamesAsSecond: true,
                 rooms:true,
                 achievments:true,
                 userToRoom: true
@@ -38,7 +39,8 @@ export class UserService {
                     id: id,
                 },
                 relations: {
-                    games: true,
+                    gamesAsFirst: true,
+                    gamesAsSecond: true,
                     userToRoom: true,
                 }
             });
@@ -67,7 +69,7 @@ export class UserService {
             const { password, ...rest } =user;
             return rest;
         }
-        const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image_url, provider: UserProvider.FT});
+        const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image_url, provider: UserProvider.FT, coalition: userData.color});
         const newUser = await this.userRepository.save(createduser);
         const { password, ...rest } =newUser;
         return rest;

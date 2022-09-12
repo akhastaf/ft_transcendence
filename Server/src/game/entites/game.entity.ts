@@ -14,9 +14,9 @@ export class Game {
     isRunning: boolean;
     @Column({ nullable: true })
     roomGame: string;
-    @ManyToOne(()=> User, (user) => user.games)
+    @ManyToOne(()=> User, (user) => user.gamesAsFirst)
     player1: User;
-    @ManyToOne(()=> User, (user) => user.games)
+    @ManyToOne(()=> User, (user) => user.gamesAsSecond)
     player2: User;
     @OneToMany(() => GameState, (gamestate) => gamestate.game)
     gameStates: GameState[];

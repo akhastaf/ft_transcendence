@@ -1,26 +1,28 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Socket } from 'net';
 import { SocketWithUserId } from 'src/types';
 import { UserService } from 'src/user/user.service';
 import { RoomService } from './room.service';
-import { Namespace } from 'socket.io'
+import { Namespace, Server } from 'socket.io'
 import { JoinRoomDTO } from './dto/join-room.dto';
 import { Room } from './entities/room.entity';
+import { JWTGuardWs } from 'src/auth/guards/jwt.guard';
 
-@WebSocketGateway({ namespace: 'room'})
+// @UseGuards(JWTGuardWs)
+@WebSocketGateway()
 export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger: Logger = new Logger(RoomGateway.name);
   constructor (private readonly roomService: RoomService, private configService: ConfigService) {}
   
   
-  @WebSocketServer() io: Namespace;
+  @WebSocketServer() io: Server;
   
   afterInit(server: any) {
     this.logger.log(`Websockets roomGateway from port ${this.configService.get('PORT')}`);
     // throw new Error('Method not implemented.');
   }
+  
   handleConnection(client: any, ...args: any[]) {
     // throw new Error('Method not implemented.');
   }
@@ -56,5 +58,10 @@ export class RoomGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const room = await this.roomService.leave(client.userId, roomid);
     client.leave(room.name);
     return room;
+  }
+
+  @SubscribeMessage('sendMessage')
+  async sendMessage(client: SocketWithUserId) {
+    
   }
 }

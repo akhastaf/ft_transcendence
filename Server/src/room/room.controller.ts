@@ -22,7 +22,8 @@ export class RoomController {
     @Post()
     async create(@Req() req : any ,@Body() createRoomDTO: CreateRoomDTO) : Promise<Room> {
         const room = await this.roomService.create(createRoomDTO, req.user.id);
-        this.roomGateway.getallrooms();
+        if (!room.private)
+            this.roomGateway.getallrooms();
         return room;
     }
 
@@ -34,7 +35,8 @@ export class RoomController {
     @Delete(':id')
     async delete(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser): Promise<any> {
         const room = await this.roomService.delete(req.user, id);
-        this.roomGateway.getallrooms();
+        if (!room.private)
+            this.roomGateway.getallrooms();
         console.log(room);
         return room;
     }
