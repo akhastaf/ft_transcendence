@@ -7,7 +7,7 @@ import { UserToRoom } from "./userToRoom.entity";
 export class Room {
     @PrimaryGeneratedColumn()
     id: number;
-    @Column()
+    @Column({ unique: true })
     name: string;
     @Column({ default: false})
     private: boolean;
