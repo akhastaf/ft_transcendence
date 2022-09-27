@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('http://fonts.cdnfonts.com/css/arcade-classic');
+
+
+@layer base {
+  [type="text"],
+  [type="email"],
+  [type="url"],
+  [type="password"],
+  [type="number"],
+  [type="date"],
+  [type="datetime-local"],
+  [type="month"],
+  [type="search"],
+  [type="tel"],
+  [type="time"],
+  [type="week"],
+  [multiple],
+  textarea,
+  select {
+    @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500;
+  }
+  [type="checkbox"],
+  [type="radio"] {
+    @apply border-gray-300 rounded text-indigo-600 focus:ring-indigo-500;
+  }
+}
+
+@layer utilities {
+    .h-75 {
+      height: 75px;
+    },
+
+    .paa {
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-box-align: center;
+    }
+
+    .arcade {
+      height : 100%;
+      font-family: 'ArcadeClassic', sans-serif;
+    }
+    .server-default {
+      @apply h-12 bg-discord_serverBg rounded-full flex justify-center items-center cursor-pointer hover:rounded-2xl transition-all duration-100 ease-out;
+    }
+  
+  }
+@layer components { 
+  .link {
+    @apply cursor-pointer font-semibold text-sm hover:underline;
+  }
+}
