@@ -1,8 +1,28 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-export default axios.create({
-    baseURL: 'http://localhost:3000',
+
+
+
+export const localService = axios.create({
+    baseURL: 'http://localhost:3000/',
     headers: {
-        'content-type': 'application/json',
+        crossdomain: true,
     },
 });
+
+
+localService.interceptors.request.use((config: AxiosRequestConfig) => {
+    if (config) {
+        const token = localStorage.getItem("accessToken");
+        if (token && config.headers) {
+            config.headers["Authorization"] = "Bearer " + token;
+        }
+    }
+    return config;
+});
+
+// intercept local service responses
+localService.interceptors.response.use((response: AxiosResponse) => {
+    return response;
+});
+

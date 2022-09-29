@@ -3,7 +3,8 @@ import logo from '../images/rsz_ponglogo.png';
 // import { useHistory } from "react-router-dom";
 import {Si42} from "react-icons/si";
 import {MenuIcon} from '@heroicons/react/outline';
-import axios from 'axios'
+import {localService} from '../api/axios'
+
 
 var scrollTrigger = 60;
       
@@ -49,11 +50,14 @@ class Header extends React.PureComponent {
   async Login(event) {
     // const form = new FormData(event.target);
     console.log("hello");
-    const info = await axios.get("http://localhost:3000/auth/login/42/", [], { withCredentials :true, header: { 'Access-Control-Allow-Origin': '*',} })
-    .then (() => {
-    const accessToken = info?.data?.accessToken;
-    console.log(accessToken)
-    }).catch ((err) => {console.log(err)});
+    window.location.assign("http://localhost:3000/auth/login/42");
+
+    // const info = await localService.get("/auth/login/42")
+    // .then (() => {
+    //   console.log("hello ===>" + info.data);
+    // const accessToken = info?.data?.accessToken;
+    // console.log(accessToken)
+    // }).catch ((err) => {console.log("error ss = " + err)});
 
   }
 

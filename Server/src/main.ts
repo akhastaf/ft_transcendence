@@ -9,17 +9,12 @@ import { SocketIoAdapter } from './room/socket-io-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    // cors: {
-    //   origin: 'http://localhost:3001',
-    //   credentials: true,
-    // }
+    cors: {
+      origin: 'http://localhost:3001',
+      credentials: true,
+    }
   });
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested With, Content-Type, Accept');
-    next();
- })
+  // app.enableCors();
   const configService = app.get(ConfigService);
   app.useWebSocketAdapter(new SocketIoAdapter(app, configService))
   app.useGlobalPipes(new ValidationPipe({

@@ -22,12 +22,13 @@ class App extends React.Component {
 //     window.removeEventListener('scroll', this.handleScroll);
 // }
 
-//   componentDidMount() {
-//    // console.log('componentDidMount() lifecycle');
-//    window.addEventListener('scroll', this.handleScroll);
-//     // Trigger update
-//     // this.setState({ foo: !this.state.foo });
-//   }
+  componentDidMount() {
+   // console.log('componentDidMount() lifecycle');
+  //  window.addEventListener('scroll', this.handleScroll);
+  // this.makeAPICall();
+    // Trigger update
+    // this.setState({ foo: !this.state.foo });
+  }
 
 //   handleScroll(event : any) {
 //     let scrollTop = event.srcElement.body.scrollTop,
@@ -37,6 +38,16 @@ class App extends React.Component {
 //       transform: itemTranslate
 //     });
 // }
+  // makeAPICall = async () => {
+  // try {
+  //   const response = await fetch('http://localhost:3000/auth/login/42', {mode:'cors'});
+  //   const data = await response.json();
+  //   console.log({ data })
+  // }
+  // catch (e) {
+  //   console.log(e)
+  // }
+  // }
 
   render() {
     console.log('Render lifecycle')

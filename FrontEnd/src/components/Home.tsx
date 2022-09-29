@@ -1,4 +1,3 @@
-
 import {ChevronDownIcon, PlusIcon } from '@heroicons/react/outline';
 import React , {useEffect, useState} from 'react';
 import ChannelIcon from './ChannelIcon';
@@ -6,6 +5,9 @@ import {IoCompassOutline } from 'react-icons/io5';
 import  MemberCard  from './MemberCard';
 import AddChannel from './AddChannel';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
+// import {access} from "../api/access"
+
 
 
 // impor
@@ -107,12 +109,24 @@ const addUsers = () => {
 	}
 }
 
+
+
 function Home() {
 
 	
 	const [showModal, setShowModal] = useState(false);
+	const [searchParams, setSearchParams] = useSearchParams();
+	// const [flag, setFlag] = useState(false);
+	// let i: number = 0;
+	// console.log('====================================');
+	const access  = searchParams.get("accessToken");
+	// console.log("Name = " + access);
+	// JSON.parse(name);
+	// console.log('====================================');
 	// const [users, getUsers] = useState("");
 	const url = 'http://localhost:3000/';
+	
+
 
 	const getAllUsers = () => {
 		axios.get(`${url}auth/login/42/return`)
@@ -135,6 +149,15 @@ function Home() {
 		// 		Authorization: 
 		// 	}
 		// }
+		// if (flag === false)
+		// {
+		// 	searchParams.delete("accessToken");
+		// 	setSearchParams(searchParams);
+		// 	setFlag(true);
+		// }
+		// console.log('====================================');
+		// console.log(access);
+		// console.log('====================================');
 		getAllUsers();
 	},[])
 
@@ -147,7 +170,8 @@ function Home() {
         	</div>
 			<hr className="bg-angol_main border w-8 mx-auto" />
 			<div className="flex flex-col items-center space-y-3">
-			 { 
+			 {
+
 			 	Users[0].channels.map(d => (<ChannelIcon image={d.icon} channelName={d.name}/>))
 			 
 			 } 

@@ -59,6 +59,7 @@ import { RegisterUserDTO } from "./dto/register-user.dto";
 import { Verify2FaDTO } from "./dto/verify-2fa.dto";
 import { FTAuthGuard } from "./guards/ft-auth.guard";
 import { LocalAuthGuard } from "./guards/local-auth.guard";
+import {access} from "./dto/access"
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -72,7 +73,10 @@ export class AuthController {
     }
     @Get('login/42')
     @UseGuards(FTAuthGuard)
-    loginft(@Req() req: any) {
+    loginft(@Req() req: any, @Res() res: Response) {
+        // console.log(req.params.accessToken);
+        // localStorage.setItem('accessToken',req.params.accessToken);
+        //res.header('Access-Control-Allow-Origin',"*");
         return req.user;
     }
 
@@ -83,7 +87,8 @@ export class AuthController {
         const user = await this.authService.register(req.user);
         // console.log(this.authService.login(user));
         console.log(user);
-        const {accessToken} = await this.authService.login(user);
+        const access = await this.authService.login(user);
+        // const accessToken = await this.authService.login(user);
         //const access_token = JSON.stringify(accessToken);
         //console.log(access_token);
         if (!user.twofa)
@@ -91,9 +96,17 @@ export class AuthController {
             // return accessToken;
             // res.status(200).json(accessToken);
             // res.cookie('accessToken', access_token);
+            res.header('Access-Control-Allow-Credentials', 'true');
             res.header('Access-Control-Allow-Origin',"*");
             // res.redirect("http://localhost:3001/channels/");
-            res.redirect("http://localhost:3001/channels?access_token=" + this.authService.login(user));
+            console.log('============accesstoken===================');
+            // console.log(accessToken.toString());
+            console.log('====================================');
+            console.log('====================================');
+            // console.log(access["access_token"]);
+            console.log('====================================');
+            res.redirect("http://localhost:3001/channels?accessToken=" + access["access_token"]);
+            // res.redirect("http://localhost:3001/channels?accessToken=" + accessToken);
         }
       //  res.redirect(this.configService.get('CILENT_HOST') + '/channels?user_id=' + user.id + '&twfa=true');
     }
