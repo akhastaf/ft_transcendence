@@ -3,7 +3,7 @@ import logo from '../images/rsz_ponglogo.png';
 // import { useHistory } from "react-router-dom";
 import {Si42} from "react-icons/si";
 import {MenuIcon} from '@heroicons/react/outline';
-import {localService} from '../api/axios'
+// import {localService} from '../api/axios'
 
 
 var scrollTrigger = 60;

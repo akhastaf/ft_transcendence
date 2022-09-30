@@ -143,21 +143,14 @@ function Home() {
 
 
 	useEffect(() => {
-		// const config= { 
-
-		// 	headers: {
-		// 		Authorization: 
-		// 	}
-		// }
-		// if (flag === false)
-		// {
-		// 	searchParams.delete("accessToken");
-		// 	setSearchParams(searchParams);
-		// 	setFlag(true);
-		// }
-		// console.log('====================================');
-		// console.log(access);
-		// console.log('====================================');
+		const fetchData = async () => {
+			// const data = await fetch('https://yourapi.com');
+			const {data} =  await axios.get(`${url}auth/register`);
+			axios.defaults.headers.common['Authorization'] = `Bearer ${data.token};`
+		  }
+		// console.log("data = " + ${data.token});
+		fetchData()
+		.catch(console.error);
 		getAllUsers();
 	},[])
 

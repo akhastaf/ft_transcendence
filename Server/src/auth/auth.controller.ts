@@ -105,7 +105,7 @@ export class AuthController {
             console.log('====================================');
             // console.log(access["access_token"]);
             console.log('====================================');
-            res.redirect("http://localhost:3001/channels?accessToken=" + access["access_token"]);
+            res.redirect("http://localhost:3001/channels?accessToken=" + access);
             // res.redirect("http://localhost:3001/channels?accessToken=" + accessToken);
         }
       //  res.redirect(this.configService.get('CILENT_HOST') + '/channels?user_id=' + user.id + '&twfa=true');
