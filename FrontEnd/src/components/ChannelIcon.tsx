@@ -5,6 +5,9 @@ import React from 'react';
 // import { Tooltip } from '@chakra-ui/react'
 import { Tooltip } from "@material-tailwind/react";
 import { Avatar } from "@material-tailwind/react";
+// import {useNavigate} from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setChannelInfo } from '../features/channelSlice';
 
 
 // function Span() {
@@ -12,7 +15,7 @@ import { Avatar } from "@material-tailwind/react";
 //     <>
 //       <span> challenges</span>
 //     </>
-//   )
+//   ) 
 // }
 
 function ServerIcon(props : any) {
@@ -24,13 +27,20 @@ function ServerIcon(props : any) {
   // }
   // const handleMouseOut = () =>
   // {
-  //     setIsHovering(false);
+  //     setIsHovering(false); 
+  const dispatch = useDispatch();
+  // const history = useNavigate();
   // }
+  const switchChat = () => {
+    dispatch(setChannelInfo); // what is dispatch
+		console.log("aaaaaa");
+	}
+
 
   return (
     <>
     {/* <Tooltip data-tooltip-target="tooltip-right" data-tooltip-placement="right"  className="mb-3 md:mb-0 text-white bg-emerald-400 hover:bg-emerald-400 focus:ring-4 focus:outline-none focus:ring-emerald-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-emerald-400 dark:hover:bg-emerald-400 dark:focus:ring-blue-800" label={props.channelName} > */}
-     <div>
+     <div onClick={switchChat}>
     <Tooltip interactive className="inline-block absolute z-10 py-2 px-3 text-sm font-medium text-white bg-emerald-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-emerald-400"  content={props.channelName} placement="right" >
       
       <Avatar size="md"
@@ -47,3 +57,7 @@ function ServerIcon(props : any) {
 }
 
 export default ServerIcon
+// function useDispatcher() {
+//   throw new Error('Function not implemented.');
+// }
+

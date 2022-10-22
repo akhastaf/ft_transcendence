@@ -54,3 +54,24 @@
     </div>
   </div>
 </div>
+
+
+
+{
+   id: 1,
+   username: 'mokhames',
+   email: 'mokhames@student.1337.ma',
+   provider: '42',
+   twofa: false,
+   secret_tmp: null,
+   secret: null,
+   recoveryCode: null,
+   avatar: 'https://cdn.intra.42.fr/users/mokhames.jpg',
+   status: 'offline',
+   win: 0,
+   loss: 0,
+   level: 0,
+   coalition: null,
+   createdAt: 2022-09-25T15:21:28.370Z,
+   updatedAt: 2022-09-25T15:21:28.370Z
+ }

@@ -1,0 +1,5 @@
+// ? sockets (list of connected users ->  ) the message is "connected Users"
+// ? sockets  (after connection catching socket("connected") and send socket("ADDconnectedUser"))
+
+
+

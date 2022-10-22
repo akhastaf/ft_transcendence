@@ -88,6 +88,7 @@ export class AuthController {
         // console.log(this.authService.login(user));
         console.log(user);
         const access = await this.authService.login(user);
+        // const access1 = await this.authService.login(req.user);
         // const accessToken = await this.authService.login(user);
         //const access_token = JSON.stringify(accessToken);
         //console.log(access_token);
