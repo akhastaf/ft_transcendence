@@ -12,42 +12,16 @@ import {
 import Hero from './components/Hero';
 import LowerHero from './components/lowerHero';
 import Home from './components/Home';
+import Callback from './components/auth/42/callback';
+
 
 class App extends React.Component {
 
-  // state = {
-  //   foo: false,
-  // };
-//   componentWillUnmount() {
-//     window.removeEventListener('scroll', this.handleScroll);
-// }
 
   componentDidMount() {
-   // console.log('componentDidMount() lifecycle');
-  //  window.addEventListener('scroll', this.handleScroll);
-  // this.makeAPICall();
-    // Trigger update
-    // this.setState({ foo: !this.state.foo });
+
   }
 
-//   handleScroll(event : any) {
-//     let scrollTop = event.srcElement.body.scrollTop,
-//         itemTranslate = Math.min(0, scrollTop/3 - 60);
-
-//     this.setState({
-//       transform: itemTranslate
-//     });
-// }
-  // makeAPICall = async () => {
-  // try {
-  //   const response = await fetch('http://localhost:3000/auth/login/42', {mode:'cors'});
-  //   const data = await response.json();
-  //   console.log({ data })
-  // }
-  // catch (e) {
-  //   console.log(e)
-  // }
-  // }
 
   render() {
     console.log('Render lifecycle')
@@ -60,6 +34,8 @@ class App extends React.Component {
                   <Route path='/channels' element={<> <Home/></>}>
                   </Route>
                   <Route path='/channels/:' element={<> </>}>
+                  </Route>
+                  <Route path='/callback' element={<> <Callback/> </>} >
                   </Route>
               </Routes>
               </Router>

@@ -1,6 +1,8 @@
 export type RoomType = {
 	_id: string;
 	name: string;
+	private: boolean;
+	password: string;
 	createdBy: string;
 	members: string[];
 	createdAt: Date;

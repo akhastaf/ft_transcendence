@@ -74,9 +74,6 @@ export class AuthController {
     @Get('login/42')
     @UseGuards(FTAuthGuard)
     loginft(@Req() req: any, @Res() res: Response) {
-        // console.log(req.params.accessToken);
-        // localStorage.setItem('accessToken',req.params.accessToken);
-        //res.header('Access-Control-Allow-Origin',"*");
         return req.user;
     }
 
@@ -97,16 +94,16 @@ export class AuthController {
             // return accessToken;
             // res.status(200).json(accessToken);
             // res.cookie('accessToken', access_token);
-            res.header('Access-Control-Allow-Credentials', 'true');
-            res.header('Access-Control-Allow-Origin',"*");
-            // res.redirect("http://localhost:3001/channels/");
-            console.log('============accesstoken===================');
-            // console.log(accessToken.toString());
-            console.log('====================================');
-            console.log('====================================');
+            // res.header('Access-Control-Allow-Credentials', 'true');
+            // res.header('Access-Control-Allow-Origin',"*");
+            // // res.redirect("http://localhost:3001/channels/");
+            // console.log('============accesstoken===================');
+            // // console.log(accessToken.toString());
+            // console.log('====================================');
+            // console.log('====================================');
             // console.log(access["access_token"]);
-            console.log('====================================');
-            res.redirect("http://localhost:3001/channels?accessToken=" + access);
+            // console.log('====================================');
+            res.redirect("http://localhost:3001/callback?accessToken=" + access["access_token"]);
             // res.redirect("http://localhost:3001/channels?accessToken=" + accessToken);
         }
       //  res.redirect(this.configService.get('CILENT_HOST') + '/channels?user_id=' + user.id + '&twfa=true');

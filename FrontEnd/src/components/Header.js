@@ -51,7 +51,7 @@ class Header extends React.PureComponent {
     // const form = new FormData(event.target);
     console.log("hello");
     window.location.assign("http://localhost:3000/auth/login/42");
-
+    
     // const info = await localService.get("/auth/login/42")
     // .then (() => {
     //   console.log("hello ===>" + info.data);

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
-import { getAllRomsAndUsersApi } from "../Services/room";
-import {  User, Channels , ChatType, MessageType, RoomType, UserType } from "../Types/types";
+// import { useNavigate } from "react-router-dom";
+// import { io, Socket } from "socket.io-client";
+// import { getAllRomsAndUsersApi } from "../Services/room";
+import {  User, Channels , ChatType, UserType } from "../Types/types";
 import {ChevronDownIcon, PlusIcon } from '@heroicons/react/outline';
-import ChannelIcon from '../ChannelIcon';
+// import ChannelIcon from '../ChannelIcon';
 import {IoCompassOutline } from 'react-icons/io5';
 import  MemberCard  from '../MemberCard';
 import AddChannel from '../AddChannel';
@@ -12,9 +12,10 @@ import AddChannel from '../AddChannel';
 // export {} 
 import axios from 'axios';
 import {  useSearchParams } from 'react-router-dom';
+import ChannelList from "./ChannelList";
 
 
-let socket : Socket;
+// let socket : Socket;
 
 
 const logo = require('../../images/ponglogo.png');
@@ -149,48 +150,48 @@ const SideBar: React.FC <{
 	// const chatroomref = useRef(choosenChat);
 	// const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
 
 
 
 
-        const fetchData = async () => {
-            // const data = searchParams.
-            const access  = searchParams.get("accessToken");
-            // const {data} =  await axios.get(`${url}auth/register`);
-            if (access)
-            // console.log(access);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${access};`;
-            else
-                alert('access token error');
-        }
-        fetchData()
-        .catch(console.error);
+    //     const fetchData = async () => {
+    //         // const data = searchParams.
+    //         const access  = searchParams.get("accessToken");
+    //         // const {data} =  await axios.get(`${url}auth/register`);
+    //         if (access)
+    //         // console.log(access);
+    //         axios.defaults.headers.common['Authorization'] = `Bearer ${access};`;
+    //         else
+    //             alert('access token error');
+    //     }
+    //     fetchData()
+    //     .catch(console.error);
 
 
 
 
 
-        // getAllRomsAndUsersApi()
-        // .then((roomsUsersData) => {
-        //     setRooms(roomsUsersData.rooms);
-        //     setUsers(roomsUsersData.users);
+    //     // getAllRomsAndUsersApi()
+    //     // .then((roomsUsersData) => {
+    //     //     setRooms(roomsUsersData.rooms);
+    //     //     setUsers(roomsUsersData.users);
+    //     // })
+    //     // .catch((err) => console.log(err));
+    // });
+
+		// socket = io(`localhost:3000`, {
+		// 	// auth: {
+		// 	// 	access_token: userInfo.access_token,
+		// 	// },
+		// })
+
+		// socket.on("connect", () => {
+		// 	// console.log("connected");
+		// 	socket.emit("AddConnectedUser", { username: Users[0].login });
+
         // })
-        // .catch((err) => console.log(err));
-    });
-
-		socket = io(`localhost:3000`, {
-			// auth: {
-			// 	access_token: userInfo.access_token,
-			// },
-		})
-
-		socket.on("connect", () => {
-			// console.log("connected");
-			socket.emit("AddConnectedUser", { username: Users[0].login });
-
-        })
         
         // socket.on("connectedUsers", (onlineUsers) => {
         //     setOnlineUsers(onlineUsers);
@@ -198,33 +199,7 @@ const SideBar: React.FC <{
 
     return (<>
     
-    <div className="flex flex-col space-y-3 bg-discord_serverSideBar p-3 min-w-max">
-        	<div className="server-default hover:bg-emerald-400">
-				<img className="w-16" src={logo} alt="" />
-        	</div>
-			<hr className="bg-angol_main border w-8 mx-auto" />
-			<div className="flex flex-col items-center space-y-3">
-			 {
-
-			 	// Users[0].channels.map(d => (<ChannelIcon image={d.icon} channelName={d.name} />))
-			 
-			 } 
-			{/* <ChannelIcon image={channel2} channelName="channel 1"/>
-			<ChannelIcon image={channel1} channelName="channel 2"/>
-			<ChannelIcon image={channel2} channelName="channel 3"/>
-			<ChannelIcon image={channel1} channelName="channel 4"/>
-			<ChannelIcon image={channel3} channelName="channel 5"/>
-			<ChannelIcon image={channel4} channelName="channel 6"/>
-			<ChannelIcon image={channel5} channelName="channel 7"/> */}
-			<div className="server-default hover:bg-discord_green group">
-				<button onClick={openModal} ><PlusIcon className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
-				{showModal ? <AddChannel  setShowModal={setShowModal} /> : null}
-			</div>
-			<div className="server-default hover:bg-discord_green group">
-				<button><IoCompassOutline className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
-			</div>
-			</div>
-        </div>
+	
 
 
 			<div className = "bg-discord_secondSideBar flex flex-col min-win-max">
@@ -243,7 +218,7 @@ const SideBar: React.FC <{
                                                 _id: user._id,
                                             })
                                         }
-                                        coll = "Bios"
+                                        coll = "BIOS"
                                         key={user._id}
                                         name={user.username}
                                         notifications={user.notifications}

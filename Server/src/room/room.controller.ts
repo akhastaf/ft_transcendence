@@ -17,6 +17,7 @@ export class RoomController {
 
     @Get()
     async getAll() : Promise<Room[]> {
+        console.log("....");
         return await this.roomService.getAll();
     }
     @Post()

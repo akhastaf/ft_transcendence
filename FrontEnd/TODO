@@ -1,0 +1,22 @@
+Main page of components/Home.tsx 
+    -> ChannelList page {rooms [], selectRoomHandler, choosenChat, Notifications, function to createRoom}
+
+    -> userList page 
+
+
+
+
+
+
+
+    // to build entity 
+        -> define the type (interface)
+        -> const [rooms, setRooms] = useState<any>([]);
+        -> in useaffect called function to get allRooms and then their users
+
+        ( getAllRomsAndUsersApi()
+        .then((roomsUsersData) => {
+            setRooms(roomsUsersData.rooms);
+            setUsers(roomsUsersData.users);
+        })
+        .catch((err) => console.log(err));)

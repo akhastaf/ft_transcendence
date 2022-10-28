@@ -1,15 +1,19 @@
-import {ChevronDownIcon, PlusIcon } from '@heroicons/react/outline';
+// import {ChevronDownIcon, PlusIcon } from '@heroicons/react/outline';
 import  {useEffect, useState} from 'react';
-import ChannelIcon from './ChannelIcon';
-import {IoCompassOutline } from 'react-icons/io5';
-import  MemberCard  from './MemberCard';
-import AddChannel from './AddChannel';
+// import ChannelIcon from './ChannelIcon';
+// import {IoCompassOutline } from 'react-icons/io5';
+// import  MemberCard  from './MemberCard';
+// import AddChannel from './AddChannel';
+import {getAllRooms } from './Services/room'
 import axios from 'axios';
 import {  useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
-import { ChatType, UserType } from './Types/types';
+import ChannelList from './SideBar/ChannelList';
+import { ChatType, RoomType, UserType } from './Types/types';
 import { io, Socket } from "socket.io-client";
-import { toast } from "react-toastify";
+import ChatHeader from './ChatSide/ChatHeader';
+import {localService} from '../api/axios'
+// import { toast } from "react-toastify";
 // import {access} from "../api/access";
 // import ChatPage from "./ChatSide/ChatPage";
 
@@ -24,7 +28,7 @@ let socket: Socket;
 // const channel5 = require('../images/tool.png');
 
 
-// interface User {
+// interface User { 
 // 	fname : string;
 // 	lname : string;
 // 	login :string;
@@ -159,16 +163,16 @@ const userInfo : UserType = {
 }
 
 
-const isAdmin = false // TODO to be feteched from localdata
-const show = isAdmin ? null : "invisible";
+// const isAdmin = false // TODO to be feteched from localdata
+// const show = isAdmin ? null : "invisible";
 
-const addUsers = () => {
-	const username = prompt("Enter username");
-	if (username)
-	{
-		// TODO add user to room 
-	}
-}
+// const addUsers = () => {
+// 	const username = prompt("Enter username");
+// 	if (username)
+// 	{
+// 		// TODO add user to room 
+// 	}
+// }
 
 
 const users : UserType[] = [
@@ -201,32 +205,53 @@ const users : UserType[] = [
 ];
 
 
-function Home() {
 
+// const usersonline : string [] = [
+// 	"med trevor",
+// 	"John www",
+// ]
+
+function Home() {
+ 
 	
-	const [showModal, setShowModal] = useState(false);
+	// const [showModal, setShowModal] = useState(false);
+	 // eslint-disable-next-line
 	const [searchParams, setSearchParams] = useSearchParams();
 	
 	// const [userInfo, setUserInfo] = useLocalStorage("user");
 			
-			const openModal = () => {
-				console.log("hello world!");
-				setShowModal(true);
-			}
+			// const openModal = () => {
+			// 	console.log("hello world!");
+			// 	setShowModal(true);
+			// }
 
 			// const [users, setUsers] = useState<any>([]);
-			
+			// const access  = searchParams.get("accessToken");
+			const [rooms, setRooms] = useState<any>([]);
+			// socket = io(`localhost:3000`, {
+			// 	auth: {
+			// 		access_token: `Bearer ${access};`,
+			// 	},
+			// })
+	
+			// socket.on("connect", () => {
+			// 	// console.log("connected");
+			// 	socket.emit("AddConnectedUser", { username: users[0].username });
+	
+			// })
+  
 
-
-
-
+			 // eslint-disable-next-line
 			const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
+			// setOnlineUsers(usersonline);
+			// setOnlineUsers("med trevor");
 
 			const [choosenChat, setChoosenChat] = useState<ChatType>({
 				name: "Direect Messages",
 				_id: "",
 			});
-
+			 // eslint-disable-next-line
 			const [selectedUserDM, setSelectedUserDM] = useState<ChatType>({
 				_id: "",
 				name: "",
@@ -238,66 +263,88 @@ function Home() {
 			const selectedUserDMHandler = (user: ChatType) => {
 				setSelectedUserDM(user);
 				setChoosenChat(() => ({ name: "Direct Messages", _id: user._id }));
-		
-				// setUsers((prevUsers: any) => {
-				// 	const users = prevUsers.map((currUser: UserType) => {
-				// 		if (currUser._id === user._id) {
-				// 			currUser.notifications = 0;
-				// 			return currUser;
-				// 		}
-				// 		return currUser;
-				// 	});
-		
-				// 	return [...users];
-				// });
-		
-				socket.emit("showPrivateMessages", {
-					receiverId: user._id,
-					userId: userInfo._id,
-				});
 			};
 
 
 
+			const selectRoomHandler = (room : RoomType | string) =>
+			{
 
+			}
 
-
+			 // eslint-disable-next-line 
 			useEffect(() => {
-				const fetchData = async () => {
-					// const data = searchParams.
-					const access  = searchParams.get("accessToken");
-					// const {data} =  await axios.get(`${url}auth/register`);
-					if (access)
-					// console.log(access);
-					axios.defaults.headers.common['Authorization'] = `Bearer ${access};`;
-					else
-						alert('access token error');
-		  }
-		// console.log("data = " + ${data.token});
-		fetchData()
-		.catch(console.error);
+
+		// 		const fetchData = async () => {
+		// 			// const data = searchParams.
+		// 			const access  = searchParams.get("accessToken");
+		// 			// const {data} =  await axios.get(`${url}auth/register`);
+		// 			if (access)
+		// 			{
+		// 				// console.log(access);z
+
+		// 				localStorage.setItem('accessToken', access);
+		// 				localService.defaults.headers.common['Authorization'] = `Bearer ${access};`;
+
+		// 			}
+		// 			else
+		// 				alert('access token error');
+		//   };
+		// // console.log("data = " + ${data.token});
+		// fetchData()
+		// .catch(console.error);
+
+
+				getAllRooms()
+				.then(() => {
+					// setRooms(roomsUsersData.rooms);
+					// console.log("u son of bitch i am in");
+					// setUsers(roomsUsersData.users);
+				})
+				.catch((err) => console.log(err));
+
 		// getAllUsers();
-	},[])
+		 // eslint-disable-next-line react-hooks/exhaustive-deps
+	},[]);
 
-	
 
-	const logoutHandler = () => {
-		socket.emit("logout", {
-			username: userInfo.username,
+	const getNumberOfDmNotifications = (): number => {
+		let numberOfNotifications = 0;
+
+		users.map((user: UserType) => {
+			if (user.notifications && user.notifications > 0) {
+				numberOfNotifications += user.notifications;
+			}
+			return null;
+		});
+
+		return numberOfNotifications;
+	};
+		
+	const createRoomHandler = (roomName: string, private1: boolean, password : string | null ) => {
+		console.log(`createRoomHandler: ${roomName}`);
+		socket.emit("createRoom", {
+			roomName: roomName,
+			private: private1,
+			password: password,
 			userId: userInfo._id,
 		});
+	}; 
 
-		toast.success("Logout success !!", {
-			position: toast.POSITION.TOP_CENTER,
-		});
-		
-		// removeLocalItem("user");
-		// setUserInfo("");
+	const logoutHandler = () => {
 	}
 
   return ( 
     <>
     <div className="flex h-screen">
+		<ChannelList 
+		rooms ={rooms}
+		choosenChat={choosenChat}
+		selectRoomHandler={selectRoomHandler}
+		dmNotifications={getNumberOfDmNotifications()}
+		createRoomHandler={createRoomHandler}
+		
+		/>
 		<SideBar
 		choosenChat={choosenChat}
 		users={users}
@@ -310,9 +357,41 @@ function Home() {
 		logoutHandler={logoutHandler}
 		
 		/>
+
+
+				<div className=" bg-[#36393f] flex-grow col-span-2 p-0">
+					<div className="flex flex-col h-[100vh]">
+						<ChatHeader
+							selectedUserDM={selectedUserDM}
+							choosenChat={choosenChat}
+						/>
+						{/* {choosenChat.name === DM_LABEL &&
+							choosenChat._id === "" && (
+								<MessagesSection messages={messages.botRoom} />
+							)}
+						{choosenChat.name === DM_LABEL &&
+							choosenChat._id !== "" &&
+							messages[choosenChat._id] && (
+								<MessagesSection
+									messages={messages[choosenChat._id]}
+								/>
+							)}
+						{choosenChat.name !== DM_LABEL &&
+							messages[choosenChat._id] && (
+								<MessagesSection
+									messages={messages[choosenChat._id]}
+								/>
+							)}
+						<MessageInput
+							joinRoomHandler={joinRoomHandler}
+							choosenChat={choosenChat}
+							isMemberOfRoom={isMemberOfRoom}
+							sendMessage={sendMessageHandler}
+						/> */}
+					</div>
 				{/* <div>
-					<ChatPage/>
-				</div> */}
+					<ChatPage/>*/}
+				</div> 
     </div>
     </>
   )
