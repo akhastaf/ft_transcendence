@@ -9,10 +9,11 @@ import axios from 'axios';
 import {  useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
 import ChannelList from './SideBar/ChannelList';
-import { ChatType, RoomType, UserType } from './Types/types';
+import { ChatType, MessageType, RoomType, UserType } from './Types/types';
 import { io, Socket } from "socket.io-client";
 import ChatHeader from './ChatSide/ChatHeader';
 import {localService} from '../api/axios'
+import MessagesSection from './ChatSide/MessagesSection';
 // import { toast } from "react-toastify";
 // import {access} from "../api/access";
 // import ChatPage from "./ChatSide/ChatPage";
@@ -210,9 +211,41 @@ const users : UserType[] = [
 // 	"med trevor",
 // 	"John www",
 // ]
+const DUMMY_MESSAGES: { [key: string]: MessageType[] } = {
+	botRoom: [
+		{
+			_id: "1",
+			roomId: "1",
+			sendBy: { _id: "ds", username: "Bot 🤖" },
+			content: "We are so happy to see you here",
+			updatedAt: new Date(),
+		},
+		{
+			_id: "2",
+			roomId: "1",
+			sendBy: { _id: "ds", username: "Bot 🤖" },
+			content: "you can contact your friends using dm",
+			updatedAt: new Date(),
+		},
+		{
+			_id: "3",
+			roomId: "1",
+			sendBy: { _id: "ds", username: "Bot 🤖" },
+			content:
+				"And also you can create your own room and chat with your friends",
+			updatedAt: new Date(),
+		},
+	],
+};
 
 function Home() {
- 
+	
+
+
+
+	const [messages, setMessages] = useState<{ [key: string]: MessageType[] }>(
+		DUMMY_MESSAGES
+	);
 	
 	// const [showModal, setShowModal] = useState(false);
 	 // eslint-disable-next-line
@@ -321,14 +354,16 @@ function Home() {
 		return numberOfNotifications;
 	};
 		
-	const createRoomHandler = (roomName: string, private1: boolean, password : string | null ) => {
+	const createRoomHandler = (roomName: string, private1: string, password : string | null ) => {
 		console.log(`createRoomHandler: ${roomName}`);
-		socket.emit("createRoom", {
-			roomName: roomName,
-			private: private1,
-			password: password,
-			userId: userInfo._id,
-		});
+		console.log(`createRoomHandler: ${private1}`);
+		console.log(`createRoomHandler: ${password}`);
+		// socket.emit("createRoom", {
+		// 	roomName: roomName,
+		// 	private: private1,
+		// 	password: password,
+		// 	userId: userInfo._id,
+		// });
 	}; 
 
 	const logoutHandler = () => {
@@ -365,18 +400,19 @@ function Home() {
 							selectedUserDM={selectedUserDM}
 							choosenChat={choosenChat}
 						/>
-						{/* {choosenChat.name === DM_LABEL &&
+						 {choosenChat.name === "Direect Messages" &&
 							choosenChat._id === "" && (
 								<MessagesSection messages={messages.botRoom} />
 							)}
-						{choosenChat.name === DM_LABEL &&
+						{/* {choosenChat.name === "Direect Messages" &&
 							choosenChat._id !== "" &&
 							messages[choosenChat._id] && (
 								<MessagesSection
 									messages={messages[choosenChat._id]}
 								/>
-							)}
-						{choosenChat.name !== DM_LABEL &&
+							)} */}
+							
+						{/*{choosenChat.name !== DM_LABEL &&
 							messages[choosenChat._id] && (
 								<MessagesSection
 									messages={messages[choosenChat._id]}

@@ -14,7 +14,7 @@ const ChannelList: React.FC <{
 	selectRoomHandler: (room: RoomType | string) => void;
 	choosenChat: ChatType;
 	dmNotifications: number;
-	createRoomHandler: (roomName: string, private1: boolean, password : string | null ) => void;
+	createRoomHandler: (roomName: string, private1: string, password : string | null ) => void;
 
 }> =  ({rooms, selectRoomHandler, choosenChat, dmNotifications, createRoomHandler }) => {
     
@@ -24,11 +24,11 @@ const ChannelList: React.FC <{
 
 	// const [showCreateRoomForm, setShowCreateRoomForm] = useState(false);
 
-	const submitCreateRoomForm = (e: any) => {
-		e.preventDefault();
-		createRoomHandler(roomNameRef.current!.value, privateRef.current!.value, passwordRef.current!.value);
-		// setShowCreateRoomForm(false);
-	};
+	// const submitCreateRoomForm = (e: any) => {
+	// 	e.preventDefault();
+	// 	createRoomHandler(roomNameRef.current!.value, privateRef.current!.value, passwordRef.current!.value);
+	// 	// setShowCreateRoomForm(false);
+	// };
 
 	// const showCreateRoomFormHandler = () => {
 	// 	setShowCreateRoomForm(!showCreateRoomForm);
@@ -57,7 +57,7 @@ const ChannelList: React.FC <{
 			 } 
 			<div className="server-default hover:bg-discord_green group">
 				<button onClick={openModal} ><PlusIcon className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
-				{showModal ? <AddChannel setShowModal={setShowModal} formSubmit={submitCreateRoomForm}  /> : null}
+				{showModal ? <AddChannel setShowModal={setShowModal} createRoomHandler={createRoomHandler}  /> : null}
 			</div>
 			<div className="server-default hover:bg-discord_green group">
 				<button><IoCompassOutline className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>

@@ -14,7 +14,7 @@ export type RoomType = {
 export type MessageType = {
 	_id: string;
 	roomId: string;
-	sendBy: {
+	sendBy: { // in back end its a type User
 		_id: string;
 		username: string;
 	};
