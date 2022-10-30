@@ -1,5 +1,6 @@
 import axios from "axios";
+import { localService } from "../../api/axios";
 
-export const getAllUsers = (): Promise<any> => {
-	return axios.get("/user/").then(res => res.data);
+export const getCurrentUser = (): Promise<any> => {
+	return localService.get("/user?id=1").then(res => res.data);
 };

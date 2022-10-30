@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from "react";
-import moment from "moment";
 import { MessageType } from "../Types/types";
+import moment from 'moment';
 
 
 
@@ -21,7 +21,7 @@ const MessagesSection : React.FC <{
 
     return (<>
     
-    <div className="flex-grow-1 m-4 d-flex flex-column gap-12 overflow-y-scroll">
+    <div className="flex-grow m-4 flex flex-col my-10 gap-12 overflow-y-scroll scrollbar-hide ">
 			{messages.map((message: MessageType, idx) => (
 				<MessageCard
 					key={message._id + "" + idx}
@@ -43,22 +43,35 @@ const MessageCard: React.FC<{
 	time: string;
 }> = ({ content, sender, time }) => {
 	return (
-		<div className="flex gap-12">
+		<div className="flex items-center p-1 pl-5 my-0 mr-2 hover:bg-[#32353B] group">
 			<img
 				width={40}
 				height={40}
-				className="rounded-full"
+				className="h-10 rounded-full cursor-pointer mr-3 hover:shadow-2x"
 				// src={`${process.env.REACT_APP_AVATARS_URL}/api/avatar?name=${sender}`}
 				 src={channel1}
 				alt=""
 			/>
 			<div>
 				<div className="flex gap-8">
-					<span className="font-bold">{sender}</span>
-					<span className="text-gray-300">{time}</span>
+					<span className=" text-white font-bold">{sender}</span>
+					<span className="text-gray-400">{time}</span>
 				</div>
-				<div>{content}</div>
+				<div className="text-sm text-[#dcddde]" >{content}</div>
 			</div>
+			{/* <div
+          className=" hover:bg-[#ed4245] p-1 ml-auto rounded-sm text-[#ed4245] hover:text-white cursor-pointer"
+          onClick={() =>
+            db
+              .collection("channels")
+              .doc(channelId)
+              .collection("messages")
+              .doc(id)
+              .delete()
+          }
+        >
+          <TrashIcon className="h-5 hidden group-hover:inline" />
+        </div> */}
 		</div>
 	);
 };

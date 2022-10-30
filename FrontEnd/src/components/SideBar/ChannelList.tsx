@@ -19,26 +19,10 @@ const ChannelList: React.FC <{
 }> =  ({rooms, selectRoomHandler, choosenChat, dmNotifications, createRoomHandler }) => {
     
 	
-	
-	const roomInputRef = useRef<HTMLInputElement>(null);
-
-	// const [showCreateRoomForm, setShowCreateRoomForm] = useState(false);
-
-	// const submitCreateRoomForm = (e: any) => {
-	// 	e.preventDefault();
-	// 	createRoomHandler(roomNameRef.current!.value, privateRef.current!.value, passwordRef.current!.value);
-	// 	// setShowCreateRoomForm(false);
-	// };
-
-	// const showCreateRoomFormHandler = () => {
-	// 	setShowCreateRoomForm(!showCreateRoomForm);
-	// };
-	
 	const [showModal, setShowModal] = useState(false);
-	// const [searchParams, setSearchParams] = useSearchParams();
 
     const openModal = () => {
-        console.log("hello world!");
+        // console.log("hello world!");
         setShowModal(true);
     };
 
@@ -51,7 +35,15 @@ const ChannelList: React.FC <{
 			<hr className="bg-angol_main border w-8 mx-auto" />
 			<div className="flex flex-col items-center space-y-3">
 			 {
-
+				rooms.map((room: RoomType, index: number) => (
+					// console.log(room.name);
+					<ChannelIcon 
+						choosenChat={choosenChat}
+						room={room}
+						onClick={selectRoomHandler}
+						key={room._id + index}
+					/>
+				))
 			 	// Users[0].channels.map(d => (<ChannelIcon image={d.icon} channelName={d.name} />))
 			 
 			 } 

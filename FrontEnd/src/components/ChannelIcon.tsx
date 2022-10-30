@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tooltip } from "@material-tailwind/react";
 import { Avatar } from "@material-tailwind/react";
 
@@ -7,9 +7,9 @@ import { setChannelInfo } from '../features/channelSlice';
 import { ChatType, RoomType } from './Types/types';
 
 
-const image = require('../../images/ponglogo.png');
+const image = require('../images/yoko.png');
 
-const ServerIcon: React.FC<{
+const ChannelIcon: React.FC<{
 	choosenChat: ChatType;
 	room: RoomType;
 	onClick: (room: RoomType) => void;
@@ -21,6 +21,13 @@ const ServerIcon: React.FC<{
 		console.log("aaaaaa");
 	}
 
+  useEffect(() => 
+  {
+    console.log(room.name);
+    console.log(room._id);
+    console.log(room.password);
+    console.log(room.name);
+  },[])
 
   return (
     <>
@@ -43,4 +50,4 @@ const ServerIcon: React.FC<{
   )
 }
 
-export default ServerIcon
+export default ChannelIcon

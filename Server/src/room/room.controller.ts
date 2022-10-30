@@ -25,6 +25,7 @@ export class RoomController {
         const room = await this.roomService.create(createRoomDTO, req.user.id);
         if (!room.private)
             this.roomGateway.getallrooms();
+        // console.log(room.name);
         return room;
     }
 

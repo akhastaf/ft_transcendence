@@ -6,7 +6,7 @@ import  {useEffect, useState} from 'react';
 // import AddChannel from './AddChannel';
 import {getAllRooms } from './Services/room'
 import axios from 'axios';
-import {  useSearchParams } from 'react-router-dom';
+import {  RouteMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
 import ChannelList from './SideBar/ChannelList';
 import { ChatType, MessageType, RoomType, UserType } from './Types/types';
@@ -14,6 +14,7 @@ import { io, Socket } from "socket.io-client";
 import ChatHeader from './ChatSide/ChatHeader';
 import {localService} from '../api/axios'
 import MessagesSection from './ChatSide/MessagesSection';
+import { getCurrentUser } from './Services/user';
 // import { toast } from "react-toastify";
 // import {access} from "../api/access";
 // import ChatPage from "./ChatSide/ChatPage";
@@ -23,7 +24,7 @@ let socket: Socket;
 // impor
 // const logo = require('../images/ponglogo.png');
 // const channel1 = require('../images/wolf.png');
-// const channel2 = require('../images/yoko.png');
+const channel2 = require('../images/yoko.png');
 // const channel3 = require('../images/download.jpeg');
 // const channel4 = require('../images/1337.jpeg');
 // const channel5 = require('../images/tool.png');
@@ -146,22 +147,22 @@ let socket: Socket;
 // ]
 
 
-const userInfo : UserType = {
-        _id: "1",
-        username: 'med trevor',
-		createdAt: 	new Date(),
-		updatedAt	: new Date(),
-		notifications: 0,
-		isOnline: false,
-	// {
-    //     _id: "2",
-    //     username: 'trevor',
-	// 	createdAt: 	new Date(),
-	// 	updatedAt	: new Date(),
-	// 	notifications: 1,
-	// 	isOnline: true,
-	// },
-}
+// const userInfo : UserType = {
+//         _id: "1",
+//         username: 'med trevor',
+// 		createdAt: 	new Date(),
+// 		updatedAt	: new Date(),
+// 		notifications: 0,
+// 		isOnline: false,
+// 	// {
+//     //     _id: "2",
+//     //     username: 'trevor',
+// 	// 	createdAt: 	new Date(),
+// 	// 	updatedAt	: new Date(),
+// 	// 	notifications: 1,
+// 	// 	isOnline: true,
+// 	// },
+// }
 
 
 // const isAdmin = false // TODO to be feteched from localdata
@@ -185,6 +186,7 @@ const users : UserType[] = [
 		updatedAt	: new Date(),
 		notifications: 0,
 		isOnline: false,
+		avatar: channel2,
 	},
 	{
 		_id: "2",
@@ -193,6 +195,7 @@ const users : UserType[] = [
 		updatedAt	: new Date(),
 		notifications: 1,
 		isOnline: true,
+		avatar: channel2,
 	},
 	{
 		_id: "2",
@@ -201,6 +204,7 @@ const users : UserType[] = [
 		updatedAt	: new Date(),
 		notifications: 6,
 		isOnline: true,
+		avatar: channel2,
 	}
 
 ];
@@ -240,7 +244,7 @@ const DUMMY_MESSAGES: { [key: string]: MessageType[] } = {
 
 function Home() {
 	
-
+	const navigate = useNavigate();
 
 
 	const [messages, setMessages] = useState<{ [key: string]: MessageType[] }>(
@@ -261,6 +265,13 @@ function Home() {
 			// const [users, setUsers] = useState<any>([]);
 			// const access  = searchParams.get("accessToken");
 			const [rooms, setRooms] = useState<any>([]);
+			const [userInfo, setUserInfo] = useState<UserType>({
+				_id: "",
+				username: "",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				avatar: "",
+			});
 			// socket = io(`localhost:3000`, {
 			// 	auth: {
 			// 		access_token: `Bearer ${access};`,
@@ -307,31 +318,17 @@ function Home() {
 
 			 // eslint-disable-next-line 
 			useEffect(() => {
-
-		// 		const fetchData = async () => {
-		// 			// const data = searchParams.
-		// 			const access  = searchParams.get("accessToken");
-		// 			// const {data} =  await axios.get(`${url}auth/register`);
-		// 			if (access)
-		// 			{
-		// 				// console.log(access);z
-
-		// 				localStorage.setItem('accessToken', access);
-		// 				localService.defaults.headers.common['Authorization'] = `Bearer ${access};`;
-
-		// 			}
-		// 			else
-		// 				alert('access token error');
-		//   };
-		// // console.log("data = " + ${data.token});
-		// fetchData()
-		// .catch(console.error);
-
+				getCurrentUser() // !! to be changed becasue its mr93a (change to connected socket)
+				.then((user) => {
+					setUserInfo(user[0]);
+					console.log(user);
+				})
+				.catch((err) => console.log(err));
 
 				getAllRooms()
-				.then(() => {
-					// setRooms(roomsUsersData.rooms);
-					// console.log("u son of bitch i am in");
+				.then((room) => {
+					setRooms([...rooms,]);
+					console.log("u son of bitch i am in");
 					// setUsers(roomsUsersData.users);
 				})
 				.catch((err) => console.log(err));
@@ -355,18 +352,33 @@ function Home() {
 	};
 		
 	const createRoomHandler = (roomName: string, private1: string, password : string | null ) => {
-		console.log(`createRoomHandler: ${roomName}`);
-		console.log(`createRoomHandler: ${private1}`);
-		console.log(`createRoomHandler: ${password}`);
+		// console.log(`createRoomHandler: ${roomName}`);
+		// console.log(`createRoomHandler: ${private1}`);
+		// console.log(`createRoomHandler: ${password}`);
 		// socket.emit("createRoom", {
 		// 	roomName: roomName,
 		// 	private: private1,
 		// 	password: password,
 		// 	userId: userInfo._id,
 		// });
+		localService.post("/room", {
+			name: roomName,
+			private: true,
+			password: password,
+			repeat_password: password,
+		}).then((room) => {
+			console.log(room.data);
+			setRooms([...rooms, room.data])
+		})
+		.catch((err) => 
+		console.log(`err  = ${err}`));
 	}; 
 
 	const logoutHandler = () => {
+		console.log("rip i am dead");
+		navigate("/");
+		// ! probably need to contact socket with message 'logout' then forward to first page
+
 	}
 
   return ( 
@@ -380,13 +392,11 @@ function Home() {
 		createRoomHandler={createRoomHandler}
 		
 		/>
+
 		<SideBar
 		choosenChat={choosenChat}
 		users={users}
-		currentUser={{
-			username: userInfo.username,
-			id: userInfo._id,
-		}}
+		currentUser={userInfo}
 		onlineUsers={onlineUsers}
 		selectedUserDM={selectedUserDMHandler}
 		logoutHandler={logoutHandler}

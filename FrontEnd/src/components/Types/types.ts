@@ -28,6 +28,7 @@ export type UserType = {
 	username: string;
 	createdAt: Date;
 	updatedAt: Date;
+	avatar: string;
 	notifications?: number;
 	isOnline?: boolean;
 }

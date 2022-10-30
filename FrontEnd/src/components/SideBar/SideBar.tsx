@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // import { io, Socket } from "socket.io-client";
 // import { getAllRomsAndUsersApi } from "../Services/room";
 import {  User, Channels , ChatType, UserType } from "../Types/types";
-import {ChevronDownIcon, PlusIcon } from '@heroicons/react/outline';
+import {ChevronDownIcon, CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
 // import ChannelIcon from '../ChannelIcon';
 import {IoCompassOutline } from 'react-icons/io5';
 import  MemberCard  from '../MemberCard';
@@ -11,8 +11,9 @@ import AddChannel from '../AddChannel';
 
 // export {} 
 import axios from 'axios';
-import {  useSearchParams } from 'react-router-dom';
+import {  Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import ChannelList from "./ChannelList";
+import SideBarE from "../EditProfil/SideBarE";
 
 
 // let socket : Socket;
@@ -42,161 +43,33 @@ const addUsers = () => {
 		// TODO add user to room 
 	}
 }
-const Users : User[] = [
-	{
-	fname : "med",
-	lname : "kh",
-	login : "mokhames",
-	// channels : channels1,
-
-	},
-	{
-	fname : "ihssane",
-	lname : "ouardi",
-	login : "iouardi",
-	// channels : channels2,
-
-	},
-
-];
-
-
-
-const channels1 : Channels[] = [
-	{
-		name :"channel11",
-		icon : channel5 ,
-		// Users : Userss,
-	}, 
-	{
-		name : "channel12",
-		icon : channel4,
-	},  
-	{
-		name :"channel13",
-		icon : channel3,
-	},  
-	{
-		name :"channel14",
-		icon : channel2,
-	}, 
-	{
-		name :"channel15",
-		icon : channel1,
-	}, 
-];
-const channels2 : Channels [] = [
-	{
-		name :"channel21",
-		icon : channel2,
-	}, 
-	{
-		name : "channel22",
-		icon : channel2,
-	},  
-	{
-		name :"channel23",
-		icon : channel3,
-	},  
-	{
-		name :"channel24",
-		icon : channel4,
-	}, 
-	{
-		name :"channel25",
-		icon : channel5,
-	}, 
-];
 
 
 const SideBar: React.FC <{
 
     choosenChat: ChatType;
 	users: UserType[];
-	currentUser: {
-		username: string;
-		id: string;
-	};
+	currentUser: UserType;
 	selectedUserDM: (user: ChatType) => void;
 	onlineUsers: string[];
 	logoutHandler: () => void;
 
 }> =  ({ users, currentUser, choosenChat, selectedUserDM, onlineUsers, logoutHandler }) => {
 
+	const Navigate = useNavigate();
 
-
-    // const [messages, setMessages] = useState<{ [key: string]: MessageType[] }>(
-	// 	DUMMY_MESSAGES
-	// );
     const [showModal, setShowModal] = useState(false);
-	const [searchParams, setSearchParams] = useSearchParams();
 
     const openModal = () => {
-        console.log("hello world!");
+        // console.log("hello world!");
         setShowModal(true);
     };
 
-	// // const [users, setUsers] = useState<any>([]);
-	// const [rooms, setRooms] = useState<any>([]);
-	// const [selectedUserDM, setSelectedUserDM] = useState<ChatType>({
-	// 	_id: "",
-	// 	name: "",
-	// });
-	// const [isMemberOfRoom, setIsMemberOfRoom] = useState<boolean>(true);
-	// const [choosenChat, setChoosenChat] = useState<ChatType>({
-	// 	name: "Direect Messages",
-	// 	_id: "",
-	// });
-	// const chatroomref = useRef(choosenChat);
-	// const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-
-    // useEffect(() => {
-
-
-
-
-
-    //     const fetchData = async () => {
-    //         // const data = searchParams.
-    //         const access  = searchParams.get("accessToken");
-    //         // const {data} =  await axios.get(`${url}auth/register`);
-    //         if (access)
-    //         // console.log(access);
-    //         axios.defaults.headers.common['Authorization'] = `Bearer ${access};`;
-    //         else
-    //             alert('access token error');
-    //     }
-    //     fetchData()
-    //     .catch(console.error);
-
-
-
-
-
-    //     // getAllRomsAndUsersApi()
-    //     // .then((roomsUsersData) => {
-    //     //     setRooms(roomsUsersData.rooms);
-    //     //     setUsers(roomsUsersData.users);
-    //     // })
-    //     // .catch((err) => console.log(err));
-    // });
-
-		// socket = io(`localhost:3000`, {
-		// 	// auth: {
-		// 	// 	access_token: userInfo.access_token,
-		// 	// },
-		// })
-
-		// socket.on("connect", () => {
-		// 	// console.log("connected");
-		// 	socket.emit("AddConnectedUser", { username: Users[0].login });
-
-        // })
-        
-        // socket.on("connectedUsers", (onlineUsers) => {
-        //     setOnlineUsers(onlineUsers);
-		// });
-
+		// const redirect  = (e:any) => 
+		// {
+		// 		// Navigate('/EditInfo');
+				// 
+		// }
     return (<>
     
 	
@@ -234,8 +107,39 @@ const SideBar: React.FC <{
 					<div className={`${show} server-default group`}>
 						<PlusIcon className="text-emerald-400 h-7 w-12 group-hover:text-white" onClick={addUsers}/>
 					</div>
+					
 					</div>
-				</div>
+					<div className="bg-[#292b2f] p-2 flex justify-between items-center space-x-8">
+            <div className="flex items-center space-x-1">
+              <img
+                // src={user?.photoURL}
+                src={currentUser.avatar}
+                alt=""
+                className="h-10 rounded-full"
+                onClick={logoutHandler}
+              />
+              <h4 className="text-white text-xs font-medium">
+                {currentUser.username}{" "}
+                {/* <span className="text-[#b9bbbe] block">
+                  #{currentUser.id.substring(0, 4)}
+                </span> */}
+              </h4>
+            </div>
+
+            <div className="text-gray-400 flex items-center">
+              <div className="hover:bg-[#3A3C43] p-2 rounded-md">
+                <MicrophoneIcon className="h-5 icon " />
+              </div>
+              <div className="hover:bg-[#3A3C43] p-2 rounded-md">
+                <PhoneIcon className="h-5 icon" />
+              </div>
+              <div onClick={openModal} className="hover:bg-[#3A3C43] p-2 rounded-md">
+                <CogIcon className="h-5 icon" />
+				{ showModal ?  <SideBarE setShowModal={setShowModal} currentUser={currentUser} logoutHandler={logoutHandler}/> : null }
+              </div>
+            </div>
+          </div>
+        </div>
     </>)
 
 }

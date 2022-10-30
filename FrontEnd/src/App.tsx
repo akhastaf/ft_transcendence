@@ -13,6 +13,7 @@ import Hero from './components/Hero';
 import LowerHero from './components/lowerHero';
 import Home from './components/Home';
 import Callback from './components/auth/42/callback';
+import EditProfile from './components/EditProfile';
 
 
 class App extends React.Component {
@@ -36,6 +37,8 @@ class App extends React.Component {
                   <Route path='/channels/:' element={<> </>}>
                   </Route>
                   <Route path='/callback' element={<> <Callback/> </>} >
+                  </Route>
+                  <Route path='/EditInfo' element={<> <EditProfile/> </>} >
                   </Route>
               </Routes>
               </Router>
