@@ -49,19 +49,27 @@ const SideBarE: React.FC<{
                         </div>
 
                     </div>
-                    <div className="h-full shadow-lg flex-grow flex flex-col  bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
-                        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                            <button
-                                className="p-1 mt-10 ml-80 bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
-                                onClick={closeModal}
-                            >
-                                <IoCloseCircleSharp className="text-emerald-400" />
-                            </button>
-                            <div className="flex flex-col ml-10 mt-40">
-                                <Settings1 currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/>
+                    <div className="h-full shadow-lg  flex-grow flex flex-col  bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                        
+                        <div className="flex justify-center h-48"></div>
+                        <div className="flex h-4/5 flex-row">
+                        <div className="flex w-full">
+                           
+                            <div className="flex w-full flex-col">
+                                <Settings1 closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/>
 
                             </div>
 
+                        {/* <button
+                                className=" bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
+                                onClick={closeModal}
+                            >
+                                <IoCloseCircleSharp className="text-emerald-400" />
+                            </button> */}
+                        </div>
+                        {/* <div className="flex flex-col align-center justify-start w-1/5">
+
+                        </div> */}
                         </div>
                     </div>
                 </div>
