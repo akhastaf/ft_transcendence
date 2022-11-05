@@ -3,11 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDTO } from 'src/auth/dto/register-user.dto';
 import { Repository } from 'typeorm';
 import { User, UserProvider, Userstatus } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as speakeasy from "speakeasy";
 import * as Qrcode from 'qrcode';
 import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
+import { Privacy } from 'src/messages/entities/group.entity';
 
 @Injectable()
 export class UserService {
@@ -23,9 +24,9 @@ export class UserService {
                 bloked: true,
                 gamesAsFirst: true,
                 gamesAsSecond: true,
-                rooms:true,
+                groups:true,
                 achievments:true,
-                userToRoom: true
+                usertogroup: true
             }
         });
     } 
@@ -41,7 +42,7 @@ export class UserService {
                 relations: {
                     gamesAsFirst: true,
                     gamesAsSecond: true,
-                    userToRoom: true,
+                    usertogroup: true,
                 }
             });
             const {password, ...rest} = user;

@@ -12,3 +12,29 @@ export interface SocketWithUserId extends Socket {
 export interface SocketWithUser extends Socket {
     user: User,
 }
+
+export class messageModel
+{
+	message: string;
+	userId: number;
+	userName: string;
+	date: Date;
+	currentUser: boolean;
+	avatar: string;
+}
+
+export class channelModel
+{
+	id: number;
+	name: string;
+	privacy: string;
+	avatar: string;
+}
+
+export class memberModel
+{
+	id: number;
+	name: string;
+	avatar: string;
+	is_connected : boolean;
+}

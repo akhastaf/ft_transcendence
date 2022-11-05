@@ -1,7 +1,8 @@
 import { Achievment } from "src/achievment/entities/achievment.entity";
 import { Game } from "src/game/entites/game.entity";
-import { Room } from "src/room/entities/room.entity";
-import { UserToRoom } from "src/room/entities/userToRoom.entity";
+import { Group } from "src/messages/entities/group.entity";
+import { Message } from "src/messages/entities/message.entity";
+import { UserToGroup } from "src/messages/entities/usertogroup.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum Userstatus {
@@ -61,9 +62,9 @@ export class User {
     @JoinTable()
     achievments: Achievment[];
 
-    @ManyToMany(() => User, (user) => user.friends)
-    @JoinTable()
-    friends: User[];
+    // @ManyToMany(() => User, (user) => user.friends)
+    // @JoinTable()
+    // friends: User[];
     
     @ManyToMany(() => User, (user) => user.bloked)
     @JoinTable()
@@ -74,10 +75,15 @@ export class User {
     gamesAsFirst: Game[];
     @OneToMany(() => Game, (game) =>game.player2)
     gamesAsSecond: Game[];
-    @OneToMany(() => UserToRoom, (userToRoom) => userToRoom.user)
-    userToRoom!: UserToRoom[];
-    @OneToMany(() => Room, (room) => room.createdBy)
-    rooms: Room[];
+    @OneToMany(type => Message, message => message.sender)
+	messages: Message[];
+	@OneToMany(type => Group, group => group.owner)
+	groups: Group[];
+	@OneToMany(type => UserToGroup, usertogroup => usertogroup.user)
+	usertogroup: UserToGroup[];
+	@ManyToMany(() => User, (user) => user.friends)
+    @JoinTable()
+    friends: User[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

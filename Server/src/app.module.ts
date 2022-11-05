@@ -7,11 +7,8 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AchievmentModule } from './achievment/achievment.module';
 import { GameModule } from './game/game.module';
-import { RoomModule } from './room/room.module';
-import { ChatModule } from './chat/chat.module';
 import { CaslModule } from './casl/casl.module';
-import { RoomGateway } from './room/room.gateway';
-import { MessageModule } from './message/message.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -21,10 +18,8 @@ import { MessageModule } from './message/message.module';
     UserModule,
     AchievmentModule,
     GameModule,
-    RoomModule,
-    ChatModule,
     CaslModule,
-    MessageModule,
+    MessagesModule
    ],
   controllers: [],
   providers: [],

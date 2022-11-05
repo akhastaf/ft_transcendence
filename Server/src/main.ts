@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { JWTGuard } from './auth/guards/jwt.guard';
-import { SocketIoAdapter } from './room/socket-io-adapter';
+import { SocketIoAdapter } from './messages/socket-io-adapter';
 
 
 async function bootstrap() {

@@ -1,7 +1,7 @@
 import { Ability, InferSubjects } from "@casl/ability";
 import { Achievment } from "src/achievment/entities/achievment.entity";
 import { Game } from "src/game/entites/game.entity";
-import { Room } from "src/room/entities/room.entity";
+import { Group } from "src/messages/entities/group.entity";
 import { User } from "src/user/entities/user.entity";
 
 
@@ -13,7 +13,7 @@ export enum Action {
     Delete = 'delete',
 }
 
-export type Subjects = InferSubjects<typeof User | typeof Game | typeof Achievment | typeof Room> | 'all';
+export type Subjects = InferSubjects<typeof User | typeof Game | typeof Achievment | typeof Group> | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 

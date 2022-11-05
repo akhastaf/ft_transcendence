@@ -8,6 +8,7 @@ export const typeOrmAsyncConfig : TypeOrmModuleAsyncOptions = {
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: async () : Promise<TypeOrmModuleOptions> => {
+        console.log(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME);
         return {
             type: "postgres",
             host: process.env.DB_HOST,
