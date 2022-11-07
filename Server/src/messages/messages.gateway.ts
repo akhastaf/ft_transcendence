@@ -9,16 +9,6 @@ import { CreateUserToGroup } from './dto/create-user-to-group.dto';
 import { RemoveUserToGroup } from './dto/remove-user-to-group.dto';
 import { memberModel, messageModel, SocketWithUserId } from 'src/types';
 
-// class msgRoomsModel
-// {
-// 	message: string;
-// 	userId: number;
-// 	userName: string;
-// 	date: Date;
-// 	currentUser: boolean;
-// 	// avatar: string;
-// }
-
 @WebSocketGateway({
 	cors: {
 		origin: '*',
@@ -126,26 +116,6 @@ export class MessagesGateway {
 // 		console.log('deleteGroup ', group);
 // 		this.server.to(client.id).emit('deleteGroup', group);
 // 	}
-
-			// *** 1- getMembers *********//
-			//! the function bellow wasn t tested yet .p
-			@SubscribeMessage('getMember')
-			async getMembers(@MessageBody() id_group:number, @ConnectedSocket() client: Socket) {
-				let arr = new Array();
-				const members = await this.groupsService.getMemberByChannel(id_group, client.data.id);
-				if (members)
-				{
-					members.forEach(element => {
-						let member = new memberModel();
-						member.id = element.user.id;
-						member.name = element.user.username;
-						member.avatar = element.user.avatar;
-						member.is_connected = this.connectedList.has(member.id);
-						arr.push(member);
-					});
-				}
-				this.server.to(client.id).emit('getMember', arr);
-			}
 
 	//* ################################################# Client connected ###############################################################
 

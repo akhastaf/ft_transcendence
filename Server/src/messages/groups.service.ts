@@ -28,10 +28,10 @@ export class GroupsService {
 		// const group = new Group(); newUser.name = name;
 		//* Creates new entities and copies all entity properties from given objects into their new entities.
 		//! You should check if the user exists:
-		const group = this.groupRepository.create(createGroupDto);
-		// group.owner = user;
-		// save group to database
+		const createGroupWithUser = {owner: user, ...createGroupDto};
+		const group = this.groupRepository.create(createGroupWithUser);
 		await this.groupRepository.save(group);
+		
 	}
 
 	async getUsertoGoupByGroupId(user_id: number, group_id: number): Promise<UserToGroup> | null {
@@ -134,7 +134,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar'])
+			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar', 'user.status'])
 			.where("group.id = :group_id", {group_id : group_id})
 			.getMany();
 			

@@ -36,5 +36,5 @@ export class memberModel
 	id: number;
 	name: string;
 	avatar: string;
-	is_connected : boolean;
+	status : string;
 }

@@ -3,27 +3,23 @@ import { messageModel, RequestWithUser } from 'src/types';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
 import { channelModel } from 'src/types';
-import { conditionalExpression } from '@babel/types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 
-@ApiTags('Channels')
+@ApiTags('Messages')
 @ApiBearerAuth()
 @UseGuards(JWTGuard)
-@Controller('channels')
+@Controller('messages')
 export class MessagesController {
   constructor(
 		private readonly messagesService: MessagesService,
 		private readonly groupsService: GroupsService
 	) {}
 
-
-	//!Normalement hna 5asni na5oud id man Req
-	//TODO: YOU SHOULD GET THE ID FROM THE TOKEN/COOKIE/REQ : to improve
-	@Get('dms')// Normalement ghana5oud id man rq
+	@Get()//* get all dms
 	async	getDmByUser(@Req() req: RequestWithUser)
 	{
-		console.log("###### getDmByUser ########", req);
+		// console.log("###### getDmByUser ########", req);
 		let arr = new Array();
 		const dms = await this.groupsService.getDmByUser(req.user.id);
 		if (dms){
@@ -34,41 +30,16 @@ export class MessagesController {
 				dm.avatar = element.group.avatar;
 				dm.privacy = element.group.privacy;
 				arr.push(dm);
-				console.log("======= dm =======", dm);
+				// console.log("======= dm =======", dm);
 			});
 			return arr;
 		}
 		return null;
 	}
 
-	@Get('rooms')// Normalement ghana5oud id man rq
-	async getChannelByUserId(@Req() req: RequestWithUser) {
-		//* Group msg;
-		//* Group users;
-		// console.log("##########  getChannelById  ##########", id);
-		// console.log(req);
-		let arr = new Array();
-		const channels = await this.groupsService.getChannelByUser(req.user.id);
-		if (channels)
-		{
-			channels.forEach(element => {
-				let channel = new channelModel();
-				channel.id = element.group.id;
-				channel.name = element.group.name;
-				channel.privacy = element.group.privacy;
-				channel.avatar = element.group.avatar;
-				arr.push(channel);
-				// console.log("channel",element);
-			});
-				// console.log("channel",channels);
-			return arr;
-		}
-		return null;
-	}
-
-	@Get('dms/messages/:id')// id -> id_room , id2 -> id_user
+	@Get(':id')//* get messages of a dm
 	async getDmMessages(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-		console.log("##########  getDmMessages  ##########", id);
+		// console.log("##########  getDmMessages  ##########", id);
 		let arr = new Array();
 		const messages = await this.messagesService.getDmMessages(id);//id here is the id of the group
 		if (messages)
@@ -89,9 +60,9 @@ export class MessagesController {
 		return null;
 	}
 
-	@Get('rooms/messages/:id')
+	@Get('rooms/:id') //* get messages of a room
 	async getRoomMessages(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-		console.log("##########  getRoomMessages  ##########", id);
+		// console.log("##########  getRoomMessages  ##########", id);
 		let arr = new Array();
 		const messages = await this.messagesService.getRoomMessages(id);//id here is the id of the group
 		if (messages)
