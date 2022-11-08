@@ -66,7 +66,7 @@ class Header extends React.PureComponent {
     
     return (
      <>
-      <header onScroll={this.handleScroll}  className=" flex items-center justify-between py-2 px-6 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500">
+      <header onScroll={this.handleScroll}  className=" flex items-center justify-between py-2 px-6 bg-gradient-to-r from-green-400 to-blue-500">
         <a href="/">
               <img src={logo} alt="ping pong logo" className="w-36 object-cover"/>
           </a>

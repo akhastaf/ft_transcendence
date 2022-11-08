@@ -1,5 +1,5 @@
 // import {ChevronDownIcon, PlusIcon } from '@heroicons/react/outline';
-import  {useEffect, useState} from 'react';
+import  {useCallback, useEffect, useRef, useState} from 'react';
 // import ChannelIcon from './ChannelIcon';
 // import {IoCompassOutline } from 'react-icons/io5';
 // import  MemberCard  from './MemberCard';
@@ -15,6 +15,8 @@ import ChatHeader from './ChatSide/ChatHeader';
 import {localService} from '../api/axios'
 import MessagesSection from './ChatSide/MessagesSection';
 import { getCurrentUser } from './Services/user';
+import MessageInput from './ChatSide/MessageInput';
+import GameHome from './Game/GameHome';
 // import { toast } from "react-toastify";
 // import {access} from "../api/access";
 // import ChatPage from "./ChatSide/ChatPage";
@@ -172,42 +174,96 @@ const channel2 = require('../images/yoko.png');
 // 	const username = prompt("Enter username");
 // 	if (username)
 // 	{
-// 		// TODO add user to room 
-// 	}
-// }
+	// 		// TODO add user to room 
+	// 	}
+	// }
+	
+	const users1 : UserType[] = [
+	
+		{
+			_id: "1",
+			username: 'John Smith',
+			createdAt: 	new Date(),
+			updatedAt	: new Date(),
+			notifications: 0,
+			isOnline: false,
+			avatar: channel2,
+			email: "hello@gmail.com",
+			phoneNumber: ""
+		},
+		{
+			_id: "2",
+			username: 'med trevor',
+			createdAt: 	new Date(),
+			updatedAt	: new Date(),
+			notifications: 1,
+			isOnline: true,
+			avatar: channel2,
+			email: "hello@gmail.com",
+			phoneNumber: ""
+		},
+		{
+			_id: "2",
+			username: 'John www',
+			createdAt: 	new Date(),
+			updatedAt	: new Date(),
+			notifications: 6,
+			isOnline: true,
+			avatar: channel2,
+			email: "hello@gmail.com",
+			phoneNumber: ""
+		}
+	
+	];
 
+	const DUMMY_MESSAGES: { [key: string]: MessageType[] } = {
+		botRoom: [
+			{
+				_id: "1",
+				roomId: "1",
+				sendBy: { _id: "ds", username: "Bot 🤖" },
+				content: "We are so happy to see you here",
+				updatedAt: new Date(),
+			},
+			{
+				_id: "2",
+				roomId: "1",
+				sendBy: { _id: "ds", username: "Bot 🤖" },
+				content: "you can contact your friends using dm",
+				updatedAt: new Date(),
+			},
+			{
+				_id: "3",
+				roomId: "1",
+				sendBy: { _id: "ds", username: "Bot 🤖" },
+				content:
+					"And also you can create your own room and chat with your friends",
+				updatedAt: new Date(),
+			},
+		],
+	};
 
-const users : UserType[] = [
+	const randomMessages : string[] = [
+		"hello",
+		"hello 2",
+		"rip",
+		"rip 1",
+	]
 
-	{
-		_id: "1",
-        username: 'John Smith',
-		createdAt: 	new Date(),
-		updatedAt	: new Date(),
-		notifications: 0,
-		isOnline: false,
-		avatar: channel2,
-	},
-	{
-		_id: "2",
-        username: 'med trevor',
-		createdAt: 	new Date(),
-		updatedAt	: new Date(),
-		notifications: 1,
-		isOnline: true,
-		avatar: channel2,
-	},
-	{
-		_id: "2",
-        username: 'John www',
-		createdAt: 	new Date(),
-		updatedAt	: new Date(),
-		notifications: 6,
-		isOnline: true,
-		avatar: channel2,
-	}
+const randomRoom : RoomType = {
+	_id : "1",
+	name: "random room",
+	private: false,
+	password: "123",
+	createdBy: users1[1],
+	members: users1,
+	createdAt: new Date(),
+	updatedAt: new Date(),
+	messages: randomMessages,
+	notifications: 1,
 
-];
+}
+
 
 
 
@@ -215,32 +271,25 @@ const users : UserType[] = [
 // 	"med trevor",
 // 	"John www",
 // ]
-const DUMMY_MESSAGES: { [key: string]: MessageType[] } = {
-	botRoom: [
-		{
-			_id: "1",
-			roomId: "1",
-			sendBy: { _id: "ds", username: "Bot 🤖" },
-			content: "We are so happy to see you here",
-			updatedAt: new Date(),
-		},
-		{
-			_id: "2",
-			roomId: "1",
-			sendBy: { _id: "ds", username: "Bot 🤖" },
-			content: "you can contact your friends using dm",
-			updatedAt: new Date(),
-		},
-		{
-			_id: "3",
-			roomId: "1",
-			sendBy: { _id: "ds", username: "Bot 🤖" },
-			content:
-				"And also you can create your own room and chat with your friends",
-			updatedAt: new Date(),
-		},
-	],
+
+
+
+
+const createNewMsg = (
+	content: string,
+	roomId: string,
+	userId: string,
+	username: string
+): MessageType => {
+	return {
+		_id: Math.random().toString(),
+		roomId: roomId,
+		sendBy: { _id: userId, username: username },
+		content: content,
+		updatedAt: new Date(),
+	};
 };
+
 
 function Home() {
 	
@@ -262,7 +311,8 @@ function Home() {
 			// 	setShowModal(true);
 			// }
 
-			// const [users, setUsers] = useState<any>([]);
+			const [users, setUsers] = useState<any>([]);
+
 			// const access  = searchParams.get("accessToken");
 			const [rooms, setRooms] = useState<any>([]);
 			const [userInfo, setUserInfo] = useState<UserType>({
@@ -271,7 +321,10 @@ function Home() {
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				avatar: "",
+				email:"",
+				phoneNumber: null,
 			});
+
 			// socket = io(`localhost:3000`, {
 			// 	auth: {
 			// 		access_token: `Bearer ${access};`,
@@ -292,19 +345,21 @@ function Home() {
 			// setOnlineUsers("med trevor");
 
 			const [choosenChat, setChoosenChat] = useState<ChatType>({
-				name: "Direect Messages",
+				name: "",
 				_id: "",
 			});
-			 // eslint-disable-next-line
+			// eslint-disable-next-line
+			const [isMemberOfRoom, setIsMemberOfRoom] = useState<boolean>(true);
 			const [selectedUserDM, setSelectedUserDM] = useState<ChatType>({
 				_id: "",
 				name: "",
 			});
 			
-
+			
 			
 
 			const selectedUserDMHandler = (user: ChatType) => {
+				console.log(`dm = ${user._id}`);
 				setSelectedUserDM(user);
 				setChoosenChat(() => ({ name: "Direct Messages", _id: user._id }));
 			};
@@ -313,7 +368,56 @@ function Home() {
 
 			const selectRoomHandler = (room : RoomType | string) =>
 			{
-
+				if (typeof room === "string") {
+					setChoosenChat(() => ({ name: room, _id: "" }));
+					setSelectedUserDM({ _id: "", name: "Direct Messages" });
+					// getAllUsers()
+					// 	.then((fetchedUsers) => {
+					// 		users.map((user: UserType) => {
+					// 			if (user.notifications && user.notifications > 0) {
+					// 				const userIndexInFetchedUsers = fetchedUsers.findIndex(
+					// 					(fetchedUser: UserType) => fetchedUser._id === user._id
+					// 				);
+					// 				if (userIndexInFetchedUsers !== -1) {
+					// 					fetchedUsers[userIndexInFetchedUsers].notifications = user.notifications;
+					// 				}
+					// 			}
+					// 			return null;
+					// 		})
+					// 		setUsers(fetchedUsers)
+					// 	})
+					// 	.catch((err) => console.log(err));
+					// if (isMemberOfRoom === false) {
+					// 	setIsMemberOfRoom(true);
+					// }
+				} else {
+					setChoosenChat(() => ({ name: room.name, _id: room._id }));
+					
+					// getRoomData(room.name)
+					// 	.then((roomData) => {
+							setRooms((prevRooms: any) => {
+								const rooms = prevRooms.map((room: RoomType) => {
+									if (room._id === randomRoom._id) {
+										room.notifications = 0;
+									}
+									return room;
+								});
+								return [...rooms];
+							});
+							addMessageInRoomOrPrivateDM(
+								room._id,
+								randomRoom.messages,
+								true
+							);
+							setUsers(randomRoom.members);
+					// 	})
+					// 	.catch((err) => console.log(err));
+		
+					// socket.emit("showMyRoom", {
+					// 	room: room,
+					// 	userId: userInfo.userId,
+					// });
+				}	
 			}
 
 			 // eslint-disable-next-line 
@@ -332,7 +436,8 @@ function Home() {
 					// setUsers(roomsUsersData.users);
 				})
 				.catch((err) => console.log(err));
-
+				// setUsers(users[0])
+				// selectedUserDMHandler(users[0]);
 		// getAllUsers();
 		 // eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
@@ -350,7 +455,8 @@ function Home() {
 
 		return numberOfNotifications;
 	};
-		
+
+	const chatroomref = useRef(choosenChat);
 	const createRoomHandler = (roomName: string, private1: string, password : string | null ) => {
 		// console.log(`createRoomHandler: ${roomName}`);
 		// console.log(`createRoomHandler: ${private1}`);
@@ -381,21 +487,145 @@ function Home() {
 
 	}
 
+	const joinRoomHandler = () => {
+		console.log(`joinRoomHandler: ${choosenChat.name}`);
+		setIsMemberOfRoom(true);
+		socket.emit("joinRoom", {
+			roomName: choosenChat.name,
+			userId: userInfo._id,
+		});
+	};
+
+	//! ********* Message       Hnadling        */
+
+
+	const addMessageInRoomOrPrivateDM = useCallback((
+		roomId: string,
+		newMessage: any,
+		isRoomMesages: boolean = false,
+		isPrivateDm: boolean = false
+	) => {
+		if (isRoomMesages === false) {
+			if (roomId !== chatroomref.current._id) {
+				if (isPrivateDm === true) addUserNotification(roomId);
+				else addRoomNotification(roomId);
+			}
+			console.log("i am here\n");
+			addPrivateDmMessage(roomId, newMessage);
+		} else {
+			addRoomMessage(roomId, newMessage);
+		}
+	}, []);
+
+
+	const addUserNotification = (roomId: string) => {
+		setUsers((prevUsers: any) => {
+			const users = prevUsers.map((user: UserType) => {
+				if (user._id === roomId) {
+					user.notifications = user.notifications
+						? user.notifications + 1
+						: 1;
+					return user;
+				}
+				return user;
+			});
+
+			return [...users];
+		});
+	};
+
+	const addRoomNotification = (roomId: string) => {
+		setRooms((prevRooms: any) => {
+			const rooms = prevRooms.map((room: RoomType) => {
+				if (room._id === roomId) {
+					room.notifications = room.notifications
+						? room.notifications + 1
+						: 1;
+
+					return room;
+				}
+				return room;
+			});
+			return [...rooms];
+		});
+	};
+
+	const addPrivateDmMessage = (roomId: string, newMessage: any) => {
+		setMessages((prevMessages) => {
+			if (prevMessages[roomId]) {
+				// console.log(prevMessages);
+				return {
+					...prevMessages,
+					[roomId]: [...prevMessages[roomId], newMessage],
+				};
+			}
+			return {
+				...prevMessages,
+				[roomId]: [newMessage],
+			};
+		});
+	};
+
+	const addRoomMessage = (roomId: string, newMessage: any) => {
+		setMessages((prevMessages) => {
+			if (prevMessages[roomId]) {
+				return {
+					...prevMessages,
+					[roomId]: [...prevMessages[roomId], ...newMessage],
+				};
+			}
+			return {
+				...prevMessages,
+				[roomId]: newMessage,
+			};
+		});
+	};
+
+	const sendMessageHandler = (content: string) => {
+		if (choosenChat.name === "Direct Messages") {
+			console.log(" i entered");
+			// socket.emit("sendMessage", {
+			// 	content: content,
+			// 	room: { ...choosenChat, _id: selectedUserDM._id },
+			// 	userId: userInfo._id,
+			// 	isPrivateDm: choosenChat.name === "Direct Messages",
+			// }
+			// );
+		} else {
+			socket.emit("sendMessage", {
+				content: content,
+				room: choosenChat,
+				userId: userInfo._id,
+			});
+		}
+
+		const createdMsg = createNewMsg(
+			content,
+			choosenChat._id,
+			userInfo._id,
+			userInfo.username
+		);
+
+		addMessageInRoomOrPrivateDM(choosenChat._id, createdMsg);
+	};
+
+
   return ( 
     <>
     <div className="flex h-screen">
-		<ChannelList 
+		<ChannelList
+		setChoosenChat={setChoosenChat}
+		setSelectedUserDM={setSelectedUserDM}
 		rooms ={rooms}
-		choosenChat={choosenChat}
 		selectRoomHandler={selectRoomHandler}
 		dmNotifications={getNumberOfDmNotifications()}
 		createRoomHandler={createRoomHandler}
 		
 		/>
-
+		{/* //! setUsers to friend when defaulted */}
 		<SideBar
 		choosenChat={choosenChat}
-		users={users}
+		users={users}  
 		currentUser={userInfo}
 		onlineUsers={onlineUsers}
 		selectedUserDM={selectedUserDMHandler}
@@ -410,30 +640,43 @@ function Home() {
 							selectedUserDM={selectedUserDM}
 							choosenChat={choosenChat}
 						/>
-						 {choosenChat.name === "Direect Messages" &&
+						 {choosenChat.name === "Direct Messages" &&
 							choosenChat._id === "" && (
 								<MessagesSection messages={messages.botRoom} />
 							)}
-						{/* {choosenChat.name === "Direect Messages" &&
+
+						{
+							choosenChat.name == "" && selectedUserDM.name == ""
+							&& (
+								<GameHome />
+							)
+						}
+
+
+						{
+						choosenChat.name === "Direct Messages" &&
 							choosenChat._id !== "" &&
 							messages[choosenChat._id] && (
 								<MessagesSection
 									messages={messages[choosenChat._id]}
 								/>
-							)} */}
+							)
+						} 
 							
-						{/*{choosenChat.name !== DM_LABEL &&
+						{/* {
+						 choosenChat.name !== "Direct Messages" &&
 							messages[choosenChat._id] && (
 								<MessagesSection
 									messages={messages[choosenChat._id]}
 								/>
-							)}
+						)}
+					 */}
 						<MessageInput
 							joinRoomHandler={joinRoomHandler}
 							choosenChat={choosenChat}
 							isMemberOfRoom={isMemberOfRoom}
 							sendMessage={sendMessageHandler}
-						/> */}
+						/> 
 					</div>
 				{/* <div>
 					<ChatPage/>*/}

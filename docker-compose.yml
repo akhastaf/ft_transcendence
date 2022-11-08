@@ -31,6 +31,10 @@ services:
        - CHOKIDAR_USEPOLLING=true
     command: "npm start"  
 volumes:
+  # backend:
+  #   driver: local
+  # FrontEnd :
+  #   driver : local
   # pgadmin-data:
   db:
     driver: local

@@ -18,6 +18,8 @@ const EditProfile : React.FC <{
         createdAt: new Date(),
         updatedAt: new Date(),
         avatar: "",
+        email: "",
+        phoneNumber: null
     });
 
     useEffect(() => {

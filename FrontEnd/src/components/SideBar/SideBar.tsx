@@ -64,7 +64,12 @@ const SideBar: React.FC <{
         // console.log("hello world!");
         setShowModal(true);
     };
-
+    useEffect(() =>
+    {
+      console.log(`users    = ${users}`);
+    }
+    
+    ,[])
 		// const redirect  = (e:any) => 
 		// {
 		// 		// Navigate('/EditInfo');
@@ -76,12 +81,12 @@ const SideBar: React.FC <{
 
 
 			<div className = "bg-discord_secondSideBar flex flex-col min-win-max">
-				<h2 className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">Room Name  <ChevronDownIcon className="h-4 ml-2"/> </h2>
+				<h2 className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.name } {choosenChat.name === "" && "FRIENDS"} <ChevronDownIcon className="h-4 ml-2"/> </h2>
 					<div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide ">
 						{/* <div className="flex items-center p-2 mb-2"> */}
                         {
                                 users.map((user: UserType) => {
-                                if (user.username === currentUser.username)
+                                // if (user.username === currentUser.username)
 
                                     return (
                                         <MemberCard
@@ -101,7 +106,7 @@ const SideBar: React.FC <{
                                     );
 
 
-                                    })
+                                      })
                             }
 						{/* </div> */}
 					<div className={`${show} server-default group`}>

@@ -5,6 +5,7 @@ import { UserType } from "../Types/types";
 // import SideBar from "../SideBar/SideBar";
 import {IoIosLogOut} from "react-icons/io";
 import Settings1 from "./Settings";
+// import Button from '@mui/material/Button';
 
 
 const logo = require('../../images/wolf.png');
@@ -32,8 +33,8 @@ const SideBarE: React.FC<{
 
                 </div>
                 <div className="w-full flex flex-row my-6 mx-auto h-full " >
-          
-                    <div className=" border-0  h-full shadow-lg  w-[20rem] flex flex-col  bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    <div className="bg-discord_secondSideBar  lg:w-[13rem] h-full border-0"></div>
+                    <div className="  h-full shadow-lg  w-[20rem] flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         <div className="flex flex-col ml-10 mt-8 gap-20">
                             <h1> USER SETTINGS </h1>
                             <div className="flex flex-col mt-20 gap-20 ">
@@ -49,9 +50,9 @@ const SideBarE: React.FC<{
                         </div>
 
                     </div>
-                    <div className="h-full shadow-lg  flex-grow flex flex-col  bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    <div className="h-full shadow-lg  flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         
-                        <div className="flex justify-center h-48"></div>
+                        <div className="flex justify-center h-28"></div>
                         <div className="flex h-4/5 flex-row">
                         <div className="flex w-full">
                            
@@ -95,7 +96,7 @@ const SettingCard : React.FC <{
 
         <div onClick={ () => { if ( text !== "Disconnect") setSelected(text) } } className={`flex items-center p-2 mb-2 ${modif}`}  >
             <div className="flex justify-center items-center p-2 gap-[7rem]">
-            <h1>{text}</h1>
+            <h1 className="arcade text-white">{text}</h1>
 
             <div className="inset-y-0 right-0">
             {
@@ -131,5 +132,48 @@ const SettingCard : React.FC <{
 //         </div>
 //     </>)
 // }
+
+export const  BasicButtons: React.FC < {
+    text: string
+    onClick: () => void
+}> = ({text, onClick}) => {
+    return (
+    //   <Stack spacing={2} direction="row">
+        // <Button variant="text">Text</Button>
+        <button onClick={onClick} type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"> {text}</button>
+        // <Button variant="outlined">Outlined</Button>
+    //   </Stack
+    );
+  }
+
+
+export const  BasicButtons1: React.FC < {
+    text: string
+    classNam: string
+    onClick: () => void
+}> = ({text, onClick , classNam}) => {
+    return (
+    //   <Stack spacing={2} direction="row">
+        // <Button variant="text">Text</Button>
+        <button onClick={onClick} type="button" className={`text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2`}> {text}</button>
+        // <Button variant="outlined">Outlined</Button>
+    //   </Stack
+    );
+  }
+
+export const  BasicButtons2: React.FC < {
+    text: string
+    classNam: string
+    onClick: () => void
+}> = ({text, onClick , classNam}) => {
+    return (
+    //   <Stack spacing={2} direction="row">
+        // <Button variant="text">Text</Button>
+        <button onClick={onClick} type="button" className={`text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm text-center  
+        mb-2`}> {text}</button>
+        // <Button variant="outlined">Outlined</Button>
+    //   </Stack
+    );
+  }
 
 export default SideBarE;

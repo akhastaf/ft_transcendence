@@ -11,16 +11,17 @@ const MemberCard : React.FC<{
 	name: string;
 	img: string;
     coll: string;
+    key: string
 	onClick: (user: string) => void;
 	onlineUsers: string[];
-}> =  ({ notifications, name , img, onClick, onlineUsers, coll }) => {
+}> =  ({ notifications, name , key, img, onClick, onlineUsers, coll }) => {
 
     const isOnline =  onlineUsers.includes(name) ? "online" : "offline";
     const Memberstat = isOnline === "online" ? "online text-green-400" : isOnline === "offline" ? "offline text-red-500" :  "in-game text-blue-500" ;
     const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" :  coll === "Pandora" ? "text-[#b61282]" : "None";
     return (
 
-        <div className="flex items-center p-2 mb-2  hover:bg-[#5c5e62]">
+        <div className={ key + " " + `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
                             <div className="flex items-center p-2 gap-3" 
                             onClick={() => {
                                 onClick(name);

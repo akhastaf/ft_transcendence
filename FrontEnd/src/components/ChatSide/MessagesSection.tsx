@@ -37,6 +37,7 @@ const MessagesSection : React.FC <{
     
     </>)
 }
+
 const MessageCard: React.FC<{
 	content: string;
 	sender: string;

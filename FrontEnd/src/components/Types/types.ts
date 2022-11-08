@@ -3,8 +3,8 @@ export type RoomType = {
 	name: string;
 	private: boolean;
 	password: string;
-	createdBy: string;
-	members: string[];
+	createdBy: UserType;
+	members: UserType[];
 	createdAt: Date;
 	updatedAt: Date;
 	messages: string[];
@@ -31,6 +31,8 @@ export type UserType = {
 	avatar: string;
 	notifications?: number;
 	isOnline?: boolean;
+	email: string
+	phoneNumber: string | null
 }
 
 export type AuthUserType = {
