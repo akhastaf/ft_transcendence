@@ -30,8 +30,7 @@ export class GroupsService {
 		//! You should check if the user exists:
 		const createGroupWithUser = {owner: user, ...createGroupDto};
 		const group = this.groupRepository.create(createGroupWithUser);
-		await this.groupRepository.save(group);
-		
+		return await this.groupRepository.save(group);
 	}
 
 	async getUsertoGoupByGroupId(user_id: number, group_id: number): Promise<UserToGroup> | null {

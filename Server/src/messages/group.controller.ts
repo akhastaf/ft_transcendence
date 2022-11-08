@@ -1,7 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { channelModel, memberModel, RequestWithUser } from 'src/types';
+import { CreateGroupDto } from './dto/create-group.dto';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
 
@@ -14,7 +15,7 @@ export class GroupController {
 		private readonly groupsService: GroupsService
 	) {}
 
-	@Get('rooms')
+	@Get()//* get all channels
 	async getChannelByUserId(@Req() req: RequestWithUser) {
 		//* Group msg;
 		//* Group users;
@@ -55,5 +56,16 @@ export class GroupController {
 				arr.push(member);
 			});
 		}
+	}
+
+	@Post()//* create channel
+	async createChannel(@Req() req: RequestWithUser, @Body() body: CreateGroupDto) {
+		const group = await this.groupsService.createGroup(req.user, body);
+		const channel = new channelModel();
+		channel.id = group.id;
+		channel.name = group.name;
+		channel.privacy = group.privacy;
+		channel.avatar = group.avatar;
+		return channel;
 	}
   }
