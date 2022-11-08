@@ -29,6 +29,7 @@ export class channelModel
 	name: string;
 	privacy: string;
 	avatar: string;
+	description: string;
 }
 
 export class memberModel

@@ -12,6 +12,7 @@ import { WsException } from '@nestjs/websockets';
 import { RemoveUserToGroup } from './dto/remove-user-to-group.dto';
 import { Privacy } from './entities/group.entity';
 import { User } from 'src/user/entities/user.entity';
+import { channelModel } from 'src/types';
 
 
 export class GroupsService {
@@ -89,7 +90,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar'])
+			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar', 'group.description'])
 			.where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
 			// .orWhere("user.id = :user_id", {user_id: user_id})
 			.orWhere(
@@ -99,7 +100,7 @@ export class GroupsService {
 				}),
 			)
 			.getMany();
-			// console.log("userToGoup", channels);
+			console.log("userToGoup", channels);
 			return channels;
 		} catch (error) {
 			console.log("getChannelByUser: Error");
@@ -281,6 +282,42 @@ export class GroupsService {
 		catch(e)
 		{
 			console.log("Error _joinGroup");
+		}
+	}
+//* ################################## getGroups ###########################
+
+	async getGroups(): Promise<Array<channelModel>>{
+		try
+		{
+			const groups = await this.groupRepository
+			.createQueryBuilder("group")
+			.where("group.privacy IN (:...privacy)", { privacy: [ "public", "protected"] })
+			// .select(["group.id", "group.name", "group.privacy", "group.password", "group.owner_id"])
+			// .where("group.privacy IN (:...privacy)", 
+			// {
+			// 	privacy: ['public', 'protected']
+			// })
+			.getMany();
+			const array = new Array();
+			if (groups)
+			{
+				groups.forEach(element => {
+					let channel = new channelModel();
+					channel.id = element.id;
+					channel.name = element.name;
+					channel.avatar = element.avatar;
+					channel.privacy = element.privacy;
+					channel.description = element.description;
+					console.log("make it Heeeere", channel);
+					array.push(channel);
+				});
+				console.log("getGroups", array);
+			}
+			return array;
+		}
+		catch(e)
+		{
+			console.log("Error getGroups");
 		}
 	}
 }
