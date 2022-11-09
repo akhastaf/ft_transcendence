@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
 import { Message } from './entities/message.entity';
 import * as dotenv from 'dotenv';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Group } from './entities/group.entity';
-import { CreateGroupDto } from './dto/create-group.dto';
 import { User, Userstatus } from 'src/user/entities/user.entity';
 import { messageModel } from 'src/types';
 dotenv.config({ path: '.env' });
+
 @Injectable()
 export class MessagesService {
 	constructor(
@@ -44,20 +43,6 @@ export class MessagesService {
 		catch (e) {
 			console.log("sendMessage: Error");
 		}
-	}
-
-	
-	async findAll(id_receiver: number): Promise<Message[]> {
-		console.log("findAll: id_receiver: ", id_receiver);
-
-		const messages = await this.messageRepository
-			.createQueryBuilder('message')
-			.leftJoinAndSelect('message.receiver', 'receiver')
-			.leftJoinAndSelect('message.sender', 'sender')
-			.where('receiver.id =:id', { id: id_receiver })
-			.getMany();
-		
-		return messages;
 	}
 
 // #######################################################################################
@@ -115,6 +100,7 @@ export class MessagesService {
 			console.log("getDmMessages: Error");
 		}
 	}
+
 	//#####################################################################################
 	// Lets get this shit done
 	//* Set client service :
