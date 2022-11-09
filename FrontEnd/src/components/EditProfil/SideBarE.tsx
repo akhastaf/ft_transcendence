@@ -41,7 +41,7 @@ const SideBarE: React.FC<{
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Account"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Profile"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="Friend List"/>
-                                 <SettingCard setSelected={setSelected} selected={selected}  text="Block List "/>
+                                 <SettingCard setSelected={setSelected} selected={selected}  text="Block List"/>
                                  <SettingCard setSelected={setSelected} selected={selected}  text="Friend Request"/>
                                  <div className="bg-rose-600 border-2 border-rose-600 hover:bg-rose-800">
                                  <SettingCard setSelected={setSelected} selected={selected}  text="Disconnect"/>

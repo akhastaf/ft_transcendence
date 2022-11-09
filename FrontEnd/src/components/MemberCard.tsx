@@ -21,7 +21,11 @@ const MemberCard : React.FC<{
     const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" :  coll === "Pandora" ? "text-[#b61282]" : "None";
     return (
 
-        <div className={ key + " " + `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
+        <div  className={ key + " " + `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
+                            
+                            
+
+                            
                             <div className="flex items-center p-2 gap-3" 
                             onClick={() => {
                                 onClick(name);
@@ -50,7 +54,7 @@ const MemberCard : React.FC<{
                                 {isOnline === "online" ? "Online" :  isOnline === "offline" ? "Offline" : "in-game"}
                             </h6>
 						</div>
-                        </div>
+                </div>
 
     );
 }

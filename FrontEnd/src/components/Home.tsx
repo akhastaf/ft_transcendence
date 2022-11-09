@@ -9,7 +9,7 @@ import axios from 'axios';
 import {  RouteMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
 import ChannelList from './SideBar/ChannelList';
-import { ChatType, MessageType, RoomType, UserType } from './Types/types';
+import { ChatType, MessageType, RoomType, Userstatus, UserType } from './Types/types';
 import { io, Socket } from "socket.io-client";
 import ChatHeader from './ChatSide/ChatHeader';
 import {localService} from '../api/axios'
@@ -189,7 +189,10 @@ const channel2 = require('../images/yoko.png');
 			isOnline: false,
 			avatar: channel2,
 			email: "hello@gmail.com",
-			phoneNumber: ""
+			phoneNumber: "",
+			friends: [],
+			bloked: [],
+			status: Userstatus.OFFLINE,
 		},
 		{
 			_id: "2",
@@ -200,7 +203,10 @@ const channel2 = require('../images/yoko.png');
 			isOnline: true,
 			avatar: channel2,
 			email: "hello@gmail.com",
-			phoneNumber: ""
+			phoneNumber: "",
+			friends: [],
+			bloked: [],
+			status: Userstatus.OFFLINE,
 		},
 		{
 			_id: "2",
@@ -211,7 +217,10 @@ const channel2 = require('../images/yoko.png');
 			isOnline: true,
 			avatar: channel2,
 			email: "hello@gmail.com",
-			phoneNumber: ""
+			phoneNumber: "",
+			friends: [],
+			bloked: [],
+			status: Userstatus.OFFLINE,
 		}
 	
 	];
@@ -323,6 +332,9 @@ function Home() {
 				avatar: "",
 				email:"",
 				phoneNumber: null,
+				friends: [],
+				bloked: [],
+				status: Userstatus.OFFLINE,
 			});
 
 			// socket = io(`localhost:3000`, {
@@ -648,7 +660,7 @@ function Home() {
 						{
 							choosenChat.name == "" && selectedUserDM.name == ""
 							&& (
-								<GameHome />
+								<GameHome currentUser={userInfo}/>
 							)
 						}
 

@@ -22,6 +22,27 @@ export type MessageType = {
 	updatedAt: Date;
 }
 
+export type Game = {
+	_id : string,
+	score1 : number
+	score2 : number
+	isRunning: boolean
+	roomGame: string
+	player1: UserType
+	player2: UserType
+	gameStates : GameStates[]
+
+}
+
+export type GameStates = {
+	_id: string
+	score1 : number
+	score2 : number
+	game : Game
+	createdAt : Date
+	updatedAt : Date
+}
+
 
 export type UserType = {
 	_id: string;
@@ -33,6 +54,10 @@ export type UserType = {
 	isOnline?: boolean;
 	email: string
 	phoneNumber: string | null
+	friends: UserType[];
+	bloked: UserType[],
+	status: string
+	// achievements: AchivementType[]
 }
 
 export type AuthUserType = {
@@ -58,4 +83,10 @@ export  interface Channels {
 		name : string;
 		icon : any;
 		// Users: User;
+}
+
+export enum Userstatus {
+    ONLINE = "online",
+    OFFLINE = "offline",
+    PLAYING = "playing",
 }

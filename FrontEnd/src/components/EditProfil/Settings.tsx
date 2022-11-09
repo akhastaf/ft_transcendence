@@ -2,7 +2,11 @@ import { useState } from "react";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { SiWappalyzer } from "react-icons/si";
 import { User, UserType } from "../Types/types";
+import BlockList from "./BlockList";
+import FriendList from "./FriendList";
+import FriendListRequest from "./FriendRequest";
 import { BasicButtons, BasicButtons1 } from "./SideBarE";
+
 // import logo1 from "../../images/cardBack.webp"
 
 const maskEmailsPhones = require('mask-email-phone');
@@ -23,20 +27,20 @@ const Settings: React.FC<{
             selected === "My Account" && <UserCard closeModal={closeModal} currentUser={currentUser} />
         }
         {
-            selected === "My Profile" && <FriendList />
+            // selected === "My Profile" && <FriendList currentUser={currentUser} />
         }
         {
-            selected === "Friend List" && <FriendList />
+            selected === "Friend List" && <FriendList closeModal={closeModal} currentUser={currentUser} />
+        }
+        { 
+            selected === "Block List" && <BlockList closeModal={closeModal} currentUser={currentUser} />
         }
         {
-            selected === "Block List" && <FriendList />
+            selected === "Friend Request" && <FriendListRequest closeModal={closeModal} currentUser={currentUser} />
         }
-        {
-            selected === "Friend Request" && <FriendList />
-        }
-        {
-            selected === "Disconnect" && <FriendList />
-        }
+        {/*{
+            selected === "Disconnect" && <FriendList currentUser={currentUser} />
+        } */}
     </>)
 }
 export default Settings;
@@ -57,7 +61,7 @@ const UserCard: React.FC<{
     }
 
     return <>
-        <div className="flex h-full flex-col gap-5 ">
+        <div className="md:invisible flex h-full flex-col gap-5 ">
             <div id="up div" className="flex flex-row  justify-around ">
                 <h1 className="float-left font-bold left-0"> My Account </h1>
                 <button
@@ -73,7 +77,7 @@ const UserCard: React.FC<{
                     <div className="flex flex-col h-[40rem] w-[80rem]">
                        <div className="flex flex-col rounded-lg h-[25rem] bg-gradient-to-r gap-5 from-sky-500 to-indigo-500 " style={{ backgroundImage: `url(${logo}) ` }}>
 
-                           {/*   <div className="flex gap-x-1 w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
+                             <div className="flex gap-x-1 w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
                                 <div className="flex flex-row jusifty-start gap-x-1 w-auto ">
                                     <img
                                         src={currentUser.avatar}
@@ -95,9 +99,9 @@ const UserCard: React.FC<{
                                 <SettingInfo2 type="mail" CurrentUser={currentUser} />
                             
 
-                            </div> */}
+                            </div>
                         </div> 
-                        <CardSection1 currentUser={currentUser}  />
+                        {/* <CardSection1 currentUser={currentUser}  /> */}
                         <div className="my-10 inset-0 flex items-center">
                             <div className="w-full border-b border-gray-500"></div>
                         </div>
@@ -256,15 +260,6 @@ const SettingInfo2: React.FC<{
 
 
 
-
-const FriendList: React.FC<{
-
-}> = ({ }) => {
-    return <>
-        <div>
-        </div>
-    </>
-};
 
 const SettingModal: React.FC<{
     setState: React.Dispatch<React.SetStateAction<boolean>>;

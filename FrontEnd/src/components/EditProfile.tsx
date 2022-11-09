@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { getCurrentUser } from "./Services/user";
 import SideBar from "./SideBar/SideBar";
 import SideBarE from "./EditProfil/SideBarE";
-import { ChatType, UserType } from "./Types/types";
+import { ChatType, Userstatus, UserType } from "./Types/types";
 
 
 const EditProfile : React.FC <{
@@ -19,7 +19,10 @@ const EditProfile : React.FC <{
         updatedAt: new Date(),
         avatar: "",
         email: "",
-        phoneNumber: null
+        phoneNumber: null,
+        friends: [],
+        bloked: [],
+        status: Userstatus.OFFLINE,
     });
 
     useEffect(() => {

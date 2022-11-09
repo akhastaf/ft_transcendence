@@ -82,7 +82,7 @@ const SideBar: React.FC <{
 
 			<div className = "bg-discord_secondSideBar flex flex-col min-win-max">
 				<h2 className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.name } {choosenChat.name === "" && "FRIENDS"} <ChevronDownIcon className="h-4 ml-2"/> </h2>
-					<div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide ">
+					<div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide  ">
 						{/* <div className="flex items-center p-2 mb-2"> */}
                         {
                                 users.map((user: UserType) => {
