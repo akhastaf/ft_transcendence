@@ -1,19 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import * as dotenv from 'dotenv';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, NotBrackets, Repository } from 'typeorm';
-import { Group } from './entities/group.entity';
+import { Brackets, Repository } from 'typeorm';
+import { Group, Privacy } from './entities/group.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
-import { userInfo } from 'os';
-import { UpdateGroupDto } from './dto/update-group.dto';
-import { UserToGroup } from './entities/usertogroup.entity';
-import { CreateUserToGroup } from './dto/create-user-to-group.dto';
-import { WsException } from '@nestjs/websockets';
-import { RemoveUserToGroup } from './dto/remove-user-to-group.dto';
-import { Privacy } from './entities/group.entity';
+import { Role, Status, UserToGroup } from './entities/usertogroup.entity';
 import { User } from 'src/user/entities/user.entity';
 import { channelModel } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
+import * as bcrypt from 'bcryptjs';
 
 
 export class GroupsService {
@@ -26,6 +19,53 @@ export class GroupsService {
 		private userToGroupRepository: Repository<UserToGroup>,
 	) {}
 
+	async isDmCreated(id_user: number, id_second_user: number): Promise<boolean> {
+		try {
+			const group_name = `dm${Math.min(id_user, id_second_user)}${Math.max(id_user, id_second_user)}`;
+			const group = await this.groupRepository.findOne({
+				where: {
+					privacy: Privacy.DM,
+					name : group_name}
+				});
+			return group ? true : false;
+		} catch (error) {
+			console.log("dmExists: Error");
+		}
+	}
+
+	async createDm(id_user: number, id_second_user: number) {
+		try {
+			const user = await this.userRepository.findOneOrFail(
+				{ where: {id: id_user}	});
+			const second_user = await this.userRepository.findOneOrFail(
+				{ where: {id: id_second_user}	});
+			let group = new Group();
+			group.name = `dm${Math.min(user.id,second_user.id)}${Math.max(user.id,second_user.id)}`;
+			group.privacy = Privacy.DM;
+			group.owner = user;
+			group = await this.groupRepository.save(group);
+			//* join the users to the dm
+			let joinDm = new UserToGroup();
+			joinDm.user = user;
+			joinDm.group = group;
+			await this.userToGroupRepository.save(joinDm);
+			joinDm = new UserToGroup();
+			joinDm.user = second_user;
+			joinDm.group = group;
+			await this.userToGroupRepository.save(joinDm);
+			let channel = new channelModel();
+			channel.id = group.id;
+			channel.name = second_user.username;
+			channel.avatar = second_user.avatar;
+			channel.privacy = group.privacy;
+			channel.description = null;
+			return channel;
+		}
+		catch(error){
+			console.log("createDm: Error");
+		}
+	}
+
 //*  Working & tested by postman
  	async createGroup(user: User, createGroupDto: CreateGroupDto){
 		// const group = new Group(); newUser.name = name;
@@ -36,6 +76,7 @@ export class GroupsService {
 		//* join the owner to the group
 		const joinGroup = new UserToGroup();
 		joinGroup.user = user;
+		joinGroup.role = Role.OWNER;
 		joinGroup.group = group;
 		await this.userToGroupRepository.save(joinGroup);
 		return group;
@@ -65,7 +106,7 @@ export class GroupsService {
 
 	async getChannelByUser(user_id: number): Promise<UserToGroup[]> | null {
 		try {
-			console.log("getChannelByUser", user_id);
+			// console.log("getChannelByUser", user_id);
 			const user = await this.userRepository.findOneOrFail(
 				{ where: {id: user_id}	}
 			);
@@ -143,7 +184,8 @@ export class GroupsService {
 				throw new Error("You can't join a dm");
 			if (group.privacy == 'protected')
 			{
-				
+				if (!await bcrypt.compare(groupdto.password, group.password))
+					throw new Error("Wrong password");
 			}
 			const joined = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")

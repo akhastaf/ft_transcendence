@@ -22,7 +22,6 @@ import { Userstatus } from 'src/user/entities/user.entity';
 //* ###################################################  Messages  ########################################################
 
 	//*** 1- createMessage   *******//
-	//*** 2- findAllMessages *******//
 	//*** 2- typing *******//
 
 export class MessagesGateway {
@@ -73,7 +72,20 @@ export class MessagesGateway {
 		const group = await this.groupsService._joinGroup(client.userId, joinGroup);
 		const message = await this.messagesService.identify(client.userId);
 		// client.join("__group_"+group.name);
-		this.server.to(client.id).emit('joinGroup2', message);
+		this.server.to(client.userId.toString()).emit('joinGroup2', message);
+	}
+
+	@SubscribeMessage('checkDm')
+	async isDmCreated(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
+		const group = await this.groupsService.isDmCreated(client.userId, second_user_id);
+		this.server.to(client.userId.toString()).emit('isDmCreated', group);
+		return group;
+	}
+
+	@SubscribeMessage('createDm')
+	async createDm(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
+		const dm = await this.groupsService.createDm(client.userId, second_user_id);
+		this.server.to(client.userId.toString()).emit('dmCreated', dm);
 	}
 
 	//* ################################################# Client connected ###############################################################
@@ -91,7 +103,7 @@ export class MessagesGateway {
 		client.join(client.data.id.toString());
 		console.log("rooom size", this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
 		//! I may should add that the user is connected:
-		this.server.to(client.id).emit('connection', client.userId);
+		this.server.to(client.userId.toString()).emit('connection', client.userId);
 		//* rooms and sids : https://socket.io/docs/v3/rooms/#:~:text=The%20%22room%22%20feature,subset%20of)%20clients
 		// const rooms = this.server.of("/").adapter.rooms;
 		// const sids = this.server.of("/").adapter.sids;
@@ -110,6 +122,6 @@ export class MessagesGateway {
 			this.messagesService.setStatus(client.data.id, Userstatus.OFFLINE);
 		}
 		console.log('connectedlist ', this.connectedList);
-		// this.server.to(client.id).emit('disconnect', client.handshake.headers.auth);
+		// this.server.to(client.userId.toString()).emit('disconnect', client.userId.toString());
 	}
 }
