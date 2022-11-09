@@ -12,6 +12,8 @@ import { WsException } from '@nestjs/websockets';
 import { RemoveUserToGroup } from './dto/remove-user-to-group.dto';
 import { Privacy } from './entities/group.entity';
 import { User } from 'src/user/entities/user.entity';
+import { channelModel } from 'src/types';
+import { joinGroupDto } from './dto/join-group.dto';
 
 
 export class GroupsService {
@@ -28,10 +30,14 @@ export class GroupsService {
 		// const group = new Group(); newUser.name = name;
 		//* Creates new entities and copies all entity properties from given objects into their new entities.
 		//! You should check if the user exists:
-		const group = this.groupRepository.create(createGroupDto);
-		// group.owner = user;
-		// save group to database
-		await this.groupRepository.save(group);
+		const createGroupWithUser = {owner: user, ...createGroupDto};
+		const group = this.groupRepository.create(createGroupWithUser);
+		//* join the owner to the group
+		const joinGroup = new UserToGroup();
+		joinGroup.user = user;
+		joinGroup.group = group;
+		await this.userToGroupRepository.save(joinGroup);
+		return await this.groupRepository.save(group);
 	}
 
 	async getUsertoGoupByGroupId(user_id: number, group_id: number): Promise<UserToGroup> | null {
@@ -90,7 +96,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar'])
+			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar', 'group.description'])
 			.where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
 			// .orWhere("user.id = :user_id", {user_id: user_id})
 			.orWhere(
@@ -100,7 +106,7 @@ export class GroupsService {
 				}),
 			)
 			.getMany();
-			// console.log("userToGoup", channels);
+			console.log("userToGoup", channels);
 			return channels;
 		} catch (error) {
 			console.log("getChannelByUser: Error");
@@ -134,7 +140,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar'])
+			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar', 'user.status'])
 			.where("group.id = :group_id", {group_id : group_id})
 			.getMany();
 			
@@ -261,27 +267,72 @@ export class GroupsService {
 	// }
 //* ################################## a more convenient version ###########################
 
-	async _joinGroup(id_user: number, id_group: number){
+	async _joinGroup(id_user: number, groupdto:joinGroupDto){
 		try
 		{
 			const user = await this.userRepository.findOneOrFail(
 				{	where : { id: id_user }	}
 			);
 			const group = await this.groupRepository.findOneOrFail(
-				{ where : {id : id_group}}
+				{ where : {id : groupdto.id_group}}
 			);
-			const join = await this.userToGroupRepository
+			const joined = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
 			.where("user.id = :user_id", {user_id: id_user})
-			.andWhere("group.id = :group_id", {group_id: id_group})
+			.andWhere("group.id = :group_id", {group_id: groupdto.id_group})
 			.getOne();
-			return join;
+			if (!joined)
+			{
+				const joinGroup = new UserToGroup();
+				joinGroup.user = user;
+				joinGroup.group = group;
+				await this.userToGroupRepository.save(joinGroup);
+				return joinGroup;
+			}
+			return joined;
 		}
 		catch(e)
 		{
 			console.log("Error _joinGroup");
+		}
+	}
+
+//* ################################## getGroups ###########################
+
+	async getGroups(): Promise<Array<channelModel>>{
+		try
+		{
+			const groups = await this.groupRepository
+			.createQueryBuilder("group")
+			.where("group.privacy IN (:...privacy)", { privacy: [ "public", "protected"] })
+			// .select(["group.id", "group.name", "group.privacy", "group.password", "group.owner_id"])
+			// .where("group.privacy IN (:...privacy)", 
+			// {
+			// 	privacy: ['public', 'protected']
+			// })
+			.getMany();
+			const array = new Array();
+			if (groups)
+			{
+				groups.forEach(element => {
+					let channel = new channelModel();
+					channel.id = element.id;
+					channel.name = element.name;
+					channel.avatar = element.avatar;
+					channel.privacy = element.privacy;
+					channel.description = element.description;
+					console.log("make it Heeeere", channel);
+					array.push(channel);
+				});
+				console.log("getGroups", array);
+			}
+			return array;
+		}
+		catch(e)
+		{
+			console.log("Error getGroups");
 		}
 	}
 }

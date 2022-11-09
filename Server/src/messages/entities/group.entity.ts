@@ -53,7 +53,6 @@ export class Group {
 	@OneToMany(type => UserToGroup, usertogroup => usertogroup.group)
 	usertogroup: UserToGroup[];
 
-
 	@BeforeInsert()
     async hashPassword() : Promise<void> {
 		if (this.privacy === Privacy.PROTECTED)

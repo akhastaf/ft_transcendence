@@ -29,6 +29,7 @@ export class channelModel
 	name: string;
 	privacy: string;
 	avatar: string;
+	description: string;
 }
 
 export class memberModel
@@ -36,5 +37,5 @@ export class memberModel
 	id: number;
 	name: string;
 	avatar: string;
-	is_connected : boolean;
+	status : string;
 }

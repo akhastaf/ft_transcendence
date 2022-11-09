@@ -7,25 +7,33 @@ export class CreateGroupDto {
 
     @ApiProperty()
     @MinLength(3)
-    @MaxLength(50)
+    @MaxLength(20)
     @IsAlphanumeric()
     name: string;
-    @ApiProperty()
-    @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)
-    @IsNotEmpty()
-    password?: string;
+
     @ApiProperty()
     @IsOptional()
     @IsString()
     avatar?: string;
+
+    @ApiProperty()
+    @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)
+    @IsNotEmpty()
+	@IsString()
+	@MinLength(8)
+    @MaxLength(20)
+    password?: string;
+
     @ApiProperty()
     @IsOptional()
+	@MaxLength(500)
     @IsString()
     description?: string;
+
     @ApiProperty()
     @IsOptional()
     @IsString()
-    privacy?: string;
+    privacy?: Privacy;
 
 }
 //** DTO (Data Transfer Object) schema. A DTO is an object that defines how the data will be sent over the network */
@@ -36,10 +44,3 @@ export class CreateGroupDto {
 //* In short, the DTO is the definition of what the request should look like, but because JavaScript is a dynamic language, you can send in anything.
 //* That's why libraries like class-validator and runtypes exist.
 //? https://stackoverflow.com/questions/59397687/what-is-the-purpose-of-a-data-transfer-object-in-nestjs#:~:text=The%20DTO%20on,and%20runtypes%20exist
-
-
-// privacy?
-// name
-// avatar?
-// description?
-// passwoord?

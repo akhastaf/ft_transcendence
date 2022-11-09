@@ -8,6 +8,7 @@ import { UserToGroup } from './entities/usertogroup.entity';
 import { GroupsService } from './groups.service';
 import { MessagesController } from './message.controller';
 import { User } from 'src/user/entities/user.entity';
+import { GroupController } from './group.controller';
 
 @Module({
 	imports: [
@@ -22,7 +23,7 @@ import { User } from 'src/user/entities/user.entity';
 		MessagesService,
 		GroupsService
 	],
-	controllers: [MessagesController],
+	controllers: [MessagesController, GroupController],
 	// exports: [MessagesService]
 })
 export class MessagesModule {}
