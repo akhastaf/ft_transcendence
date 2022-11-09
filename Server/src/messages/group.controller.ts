@@ -17,8 +17,8 @@ export class GroupController {
 
 	@Post()//* create channel
 	async createChannel(@Req() req: RequestWithUser, @Body() body: CreateGroupDto) {
-		console.log("##########  createChannel  ##########", req.user.id);
-		console.log("body", body);
+		// console.log("##########  createChannel  ##########", req.user.id);
+		// console.log("body", body);
 		const group = await this.groupsService.createGroup(req.user, body);
 		const channel = new channelModel();
 		channel.id = group.id;
@@ -33,8 +33,8 @@ export class GroupController {
 	async getChannelByUserId(@Req() req: RequestWithUser) {
 		//* Group msg;
 		//* Group users;
-		console.log("##########  getChannelById  ##########", req.user.id);
-		console.log(req);
+		// console.log("##########  getChannelById  ##########", req.user.id);
+		// console.log(req);
 		let arr = new Array();
 		const channels = await this.groupsService.getChannelByUser(req.user.id);
 		if (channels)
@@ -49,7 +49,7 @@ export class GroupController {
 				arr.push(channel);
 				// console.log("channel",element);
 			});
-				console.log("groups",arr);
+				// console.log("groups",arr);
 		}
 		return arr;
 	}
