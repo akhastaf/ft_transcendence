@@ -10,8 +10,6 @@ export class joinGroupDto
 	id_group: number;
 
     @ApiProperty()
-    @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)
-    @IsNotEmpty()
 	@IsString()
 	@MinLength(8)
     @MaxLength(20)
