@@ -19,7 +19,7 @@ export const typeOrmAsyncConfig : TypeOrmModuleAsyncOptions = {
             autoLoadEntities: true,
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-            synchronize: false,
+            synchronize: true,
             logging: false,
         };
     },
@@ -34,7 +34,7 @@ export const typeormConfig: DataSourceOptions = {
     database: "pongapp",//process.env.DB_NAME,
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-    synchronize: false,
+    synchronize: true,
     extra: {
         charset: 'utf8mb4_unicode_ci',
     },

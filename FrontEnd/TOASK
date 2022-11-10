@@ -1,0 +1,8 @@
+// ? sockets (list of connected users ->  ) the message is "connected Users"
+// ? sockets  (after connection catching socket("connected") and send socket("ADDconnectedUser"))
+// ? the current user 
+
+
+// * get on /room return empty 
+
+// *flag to know if i  am connected for the first time

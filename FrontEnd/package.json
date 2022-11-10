@@ -1,0 +1,70 @@
+{
+  "name": "disc",
+  "homepage": ".",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:3000",
+  "dependencies": {
+    "@chakra-ui/react": "^2.3.2",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@heroicons/react": "^1.0.6",
+    "@material-tailwind/react": "^1.2.4",
+    "@mui/material": "^5.10.12",
+    "@reduxjs/toolkit": "^1.8.5",
+    "@tailwindcss/forms": "^0.5.3",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@tippy.js/react": "^3.1.1",
+    "@types/socket.io-client": "^3.0.0",
+    "axios": "^0.27.2",
+    "firebase": "^9.9.2",
+    "framer-motion": "^6.5.1",
+    "mask-email-phone": "^1.0.2",
+    "moment": "^2.29.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
+    "react-moment": "^1.1.2",
+    "react-player": "^2.10.1",
+    "react-redux": "^8.0.4",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "react-toastify": "^9.0.8",
+    "react-tooltip": "^4.2.21",
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.3",
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "PORT=3001 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.8",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.8"
+  }
+}
