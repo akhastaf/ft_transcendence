@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 services:
   db:
     image: postgres:14.1-alpine
@@ -9,6 +9,8 @@ services:
       - POSTGRES_DB=pongapp
     volumes: 
       - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
   back:
     build: ./Server
     ports:
