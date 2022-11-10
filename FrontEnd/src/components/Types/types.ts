@@ -90,3 +90,10 @@ export enum Userstatus {
     OFFLINE = "offline",
     PLAYING = "playing",
 }
+
+export enum Privacy {
+	DM = 'dm',
+	PUBLIC = 'public',
+	PRIVATE = 'private',
+	PROTECTED = 'protected'
+}  

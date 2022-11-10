@@ -9,14 +9,16 @@ services:
       - POSTGRES_DB=pongapp
     volumes: 
       - db:/var/lib/postgresql/data
-  back:
-    build: ./Server
     ports:
-      - "3000:3000"
-    restart: always
-    volumes:
-      - /usr/src/app/node_modules
-      - ./Server:/usr/src/app
+      - '5432:5432'
+  # back:
+  #   build: ./Server
+  #   ports:
+  #     - "3000:3000"
+  #   restart: always
+  #   volumes:
+  #     - /usr/src/app/node_modules
+  #     - ./Server:/usr/src/app
   front:
     build: ./FrontEnd
     ports:
