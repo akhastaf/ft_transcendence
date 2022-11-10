@@ -1,13 +1,14 @@
 // import React, {useRef} from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 import { IoCloseCircleSharp } from "react-icons/io5";
+import { Privacy } from './Types/types';
 const formImage = require('../images/form.gif');
 
 const logo = require('../images/ponglogo.png');
 
 const AddChannel: React.FC<{
 
-  createRoomHandler: (roomName: string, private1: string, password: string | null) => void;
+  createRoomHandler: (roomName: string, private1: Privacy, password: string | null) => void;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   setState: React.Dispatch<React.SetStateAction<string>>;
   
@@ -27,7 +28,7 @@ const AddChannel: React.FC<{
   };
 
   const formSubmit = (e: any) => {
-
+	let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
 
     e.preventDefault();
     let pass: string | null;
@@ -35,7 +36,7 @@ const AddChannel: React.FC<{
       pass = passwordRef.current!.value;
     else
       pass = null;
-    createRoomHandler(roomNameRef.current!.value, privacy, pass);
+    createRoomHandler(roomNameRef.current!.value, p, pass);
     closeModal();
   };
 
@@ -247,7 +248,7 @@ const AddChannel2: React.FC<{
 
 export const AddChannel1: React.FC<{
 
-  createRoomHandler: (roomName: string, private1: string, password: string | null) => void;
+  createRoomHandler: (roomName: string, private1: Privacy, password: string | null) => void;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 
 }> = ({ createRoomHandler, setShowModal }) => {
@@ -265,36 +266,36 @@ export const AddChannel1: React.FC<{
 
   };
 
-  const reload=()=>window.location.reload();
-  useEffect(() => {
-    console.log(`state = ${state}`)
-  }, [])
-  const formSubmit = (e: any) => {
+//   const reload=()=>window.location.reload();
+//   useEffect(() => {
+//     console.log(`state = ${state}`)
+//   }, [])
+//   const formSubmit = (e: any) => {
 
 
-    e.preventDefault();
-    let pass: string | null;
-    if (passwordRef.current)
-      pass = passwordRef.current!.value;
-    else
-      pass = null;
-    createRoomHandler(roomNameRef.current!.value, privacy, pass);
-    setState("");
-    closeModal();
-  };
-  const formSubmit1 = (e: any) => {
+//     e.preventDefault();
+//     let pass: string | null;
+//     if (passwordRef.current)
+//       pass = passwordRef.current!.value;
+//     else
+//       pass = null;
+//     createRoomHandler(roomNameRef.current!.value, privacy, pass);
+//     setState("");
+//     closeModal();
+//   };
+//   const formSubmit1 = (e: any) => {
 
 
-    e.preventDefault();
-    let pass: string | null;
-    if (passwordRef.current)
-      pass = passwordRef.current!.value;
-    else
-      pass = null;
-    createRoomHandler(roomNameRef.current!.value, privacy, pass);
-    setState("");
-    closeModal();
-  };
+//     e.preventDefault();
+//     let pass: string | null;
+//     if (passwordRef.current)
+//       pass = passwordRef.current!.value;
+//     else
+//       pass = null;
+//     createRoomHandler(roomNameRef.current!.value, privacy, pass);
+//     setState("");
+//     closeModal();
+//   };
 
   const showdiv = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPrivacy(event.target.value);
