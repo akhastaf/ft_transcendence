@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Basemigration1667663743078 implements MigrationInterface {
-    name = 'Basemigration1667663743078'
+export class Basemigration1668093643325 implements MigrationInterface {
+    name = 'Basemigration1668093643325'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "game_state" ("id" SERIAL NOT NULL, "score1" integer NOT NULL DEFAULT '0', "score2" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "gameId" integer, CONSTRAINT "PK_e7b8f9fb87d56841a7aaa284f52" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "game" ("id" SERIAL NOT NULL, "score1" integer NOT NULL DEFAULT '0', "score2" integer NOT NULL DEFAULT '0', "isRunning" boolean NOT NULL DEFAULT false, "roomGame" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "player1Id" integer, "player2Id" integer, CONSTRAINT "PK_352a30652cd352f552fef73dec5" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."usertogroup_role_enum" AS ENUM('owner', 'admin', 'member')`);
-        await queryRunner.query(`CREATE TYPE "public"."usertogroup_status_enum" AS ENUM('accepted', 'pending', 'muted')`);
+        await queryRunner.query(`CREATE TYPE "public"."usertogroup_status_enum" AS ENUM('accepted', 'banned', 'muted', 'kicked')`);
         await queryRunner.query(`CREATE TABLE "usertogroup" ("id" SERIAL NOT NULL, "role" "public"."usertogroup_role_enum" NOT NULL DEFAULT 'member', "status" "public"."usertogroup_status_enum" NOT NULL DEFAULT 'accepted', "until" TIMESTAMP, "userId" integer, "groupId" integer, CONSTRAINT "PK_a13f4eca20d04cb764ddb971e7d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "Message" ("id" SERIAL NOT NULL, "content" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "senderId" integer, "receiverId" integer, CONSTRAINT "PK_7dd6398f0d1dcaf73df342fa325" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."Group_privacy_enum" AS ENUM('dm', 'public', 'private', 'protected')`);
