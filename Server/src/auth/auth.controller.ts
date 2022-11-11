@@ -23,7 +23,7 @@ export class AuthController {
 
     @Post('register')
     register(@Body() registerUserDTO: RegisterUserDTO): any {
-        return this.authService.register(registerUserDTO);
+        return this.authService.registerLocal(registerUserDTO);
     }
     @Get('login/42')
     @UseGuards(FTAuthGuard)
