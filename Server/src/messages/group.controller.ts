@@ -15,11 +15,25 @@ export class GroupController {
 		private readonly groupsService: GroupsService
 	) {}
 
-	@Get()//* get all channels
+	@Post()//* create channel
+	async createChannel(@Req() req: RequestWithUser, @Body() body: CreateGroupDto) {
+		console.log("##########  createChannel  ##########", req.user.id);
+		console.log("body", body);
+		const group = await this.groupsService.createGroup(req.user, body);
+		const channel = new channelModel();
+		channel.id = group.id;
+		channel.name = group.name;
+		channel.privacy = group.privacy;
+		channel.avatar = group.avatar;
+		channel.description = group.description;
+		return channel;
+	}
+
+	@Get()//* get joined channels
 	async getChannelByUserId(@Req() req: RequestWithUser) {
 		//* Group msg;
 		//* Group users;
-		// console.log("##########  getChannelById  ##########", id);
+		// console.log("##########  getChannelById  ##########", req.user.id);
 		// console.log(req);
 		let arr = new Array();
 		const channels = await this.groupsService.getChannelByUser(req.user.id);
@@ -31,14 +45,21 @@ export class GroupController {
 				channel.name = element.group.name;
 				channel.privacy = element.group.privacy;
 				channel.avatar = element.group.avatar;
+				channel.description = element.group.description;
 				arr.push(channel);
 				// console.log("channel",element);
 			});
-				// console.log("channel",channels);
-			return arr;
+				// console.log("groups",arr);
 		}
-		return null;
+		return arr;
 	}
+
+	@Get('guild-discovery')//* get public and protected channels
+	async getChannels(@Req() req: RequestWithUser) {
+		const channels = await this.groupsService.getGroups();
+		return channels;
+	}
+
 	// *** 1- getMembers *********//
 	//! the function bellow wasn t tested yet .p
 	@Get('members/:id')
@@ -58,14 +79,4 @@ export class GroupController {
 		}
 	}
 
-	@Post()//* create channel
-	async createChannel(@Req() req: RequestWithUser, @Body() body: CreateGroupDto) {
-		const group = await this.groupsService.createGroup(req.user, body);
-		const channel = new channelModel();
-		channel.id = group.id;
-		channel.name = group.name;
-		channel.privacy = group.privacy;
-		channel.avatar = group.avatar;
-		return channel;
-	}
   }

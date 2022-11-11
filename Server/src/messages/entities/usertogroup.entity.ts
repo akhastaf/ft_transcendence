@@ -4,8 +4,9 @@ import { Group } from "./group.entity";
 
 export enum Status {
 	ACCEPTED = 'accepted',
-	PENDING = 'pending',
+	BANNED = 'banned',
 	MUTED = 'muted',
+	KICKED = 'kicked',
 }
 export enum Role {
 	OWNER = 'owner',
@@ -18,16 +19,13 @@ export class UserToGroup {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	// @Column({default: false})
-	// is_admin: boolean;
-
 	@Column({
 		type: 'enum',
 		enum: Role,
 		default: Role.MEMBER
 	})
-
 	role: Role
+
 	@Column({
 		type: 'enum',
 		enum: Status,

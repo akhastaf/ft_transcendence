@@ -7,7 +7,7 @@ export class CreateGroupDto {
 
     @ApiProperty()
     @MinLength(3)
-    @MaxLength(50)
+    @MaxLength(20)
     @IsAlphanumeric()
     name: string;
 
@@ -19,6 +19,9 @@ export class CreateGroupDto {
     @ApiProperty()
     @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)
     @IsNotEmpty()
+	@IsString()
+	@MinLength(8)
+    @MaxLength(20)
     password?: string;
 
     @ApiProperty()

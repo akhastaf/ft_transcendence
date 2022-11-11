@@ -8,13 +8,19 @@ import { SocketIoAdapter } from './messages/socket-io-adapter';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: 'http://localhost:3001',
+      credentials: true,
+    }
+  });
+  // app.enableCors();
   const configService = app.get(ConfigService);
   app.useWebSocketAdapter(new SocketIoAdapter(app, configService))
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true
   }));
-  // app.useGlobalGuards(new JWTGuard());
+  //  app.useGlobalGuards(new JWTGuard());
   const config = new DocumentBuilder()
                     .setTitle('Pong API Docs')
                     .setDescription('This is the documentation of Pong API')
