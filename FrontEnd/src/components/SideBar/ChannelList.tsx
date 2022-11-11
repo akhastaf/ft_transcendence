@@ -1,5 +1,5 @@
 import React, {  useState } from "react";
-import {  ChatType, RoomType } from "../Types/types";
+import {  ChatType, Privacy, RoomType } from "../Types/types";
 import AddChannel, { AddChannel1 } from '../AddChannel';
 import {IoCompassOutline } from 'react-icons/io5';
 import ChannelIcon from '../ChannelIcon';
@@ -16,7 +16,7 @@ const ChannelList: React.FC <{
     rooms: RoomType[];
 	selectRoomHandler: (room: RoomType | string) => void;
 	dmNotifications: number;
-	createRoomHandler: (roomName: string, private1: string, password : string | null ) => void;
+	createRoomHandler: (roomName: string, private1: Privacy, password : string | null ) => void;
 
 }> =  ({rooms, selectRoomHandler, dmNotifications, createRoomHandler, setChoosenChat, setSelectedUserDM }) => {
     

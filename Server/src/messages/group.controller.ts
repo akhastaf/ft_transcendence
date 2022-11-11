@@ -17,8 +17,8 @@ export class GroupController {
 
 	@Post()//* create channel
 	async createChannel(@Req() req: RequestWithUser, @Body() body: CreateGroupDto) {
-		// console.log("##########  createChannel  ##########", req.user.id);
-		// console.log("body", body);
+		console.log("##########  createChannel  ##########", req.user.id);
+		console.log("body", body);
 		const group = await this.groupsService.createGroup(req.user, body);
 		const channel = new channelModel();
 		channel.id = group.id;

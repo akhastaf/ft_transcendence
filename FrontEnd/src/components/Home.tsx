@@ -9,7 +9,7 @@ import axios from 'axios';
 import {  RouteMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
 import ChannelList from './SideBar/ChannelList';
-import { ChatType, MessageType, RoomType, Userstatus, UserType } from './Types/types';
+import { ChatType, MessageType, Privacy, RoomType, Userstatus, UserType } from './Types/types';
 import { io, Socket } from "socket.io-client";
 import ChatHeader from './ChatSide/ChatHeader';
 import {localService} from '../api/axios'
@@ -469,27 +469,27 @@ function Home() {
 	};
 
 	const chatroomref = useRef(choosenChat);
-	const createRoomHandler = (roomName: string, private1: string, password : string | null ) => {
-		// console.log(`createRoomHandler: ${roomName}`);
-		// console.log(`createRoomHandler: ${private1}`);
-		// console.log(`createRoomHandler: ${password}`);
+	const createRoomHandler = (roomName: string, private1: Privacy, password : string | null ) => {
+		console.log(`createRoomHandler: ${roomName}`);
+		console.log(`createRoomHandler: ${private1}`);
+		console.log(`createRoomHandler: ${password}`);
 		// socket.emit("createRoom", {
 		// 	roomName: roomName,
 		// 	private: private1,
 		// 	password: password,
 		// 	userId: userInfo._id,
 		// });
-		localService.post("/room", {
+		localService.post("/channels", {
 			name: roomName,
-			private: true,
+			privacy : private1,
+			// avatar : avatar,
 			password: password,
-			repeat_password: password,
 		}).then((room) => {
 			console.log(room.data);
 			setRooms([...rooms, room.data])
 		})
 		.catch((err) => 
-		console.log(`err  = ${err}`));
+		console.log(err.response.data.message));
 	}; 
 
 	const logoutHandler = () => {

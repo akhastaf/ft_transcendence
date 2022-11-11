@@ -98,7 +98,7 @@ export class MessagesGateway {
 			this.connectedList.add(client.data.id);
 			this.messagesService.setStatus(client.data.id, Userstatus.ONLINE);
 		}
-		// console.log('connectedlist ', this.connectedList);
+		console.log('connectedlist ', this.connectedList);
 		console.log("###id###", client.data.id);
 		client.join(client.data.id.toString());
 		console.log("rooom size", this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
@@ -111,7 +111,7 @@ export class MessagesGateway {
 		// console.log("sids", sids);
 	}
 
-	@SubscribeMessage('disconnect')
+	@SubscribeMessage('disconnect_client')
 	handleDisconnect(@ConnectedSocket() client: SocketWithUserId)
 	{
 		console.log('disconnect ', client.userId);
@@ -120,8 +120,8 @@ export class MessagesGateway {
 		{
 			this.connectedList.delete(client.data.id);
 			this.messagesService.setStatus(client.data.id, Userstatus.OFFLINE);
+			this.server.emit('disconnect_server', this.connectedList);
 		}
 		console.log('connectedlist ', this.connectedList);
-		// this.server.to(client.userId.toString()).emit('disconnect', client.userId.toString());
 	}
 }
