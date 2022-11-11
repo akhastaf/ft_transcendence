@@ -23,6 +23,6 @@ export class RegisterUserDTO {
     @IsString()
     @MinLength(8)
     @MaxLength(20)
-    @Match("password", {message: 'repeat password must be idenitcal to password'})
+    @Match('password', {message: 'repeat password must be idenitcal to password'})
     repeat_password: string;
 }

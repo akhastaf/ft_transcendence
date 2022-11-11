@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 services:
   db:
     image: postgres:14.1-alpine
@@ -10,15 +10,19 @@ services:
     volumes: 
       - db:/var/lib/postgresql/data
     ports:
+      - "5432:5432"
+  back:
+    build: ./Server
+    ports:
       - '5432:5432'
-  # back:
-  #   build: ./Server
-  #   ports:
-  #     - "3000:3000"
-  #   restart: always
-  #   volumes:
-  #     - /usr/src/app/node_modules
-  #     - ./Server:/usr/src/app
+  back:
+    build: ./Server
+    ports:
+      - "3000:3000"
+    restart: always
+    volumes:
+      - /usr/src/app/node_modules
+      - ./Server:/usr/src/app
   front:
     build: ./FrontEnd
     ports:
