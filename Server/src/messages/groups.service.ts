@@ -7,6 +7,8 @@ import { User } from 'src/user/entities/user.entity';
 import { channelModel } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import * as bcrypt from 'bcryptjs';
+import { addUserDto } from './dto/add-user.dto';
+import { HttpException } from '@nestjs/common';
 
 
 export class GroupsService {
@@ -171,7 +173,7 @@ export class GroupsService {
 
 //* ################################## a more convenient version ###########################
 
-	async _joinGroup(id_user: number, groupdto:joinGroupDto){
+	async joinGroup(id_user: number, groupdto:joinGroupDto){
 		try
 		{
 			const user = await this.userRepository.findOneOrFail(
@@ -181,7 +183,7 @@ export class GroupsService {
 				{ where : {id : groupdto.id_group}}
 			);
 			if (group.privacy == 'dm')
-				throw new Error("You can't join a dm");
+				throw new Error("You can't join");
 			if (group.privacy == 'protected')
 			{
 				if (!await bcrypt.compare(groupdto.password, group.password))
@@ -206,7 +208,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error _joinGroup");
+			console.log("Error joinGroup");
 		}
 	}
 
@@ -259,6 +261,64 @@ export class GroupsService {
 		catch(e)
 		{
 			console.log("Error isGroupMember");
+		}
+	}
+
+	//* ############################################# add User ##############################
+	
+	async addUser(id_user: number, info:addUserDto)
+	{
+		try{
+			const join = await this.isGroupMember(id_user, info.id_group);
+			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
+			{
+				// const dto = new joinGroupDto;
+				// dto.id_group = info.id_group;
+				// if (info.password)
+				// 	dto.password = info.password;
+				const dto:joinGroupDto = info;
+				return await this.joinGroup(id_user, dto);
+			}
+			//! I may should throw an exception
+			return null;
+		}
+		catch(e)
+		{
+			console.log("Error addUser");
+		}
+	}
+	
+	//* ############################################# add User ##############################
+
+	async leaveGroup(id_user: number, groupdto:joinGroupDto){
+		try
+		{
+			const user = await this.userRepository.findOneOrFail(
+				{	where : { id: id_user }	}
+			);
+			const group = await this.groupRepository.findOneOrFail(
+				{ where : {id : groupdto.id_group}}
+			);
+			if (group.privacy == 'dm')
+				throw new Error("You can't leave");
+			if (group.privacy == 'protected')
+			{
+				if (!await bcrypt.compare(groupdto.password, group.password))
+					throw new Error("Wrong password");
+			}
+			const joined = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.delete()
+			.where("user.id = :user_id", {user_id: id_user})
+			.andWhere("group.id = :group_id", {group_id: groupdto.id_group})
+			.execute();
+			return joined;
+		}
+		catch(e)
+		{
+			console.log("Error joinGroup");
 		}
 	}
 }

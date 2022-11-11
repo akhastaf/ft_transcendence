@@ -65,7 +65,7 @@ export class MessagesGateway {
 	@SubscribeMessage('joinGroup_client')
 	async joinGroup(@MessageBody() joinGroup:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
 		// console.log('join group ', createUserToGroup, client.id);
-		const group = await this.groupsService._joinGroup(client.userId, joinGroup);
+		const group = await this.groupsService.joinGroup(client.userId, joinGroup);
 		const message = await this.messagesService.identify(client.userId);
 		// client.join("__group_"+group.name);
 		this.server.to(client.userId.toString()).emit('joinGroup_sever', message);
