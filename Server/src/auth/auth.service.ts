@@ -41,6 +41,13 @@ export class AuthService {
         // const user = { password: hash, ...rest};
         return await this.userService.create(user);
     }
+    async registerLocal(registerUserDTO: RegisterUserDTO): Promise<any> {
+        const { password, ...rest} = registerUserDTO;
+        const hash = await bcrypt.hash(password, 10);
+        const user = { password: hash, ...rest};
+        console.log(registerUserDTO);
+        return await this.userService.createLocal(user);
+    }
 
     async verify(verifydto: Verify2FaDTO) : Promise<any> {
         const user = await this.userService.getUser(verifydto.id);

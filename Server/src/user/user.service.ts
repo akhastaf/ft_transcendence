@@ -75,6 +75,13 @@ export class UserService {
         const { password, ...rest } =newUser;
         return rest;
     }
+    async createLocal(userData: RegisterUserDTO): Promise<any> 
+    {
+        const user = this.userRepository.create(userData);
+        const newUser = await this.userRepository.save(user);
+        const { password, ...rest } =newUser;
+        return rest;
+    }
 
     async updateUser(updateUserDTO: UpdateUserDTO, id: number) : Promise<any> {
         console.log(updateUserDTO);
