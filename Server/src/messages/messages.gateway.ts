@@ -1,13 +1,9 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
 import { Server, Socket } from 'socket.io';
-import { CreateGroupDto } from './dto/create-group.dto';
 import { GroupsService } from './groups.service';
-import { CreateUserToGroup } from './dto/create-user-to-group.dto';
-import { RemoveUserToGroup } from './dto/remove-user-to-group.dto';
-import { memberModel, messageModel, SocketWithUserId } from 'src/types';
+import { SocketWithUserId } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import { Userstatus } from 'src/user/entities/user.entity';
 
@@ -34,7 +30,7 @@ export class MessagesGateway {
 		
 	connectedList =	new Set<number>();
 
-	@SubscribeMessage('sendMessage')
+	@SubscribeMessage('sendMessage_client')
 	async sendMessage(@MessageBody() createMessageDto: CreateMessageDto, @ConnectedSocket() client: Socket) {
 		//! you can send a message to a group only if you are in it
 		const is_allowed = await this.groupsService.isGroupMember(client.data.id, createMessageDto.receiver_id);
@@ -50,7 +46,7 @@ export class MessagesGateway {
 			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
 			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
 			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
-				this.server.to(member.user.id.toString()).emit('newMessage', message);
+				this.server.to(member.user.id.toString()).emit('sendMessage_server', message);
 			}
 		}
 	}
@@ -66,26 +62,26 @@ export class MessagesGateway {
 	//* ################################################# Group ###############################################################
 	//*** 1- joinGoup   *******///
 
-	@SubscribeMessage('joinGroup')
+	@SubscribeMessage('joinGroup_client')
 	async joinGroup(@MessageBody() joinGroup:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
 		// console.log('join group ', createUserToGroup, client.id);
 		const group = await this.groupsService._joinGroup(client.userId, joinGroup);
 		const message = await this.messagesService.identify(client.userId);
 		// client.join("__group_"+group.name);
-		this.server.to(client.userId.toString()).emit('joinGroup2', message);
+		this.server.to(client.userId.toString()).emit('joinGroup_sever', message);
 	}
 
-	@SubscribeMessage('checkDm')
+	@SubscribeMessage('checkDm_client')
 	async isDmCreated(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
-		const group = await this.groupsService.isDmCreated(client.userId, second_user_id);
-		this.server.to(client.userId.toString()).emit('isDmCreated', group);
-		return group;
+		const is_created = await this.groupsService.isDmCreated(client.userId, second_user_id);
+		this.server.to(client.userId.toString()).emit('checkDm_server', is_created);
+		return is_created;
 	}
 
-	@SubscribeMessage('createDm')
+	@SubscribeMessage('createDm_client')
 	async createDm(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
 		const dm = await this.groupsService.createDm(client.userId, second_user_id);
-		this.server.to(client.userId.toString()).emit('dmCreated', dm);
+		this.server.to(client.userId.toString()).emit('createDm_server', dm);
 	}
 
 	//* ################################################# Client connected ###############################################################
