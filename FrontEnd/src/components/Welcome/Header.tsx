@@ -1,55 +1,54 @@
 import React  from 'react';
-import logo from '../images/rsz_ponglogo.png';
+// import logo from '../images/rsz_ponglogo.png';
 // import { useHistory } from "react-router-dom";
 import {Si42} from "react-icons/si";
 import {MenuIcon} from '@heroicons/react/outline';
 // import {localService} from '../api/axios'
 
-
+const logo = require('../../images/rsz_ponglogo.png');
 var scrollTrigger = 60;
       
 class Header extends React.PureComponent {
 
 
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
-}
+//   componentWillUnmount() {
+//     window.removeEventListener('scroll', this.handleScroll);
+// }
 
-  componentDidMount() {
-   // console.log('componentDidMount() lifecycle');
-  //  this.state.scrolling = false;
-   window.addEventListener('scroll', this.handleScroll);
+//   componentDidMount() {
+//    // console.log('componentDidMount() lifecycle');
+//   //  this.state.scrolling = false;
+//    window.addEventListener('scroll', this.handleScroll);
    
-    // Trigger update
-    // this.setState({ foo: !this.state.foo });
-  }
+//     // Trigger update
+//     // this.setState({ foo: !this.state.foo });
+//   }
 
-  handleScroll(event) {
+  // handleScroll(event) {
 
-    if (window.scrollY >= scrollTrigger || window.pageYOffset >= scrollTrigger) {
-      document.getElementsByTagName('Header')[0].classList.remove('bg-emerald-400');
-      document.getElementsByTagName('Header')[0].classList.add('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500');
+  //   if (window.scrollY >= scrollTrigger || window.pageYOffset >= scrollTrigger) {
+  //     document.getElementsByTagName('Header')[0].classList.remove('bg-emerald-400');
+  //     document.getElementsByTagName('Header')[0].classList.add('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500');
 
-      // document.getElementsByTagName('Header')[0].classList.add('bg-angol_main');
+  //     // document.getElementsByTagName('Header')[0].classList.add('bg-angol_main');
 
-      // this.setState({scrolling: false});
-    }
-    else {
-      document.getElementsByTagName('Header')[0].classList.remove('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500');
-    document.getElementsByTagName('Header')[0].classList.add('bg-emerald-400');
-      // this.setState({scrolling: true});
-  }
-    // let scrollTop = event.srcElement.body.scrollTop,
-    //     itemTranslate = Math.min(0, scrollTop/3 - 60);
+  //     // this.setState({scrolling: false});
+  //   }
+  //   else {
+  //     document.getElementsByTagName('Header')[0].classList.remove('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500');
+  //   document.getElementsByTagName('Header')[0].classList.add('bg-emerald-400');
+  //     // this.setState({scrolling: true});
+  // }
+  //   // let scrollTop = event.srcElement.body.scrollTop,
+  //   //     itemTranslate = Math.min(0, scrollTop/3 - 60);
 
-    // this.setState({
-    //   transform: itemTranslate
-    // });
-  }
+  //   // this.setState({
+  //   //   transform: itemTranslate
+  //   // });
+  // }
 
-  async Login(event) {
+  async Login(event : any) {
     // const form = new FormData(event.target);
-    console.log("hello");
     window.location.assign("http://localhost:3000/auth/login/42");
     
     // const info = await localService.get("/auth/login/42")
@@ -66,7 +65,7 @@ class Header extends React.PureComponent {
     
     return (
      <>
-      <header onScroll={this.handleScroll}  className=" flex items-center justify-between py-2 px-6 bg-gradient-to-r from-green-400 to-blue-500">
+      <header   className=" flex items-center justify-between py-2 px-6 bg-gradient-to-r from-green-400 to-blue-500">
         <a href="/">
               <img src={logo} alt="ping pong logo" className="w-36 object-cover"/>
           </a>

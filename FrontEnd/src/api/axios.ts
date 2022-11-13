@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { getLocalItem } from "../app/hooks/useLocalStorage";
+// import { getLocalItem } from "../app/hooks/useLocalStorage";
 
 
 
@@ -47,6 +47,20 @@ localService.interceptors.request.use((config: AxiosRequestConfig) => {
 
 // intercept local service responses
 localService.interceptors.response.use((response: AxiosResponse) => {
+    // if (response.data.status === 400)
+    // {
+    //     console.log('====================================');
+    //     console.log("here we are in 400");
+    //     console.log('====================================');
+    // }
+    console.log('====================================');
+    console.log(response.status);
+    console.log('====================================');
     return response;
+}, function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    console.log("here i am error 400");
+    return Promise.reject(error);
 });
 

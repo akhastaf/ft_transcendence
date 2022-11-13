@@ -1,14 +1,16 @@
 // import React, {useRef} from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 import { IoCloseCircleSharp } from "react-icons/io5";
-import { Privacy } from './Types/types';
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Privacy, IFormInput } from './Types/types';
+import { avatar } from '@material-tailwind/react';
 const formImage = require('../images/form.gif');
 
 const logo = require('../images/ponglogo.png');
 
 const AddChannel: React.FC<{
 
-  createRoomHandler: (roomName: string, private1: Privacy, password: string | null) => void;
+  createRoomHandler: (roomName: string, private1: Privacy, password?: string) => void;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   setState: React.Dispatch<React.SetStateAction<string>>;
   
@@ -20,6 +22,32 @@ const AddChannel: React.FC<{
   const roomNameRef = useRef<HTMLInputElement>(null);
   const privateRef = useRef<HTMLSelectElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const formVadlid = useState(false);
+
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<IFormInput>();
+  const onSubmit: SubmitHandler<IFormInput> = (data) =>
+  {
+    // let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
+
+    // // e.preventDefault();
+    // let pass: string | null;
+    // if (passwordRef.current)
+    //   pass = passwordRef.current!.value;
+    // else
+    //   pass = null;
+  // if (data.avatar)
+  // {
+  //   const file = data.avatar[0];
+  //   const storageRef = app.storage().ref();
+  //   const fileRef = storageRef.child(file.name);
+  //   fileRef.put(file).then(() => {
+  //     console.log("Uploaded a file");
+  //   });
+  // }
+    createRoomHandler(data.name, data.privacy, data.password);
+    closeModal();
+
+  };
 
   const closeModal = () => {
 
@@ -27,18 +55,25 @@ const AddChannel: React.FC<{
 
   };
 
-  const formSubmit = (e: any) => {
-	let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
+  // React.useEffect(() => {
+  //   setError("name", {
+  //     type: "manual",
+  //     message: "Dont Forget Your Username Should Be Cool!"
+  //   });
+  // }, [setError])
 
-    e.preventDefault();
-    let pass: string | null;
-    if (passwordRef.current)
-      pass = passwordRef.current!.value;
-    else
-      pass = null;
-    createRoomHandler(roomNameRef.current!.value, p, pass);
-    closeModal();
-  };
+  // const formSubmit = (e: any) => {
+	// let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
+
+  //   e.preventDefault();
+  //   let pass: string | null;
+  //   if (passwordRef.current)
+  //     pass = passwordRef.current!.value;
+  //   else
+  //     pass = null;
+  //   createRoomHandler(roomNameRef.current!.value, p, pass);
+  //   closeModal();
+  // };
 
   const showdiv = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPrivacy(event.target.value);
@@ -54,9 +89,10 @@ const AddChannel: React.FC<{
       >
         <div className="flex items-center" onClick={e => { e.stopPropagation(); }} >
           <div className="grow invisible lg:visible">
-            <img className="lg:visible w-0 lg:w-[35rem] lg:h-[46rem] lg:rounded-l-lg" src={formImage}
+              <img className="lg:visible w-0 lg:w-[35rem] lg:h-[46rem] lg:rounded-l-lg" src={formImage}
               alt="img" />
           </div>
+
           <div className="w-auto my-6 mx-auto h-[46rem] max-w-3xl" >
             {/*content*/}
             <div className="border-0 rounded-lg lg:rounded-r-lg  h-[46rem] shadow-lg  flex flex-col w-full bg-white outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
@@ -74,11 +110,16 @@ const AddChannel: React.FC<{
 
               <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-6 shadow  rounded lg:rounded-r-lg sm:px-10 h-full">
-                  <form onSubmit={formSubmit} className="mb-0 space-y-6" action="addchannel" method="POST">
+                  <form onSubmit={handleSubmit(onSubmit)} className="mb-0 space-y-6" action="addchannel" method="POST">
                     <div>
                       <label htmlFor="text" className="block text-sm font-medium text-gray-700">Channel Name</label>
                       <div className="mt-1">
-                        <input ref={roomNameRef} id="channelName" name="channelName" type="text" required className="" />
+                        {/* <input ref={roomNameRef} id="channelName" name="channelName" type="text" required className="" /> */}
+                        <input className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("name", { required: true , minLength: {value : 3, message: "name must be more than 3 characters"}, maxLength: {value : 20, message: "name must be less than 20 characters"}, pattern: {value:/^[A-Za-z0-9]+$/i, message: "Enter an alpha numeric value"} })} />
+                        {errors.name && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-1" role="alert">
+                            <p className="font-semibold">Error</p>
+                            <p>{errors.name.message}</p>
+                          </div>}
                       </div>
                     </div>
 
@@ -95,11 +136,16 @@ const AddChannel: React.FC<{
                       </div>
                     </div>
                     {
-                      privacy === "Protected" || privacy === "Private" ?
+                      privacy === "Protected"  ?
                         <div>
                           <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                           <div className="mt-1">
-                            <input ref={passwordRef} id="password" name="password" type="password" required className="" />
+                            {/* <input ref={passwordRef} id="password" name="password" type="password" required className="" /> */}
+                            <input className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("password", { required: {value : true, message: "Field must not be empty"}, minLength: {value : 3, message: "password must be more than 3 characters"}, maxLength: {value : 20, message: "password must be less than 20 characters"}})} />
+                            {!errors.name && errors.password && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 " role="alert">
+                                  <p className="font-bold">Error</p>
+                                  <p>{errors.password.message}</p>
+                              </div>}
                           </div>
                         </div> : null
                     }
@@ -110,7 +156,10 @@ const AddChannel: React.FC<{
                     </div>
 
                     <div>
-                      <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Create</button>
+                      <button type="submit"  onClick={() => {
+                           setError("name", { type: "focus", message : "Must not be empty field" },  { shouldFocus: true });
+                      setError("password", { type: "9", message : "Must not be empty field" },  { shouldFocus: true });
+        }} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Create</button>
                     </div>
                     <div>
                       OR <a onClick={(e)=> { e.preventDefault(); setState("JOIN")}} className='underline text-blue-600 hover:text-blue-800 visited:text-purple-600'> Join Channel</a>
@@ -132,9 +181,10 @@ const AddChannel2: React.FC<{
   // createRoomHandler: (roomName: string, private1: string, password: string | null) => void;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   setState: React.Dispatch<React.SetStateAction<string>>;
+  joinRoomHandler: () => void;
   
 
-}> = ({  setShowModal, setState }) => {
+}> = ({  setShowModal, setState , joinRoomHandler}) => {
 
 
   const [privacy, setPrivacy] = useState("Public");
@@ -158,6 +208,7 @@ const AddChannel2: React.FC<{
     else
       pass = null;
    // createRoomHandler(roomNameRef.current!.value, privacy, pass);
+   joinRoomHandler();
     closeModal();
   };
 
@@ -248,10 +299,11 @@ const AddChannel2: React.FC<{
 
 export const AddChannel1: React.FC<{
 
-  createRoomHandler: (roomName: string, private1: Privacy, password: string | null) => void;
+  createRoomHandler: (roomName: string, private1: Privacy, password?: string) => void;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  joinRoomHandler: () => void;
 
-}> = ({ createRoomHandler, setShowModal }) => {
+}> = ({ createRoomHandler, setShowModal ,joinRoomHandler}) => {
 
 
   const [privacy, setPrivacy] = useState("Public");
@@ -335,7 +387,7 @@ export const AddChannel1: React.FC<{
                     state === "CREATE" && <AddChannel setState={setState} createRoomHandler={createRoomHandler} setShowModal={setShowModal} />
                   }
                   {
-                    state === "JOIN" && <AddChannel2 setState={setState} setShowModal={setShowModal}/>
+                    state === "JOIN" && <AddChannel2 setState={setState} setShowModal={setShowModal}  joinRoomHandler={joinRoomHandler}/>
                   }
 
                   {

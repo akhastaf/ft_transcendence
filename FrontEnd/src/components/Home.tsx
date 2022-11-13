@@ -4,7 +4,7 @@ import  {useCallback, useEffect, useRef, useState} from 'react';
 // import {IoCompassOutline } from 'react-icons/io5';
 // import  MemberCard  from './MemberCard';
 // import AddChannel from './AddChannel';
-import {getAllRooms } from './Services/room'
+import {getAllRooms, getRoomUsers } from './Services/room'
 import axios from 'axios';
 import {  RouteMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
@@ -17,167 +17,41 @@ import MessagesSection from './ChatSide/MessagesSection';
 import { getCurrentUser } from './Services/user';
 import MessageInput from './ChatSide/MessageInput';
 import GameHome from './Game/GameHome';
+import {socket} from './Services/sockets'
 // import { toast } from "react-toastify";
 // import {access} from "../api/access";
 // import ChatPage from "./ChatSide/ChatPage";
 
-let socket: Socket;
-
-// impor
-// const logo = require('../images/ponglogo.png');
-// const channel1 = require('../images/wolf.png');
-const channel2 = require('../images/yoko.png');
-// const channel3 = require('../images/download.jpeg');
-// const channel4 = require('../images/1337.jpeg');
-// const channel5 = require('../images/tool.png');
+// let socket: Socket;
 
 
-// interface User { 
-// 	fname : string;
-// 	lname : string;
-// 	login :string;
-// 	channels:  Channels[];
+// let token = null;
+// if (typeof window !== 'undefined') {
+//   token = localStorage.getItem('access_token');
+
 // }
 
-// interface Channels {
-// 	name : string;
-// 	icon : any;
-// 	// Users: User;
-// }
-
-// const channels1 : Channels[] = [
-// 	{
-// 		name :"channel11",
-// 		icon : channel5 ,
-// 		// Users : Userss,
-// 	}, 
-// 	{
-// 		name : "channel12",
-// 		icon : channel4,
-// 	},  
-// 	{
-// 		name :"channel13",
-// 		icon : channel3,
-// 	},  
-// 	{
-// 		name :"channel14",
-// 		icon : channel2,
-// 	}, 
-// 	{
-// 		name :"channel15",
-// 		icon : channel1,
-// 	}, 
-// ];
-// const channels2 : Channels [] = [
-// 	{
-// 		name :"channel21",
-// 		icon : channel2,
-// 	}, 
-// 	{
-// 		name : "channel22",
-// 		icon : channel2,
-// 	},  
-// 	{
-// 		name :"channel23",
-// 		icon : channel3,
-// 	},  
-// 	{
-// 		name :"channel24",
-// 		icon : channel4,
-// 	}, 
-// 	{
-// 		name :"channel25",
-// 		icon : channel5,
-// 	}, 
-// ];
-
-// const Users : User[] = [
-// 	{
-// 	fname : "med",
-// 	lname : "kh",
-// 	login : "mokhames",
-// 	channels : channels1,
-
-// 	},
-// 	{
-// 	fname : "ihssane",
-// 	lname : "ouardi",
-// 	login : "iouardi",
-// 	channels : channels2,
-
-// 	},
-
-// ];
+// let backendHost = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
-// let u = [{
-// 	id: 1,
-// 	username: 'mokhames',
-// 	email: 'mokhames@student.1337.ma',
-// 	provider: '42',
-// 	twofa: false,
-// 	secret_tmp: null,
-// 	secret: null,
-// 	recoveryCode: null,
-// 	avatar: 'https://cdn.intra.42.fr/users/mokhames.jpg',
-// 	status: 'offline',
-// 	win: 0,
-// 	loss: 0,
-// 	level: 0,
-// 	coalition: null,
-// 	// createdAt: 2022-09-25T15:21:28.370Z,
-// 	// updatedAt: 2022-09-25T15:21:28.370Z
+// // let socket = io('http://localhost:8080', { transports: ['websocket'], auth: {
+// //   token: token
+// // }});
+// const URL = "http://localhost:3080/";
+// let socket = io(URL, {
+//   withCredentials: true,
+//   forceNew: true,
+//   timeout: 10000, //before connect_error and connect_timeout are emitted.
+//   transports: ['websocket'],
+//   auth: {
+//     token: token,
 //   },
-//    {
-// 	   id: 2,
-// 	   username: 'iouardi',
-// 	   email: 'iouardi@student.1337.ma',
-// 	   provider: '42',
-// 	   twofa: false,
-// 	   secret_tmp: null,
-// 	   secret: null,
-// 	   recoveryCode: null,
-// 	   avatar: 'https://cdn.intra.42.fr/users/iouardi.jpg',
-// 	   status: 'offline',
-// 	   win: 0,
-// 	   loss: 0,
-// 	   level: 0,
-// 	   coalition: null,
-// 	//    createdAt: 2022-09-26T14:23:39.314Z,
-// 	//    updatedAt: 2022-09-26T14:23:39.314Z
-// 	 }
-// ]
+// });
 
 
-// const userInfo : UserType = {
-//         _id: "1",
-//         username: 'med trevor',
-// 		createdAt: 	new Date(),
-// 		updatedAt	: new Date(),
-// 		notifications: 0,
-// 		isOnline: false,
-// 	// {
-//     //     _id: "2",
-//     //     username: 'trevor',
-// 	// 	createdAt: 	new Date(),
-// 	// 	updatedAt	: new Date(),
-// 	// 	notifications: 1,
-// 	// 	isOnline: true,
-// 	// },
-// }
 
+const channel2 = require('../images/yoko.png');
 
-// const isAdmin = false // TODO to be feteched from localdata
-// const show = isAdmin ? null : "invisible";
-
-// const addUsers = () => {
-// 	const username = prompt("Enter username");
-// 	if (username)
-// 	{
-	// 		// TODO add user to room 
-	// 	}
-	// }
-	
 	const users1 : UserType[] = [
 	
 		{
@@ -260,7 +134,7 @@ const channel2 = require('../images/yoko.png');
 	]
 
 const randomRoom : RoomType = {
-	_id : "1",
+	id : "1",
 	name: "random room",
 	private: false,
 	password: "123",
@@ -337,17 +211,36 @@ function Home() {
 				status: Userstatus.OFFLINE,
 			});
 
-			// socket = io(`localhost:3000`, {
+
+
+			
+			useEffect(() => {
+				// console.log(`wevsute = ${process.env.WEBSITE_URL}`);
+			// socket = io(`http://localhost:3000/`, {
 			// 	auth: {
-			// 		access_token: `Bearer ${access};`,
+			// 		access_token: `Bearer ${localStorage.getItem("accessToken")};`,
 			// 	},
-			// })
+			// }) 
+			// socket.emit("HI");
+		});
+
 	
-			// socket.on("connect", () => {
-			// 	// console.log("connected");
-			// 	socket.emit("AddConnectedUser", { username: users[0].username });
+			socket.on("connection", (data) => {
+
+
+				console.log(data);
+		
+				getCurrentUser(data)
+				.then((user) => {
+					setUserInfo(user);
+				})
+				.catch((err) => console.log(err));
+				// console.log("socket is connected");
+
+				// console.log("connected");
+				// socket.emit("AddConnectedUser", { username: users[0].username });
 	
-			// })
+			})
   
 
 			 // eslint-disable-next-line
@@ -403,13 +296,14 @@ function Home() {
 					// 	setIsMemberOfRoom(true);
 					// }
 				} else {
-					setChoosenChat(() => ({ name: room.name, _id: room._id }));
+					setChoosenChat(() => ({ name: room.name, _id: room.id }));
 					
 					// getRoomData(room.name)
 					// 	.then((roomData) => {
+						console.log(room.id);
 							setRooms((prevRooms: any) => {
 								const rooms = prevRooms.map((room: RoomType) => {
-									if (room._id === randomRoom._id) {
+									if (room.id === randomRoom.id) {
 										room.notifications = 0;
 									}
 									return room;
@@ -417,11 +311,17 @@ function Home() {
 								return [...rooms];
 							});
 							addMessageInRoomOrPrivateDM(
-								room._id,
+								room.id,
 								randomRoom.messages,
 								true
 							);
-							setUsers(randomRoom.members);
+							getRoomUsers(room.id)
+							.then((res) => {
+
+								setUsers(res)
+							}
+							).catch(err => console.log(err))
+							;
 					// 	})
 					// 	.catch((err) => console.log(err));
 		
@@ -434,17 +334,20 @@ function Home() {
 
 			 // eslint-disable-next-line 
 			useEffect(() => {
-				getCurrentUser() // !! to be changed becasue its mr93a (change to connected socket)
-				.then((user) => {
-					setUserInfo(user[0]);
-					console.log(user);
-				})
-				.catch((err) => console.log(err));
+				// getCurrentUser() // !! to be changed becasue its mr93a (change to connected socket)
+				// .then((user) => {
+				// 	setUserInfo(user[0]);
+				// 	console.log(user);
+				// })
+				// .catch((err) => console.log(err));
 
 				getAllRooms()
 				.then((room) => {
-					setRooms([...rooms,]);
-					console.log("u son of bitch i am in");
+					setRooms(room);
+					console.log("dasdasd");
+					
+					console.log(room);
+					// console.log("u son of bitch i am in");
 					// setUsers(roomsUsersData.users);
 				})
 				.catch((err) => console.log(err));
@@ -469,7 +372,7 @@ function Home() {
 	};
 
 	const chatroomref = useRef(choosenChat);
-	const createRoomHandler = (roomName: string, private1: Privacy, password : string | null ) => {
+	const createRoomHandler = (roomName: string, private1: Privacy, password? : string ) => {
 		console.log(`createRoomHandler: ${roomName}`);
 		console.log(`createRoomHandler: ${private1}`);
 		console.log(`createRoomHandler: ${password}`);
@@ -501,8 +404,8 @@ function Home() {
 
 	const joinRoomHandler = () => {
 		console.log(`joinRoomHandler: ${choosenChat.name}`);
-		setIsMemberOfRoom(true);
-		socket.emit("joinRoom", {
+		// setIsMemberOfRoom(true);
+		socket.emit("joinGroup", {
 			roomName: choosenChat.name,
 			userId: userInfo._id,
 		});
@@ -549,7 +452,7 @@ function Home() {
 	const addRoomNotification = (roomId: string) => {
 		setRooms((prevRooms: any) => {
 			const rooms = prevRooms.map((room: RoomType) => {
-				if (room._id === roomId) {
+				if (room.id === roomId) {
 					room.notifications = room.notifications
 						? room.notifications + 1
 						: 1;
@@ -632,6 +535,7 @@ function Home() {
 		selectRoomHandler={selectRoomHandler}
 		dmNotifications={getNumberOfDmNotifications()}
 		createRoomHandler={createRoomHandler}
+		joinRoomHandler={joinRoomHandler}
 		
 		/>
 		{/* //! setUsers to friend when defaulted */}

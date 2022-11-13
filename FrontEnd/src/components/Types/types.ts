@@ -1,5 +1,5 @@
 export type RoomType = {
-	_id: string;
+	id: string;
 	name: string;
 	private: boolean;
 	password: string;
@@ -96,4 +96,52 @@ export enum Privacy {
 	PUBLIC = 'public',
 	PRIVATE = 'private',
 	PROTECTED = 'protected'
-}  
+} 
+
+export interface IFormInput {
+	name: string;
+	avatar?: string;
+	password?: string;
+	description?: string;
+	privacy: Privacy;
+  }
+
+export interface userModel
+{
+	id: number;
+	name: string;
+	avatar: string;
+	status : string;
+	notifications: number
+}
+//   export class CreateGroupDto {
+
+//     @ApiProperty()
+//     @MinLength(3)
+//     @MaxLength(20)
+//     @IsAlphanumeric()
+//     name: string;
+
+//     @ApiProperty()
+//     @IsOptional()
+//     @IsString()
+//     avatar?: string;
+
+//     @ApiProperty()
+//     @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)
+//     @IsNotEmpty()
+// 	@IsString()
+// 	@MinLength(8)
+//     @MaxLength(20)
+//     password?: string;
+
+//     @ApiProperty()
+//     @IsOptional()
+// 	@MaxLength(500)
+//     @IsString()
+//     description?: string;
+
+//     @ApiProperty()
+//     @IsOptional()
+//     @IsString()
+//     privacy?: Privacy;

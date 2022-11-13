@@ -1,4 +1,5 @@
 import { ChatType } from "../Types/types";
+import React from 'react';
 
 
 const ChatHeader: React.FC <{

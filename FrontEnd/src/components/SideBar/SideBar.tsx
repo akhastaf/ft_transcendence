@@ -1,30 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import { io, Socket } from "socket.io-client";
 // import { getAllRomsAndUsersApi } from "../Services/room";
-import {  User, Channels , ChatType, UserType } from "../Types/types";
+import {    ChatType, userModel, UserType } from "../Types/types";
 import {ChevronDownIcon, CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
 // import ChannelIcon from '../ChannelIcon';
-import {IoCompassOutline } from 'react-icons/io5';
+// import {IoCompassOutline } from 'react-icons/io5';
 import  MemberCard  from '../MemberCard';
-import AddChannel from '../AddChannel';
+// import AddChannel from '../AddChannel';
 
 // export {} 
-import axios from 'axios';
-import {  Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import ChannelList from "./ChannelList";
+// import axios from 'axios';
+// import {  Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+// import ChannelList from "./ChannelList";
 import SideBarE from "../EditProfil/SideBarE";
 
 
 // let socket : Socket;
 
 
-const logo = require('../../images/ponglogo.png');
-const channel1 = require('../../images/wolf.png');
-const channel2 = require('../../images/yoko.png');
-const channel3 = require('../../images/download.jpeg');
-const channel4 = require('../../images/1337.jpeg');
-const channel5 = require('../../images/tool.png');
+// const logo = require('../../images/ponglogo.png');
+// const channel1 = require('../../images/wolf.png');
+// const channel2 = require('../../images/yoko.png');
+// const channel3 = require('../../images/download.jpeg');
+// const channel4 = require('../../images/1337.jpeg');
+// const channel5 = require('../../images/tool.png');
 
 
 // interface User {
@@ -48,7 +48,7 @@ const addUsers = () => {
 const SideBar: React.FC <{
 
     choosenChat: ChatType;
-	users: UserType[];
+	users: userModel[];
 	currentUser: UserType;
 	selectedUserDM: (user: ChatType) => void;
 	onlineUsers: string[];
@@ -56,7 +56,7 @@ const SideBar: React.FC <{
 
 }> =  ({ users, currentUser, choosenChat, selectedUserDM, onlineUsers, logoutHandler }) => {
 
-	const Navigate = useNavigate();
+	// const Navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
 
@@ -66,7 +66,7 @@ const SideBar: React.FC <{
     };
     useEffect(() =>
     {
-      console.log(`users    = ${users}`);
+      // console.log(`users    = ${users}`);
     }
     
     ,[])
@@ -85,22 +85,22 @@ const SideBar: React.FC <{
 					<div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide  ">
 						{/* <div className="flex items-center p-2 mb-2"> */}
                         {
-                                users.map((user: UserType) => {
-                                // if (user.username === currentUser.username)
+                                users.map((user: userModel) => {
+                                if (user.name !== currentUser.username)
 
                                     return (
                                         <MemberCard
                                         onClick={() =>
                                             selectedUserDM({
-                                                name: user.username,
-                                                _id: user._id,
+                                                name: user.name,
+                                                _id: user.id.toString(),
                                             })
                                         }
                                         coll = "BIOS"
-                                        key={user._id}
-                                        name={user.username}
+                                        key={user.id.toString()}
+                                        name={user.name}
                                         notifications={user.notifications}
-                                        img={`${process.env.REACT_APP_AVATARS_URL}/api/avatar?name=${user.username}`}
+                                        img={user.avatar}
                                         onlineUsers={onlineUsers}
                                     />
                                     );

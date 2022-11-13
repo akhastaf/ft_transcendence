@@ -16,9 +16,10 @@ const ChannelList: React.FC <{
     rooms: RoomType[];
 	selectRoomHandler: (room: RoomType | string) => void;
 	dmNotifications: number;
-	createRoomHandler: (roomName: string, private1: Privacy, password : string | null ) => void;
+	createRoomHandler: (roomName: string, private1: Privacy, password? : string ) => void;
+	joinRoomHandler: () => void;
 
-}> =  ({rooms, selectRoomHandler, dmNotifications, createRoomHandler, setChoosenChat, setSelectedUserDM }) => {
+}> =  ({rooms, selectRoomHandler, dmNotifications, createRoomHandler, setChoosenChat, setSelectedUserDM, joinRoomHandler }) => {
     
 	
 	const [showModal, setShowModal] = useState(false);
@@ -49,7 +50,7 @@ const ChannelList: React.FC <{
 					<ChannelIcon 
 						room={room}
 						onClick={selectRoomHandler}
-						key={room._id + index}
+						key={index}
 					/>
 				))
 			 	// Users[0].channels.map(d => (<ChannelIcon image={d.icon} channelName={d.name} />))
@@ -57,7 +58,7 @@ const ChannelList: React.FC <{
 			 } 
 			<div className="server-default hover:bg-discord_green group">
 				<button onClick={openModal} ><PlusIcon className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
-				{showModal ? <AddChannel1 setShowModal={setShowModal} createRoomHandler={createRoomHandler}  /> : null}
+				{showModal ? <AddChannel1 setShowModal={setShowModal} createRoomHandler={createRoomHandler} joinRoomHandler={joinRoomHandler} /> : null}
 			</div>
 			<div className="server-default hover:bg-discord_green group">
 				<button><IoCompassOutline className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>

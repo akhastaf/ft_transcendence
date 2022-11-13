@@ -1,7 +1,7 @@
 
 import './App.css';
 import React from 'react';
-import Header from './components/Header';
+import Welcome from './components/Welcome/Welcome';
 import {
   BrowserRouter as Router,
   // Switch,
@@ -9,8 +9,7 @@ import {
   Routes,
   // Link,
 } from "react-router-dom";
-import Hero from './components/Hero';
-import LowerHero from './components/lowerHero';
+
 import Home from './components/Home';
 import Callback from './components/auth/42/callback';
 import EditProfile from './components/EditProfile';
@@ -30,7 +29,7 @@ class App extends React.Component {
           <>
               <Router>
               <Routes>
-                  <Route path='/' element={<><Header/><Hero/> <LowerHero/> </>}>
+                  <Route path='/' element={<><Welcome/> </>}>
                   </Route>
                   <Route path='/channels' element={<> <Home/></>}>
                   </Route>
