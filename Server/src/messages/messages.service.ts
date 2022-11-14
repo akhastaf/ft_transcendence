@@ -25,7 +25,7 @@ export class MessagesService {
 			const sender = await this.userRepository.findOneByOrFail({ id: sender_id });
 			const receiver = await this.groupRepository.findOneByOrFail({ id: message.receiver_id });
 			//! Should   I ckeck if the sender is in the group ?
-			// const is_allowed = await this.groupRepository._joinGroup(sender_id, message.receiver_id);
+			// const is_allowed = await this.groupRepository.joinGroup(sender_id, message.receiver_id);
 			const newMessage = this.messageRepository.create(message);
 			newMessage.sender = sender;
 			newMessage.receiver = receiver;

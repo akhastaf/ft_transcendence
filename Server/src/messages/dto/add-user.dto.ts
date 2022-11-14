@@ -1,8 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
 
-export class joinGroupDto
+export class addUserDto
 {
+	@ApiProperty()
+	@IsNumber()
+	@IsNotEmpty()
+	id_user: number;
+
 	@ApiProperty()
 	@IsNumber()
 	@IsNotEmpty()

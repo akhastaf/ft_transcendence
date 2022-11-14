@@ -7,6 +7,8 @@ import { User } from 'src/user/entities/user.entity';
 import { channelModel } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import * as bcrypt from 'bcryptjs';
+import { addUserDto } from './dto/add-user.dto';
+import { HttpException } from '@nestjs/common';
 
 
 export class GroupsService {
@@ -19,7 +21,7 @@ export class GroupsService {
 		private userToGroupRepository: Repository<UserToGroup>,
 	) {}
 
-	async isDmCreated(id_user: number, id_second_user: number): Promise<boolean> {
+	async isDmCreated(id_user: number, id_second_user: number){
 		try {
 			const group_name = `dm${Math.min(id_user, id_second_user)}${Math.max(id_user, id_second_user)}`;
 			const group = await this.groupRepository.findOne({
@@ -27,7 +29,7 @@ export class GroupsService {
 					privacy: Privacy.DM,
 					name : group_name}
 				});
-			return group ? true : false;
+			return group;
 		} catch (error) {
 			console.log("dmExists: Error");
 		}
@@ -39,20 +41,24 @@ export class GroupsService {
 				{ where: {id: id_user}	});
 			const second_user = await this.userRepository.findOneOrFail(
 				{ where: {id: id_second_user}	});
-			let group = new Group();
-			group.name = `dm${Math.min(user.id,second_user.id)}${Math.max(user.id,second_user.id)}`;
-			group.privacy = Privacy.DM;
-			group.owner = user;
-			group = await this.groupRepository.save(group);
-			//* join the users to the dm
-			let joinDm = new UserToGroup();
-			joinDm.user = user;
-			joinDm.group = group;
-			await this.userToGroupRepository.save(joinDm);
-			joinDm = new UserToGroup();
-			joinDm.user = second_user;
-			joinDm.group = group;
-			await this.userToGroupRepository.save(joinDm);
+			let group = await this.isDmCreated(id_user, id_second_user);
+			if (!group)
+			{
+				group = new Group();
+				group.name = `dm${Math.min(user.id,second_user.id)}${Math.max(user.id,second_user.id)}`;
+				group.privacy = Privacy.DM;
+				group.owner = user;
+				group = await this.groupRepository.save(group);
+				//* join the users to the dm
+				let joinDm = new UserToGroup();
+				joinDm.user = user;
+				joinDm.group = group;
+				await this.userToGroupRepository.save(joinDm);
+				joinDm = new UserToGroup();
+				joinDm.user = second_user;
+				joinDm.group = group;
+				await this.userToGroupRepository.save(joinDm);
+			}
 			let channel = new channelModel();
 			channel.id = group.id;
 			channel.name = second_user.username;
@@ -115,15 +121,18 @@ export class GroupsService {
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
 			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar', 'group.description'])
-			.where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
-			// .orWhere("user.id = :user_id", {user_id: user_id})
-			.orWhere(
-				new Brackets((qb) => {
-					qb.where("group.privacy = :_privacy", {_privacy: 'private'})
-					.andWhere("user.id = :user_id", {user_id: user_id})
-				}),
-			)
+			.where("group.privacy != :privacy", {privacy: 'dm'})
+			.andWhere("user.id = :user_id", {user_id: user_id})
 			.getMany();
+			// .where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
+			// // .orWhere("user.id = :user_id", {user_id: user_id})
+			// .orWhere(
+			// 	new Brackets((qb) => {
+			// 		qb.where("group.privacy = :_privacy", {_privacy: 'private'})
+			// 		.andWhere("user.id = :user_id", {user_id: user_id})
+			// 	}),
+			// )
+			// .getMany();
 			// console.log("userToGoup", channels);
 			return channels;
 		} catch (error) {
@@ -171,7 +180,7 @@ export class GroupsService {
 
 //* ################################## a more convenient version ###########################
 
-	async _joinGroup(id_user: number, groupdto:joinGroupDto){
+	async joinGroup(id_user: number, groupdto:joinGroupDto){
 		try
 		{
 			const user = await this.userRepository.findOneOrFail(
@@ -181,7 +190,7 @@ export class GroupsService {
 				{ where : {id : groupdto.id_group}}
 			);
 			if (group.privacy == 'dm')
-				throw new Error("You can't join a dm");
+				throw new Error("You can't join");
 			if (group.privacy == 'protected')
 			{
 				if (!await bcrypt.compare(groupdto.password, group.password))
@@ -206,7 +215,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error _joinGroup");
+			console.log("Error joinGroup");
 		}
 	}
 
@@ -259,6 +268,64 @@ export class GroupsService {
 		catch(e)
 		{
 			console.log("Error isGroupMember");
+		}
+	}
+
+	//* ############################################# add User ##############################
+	
+	async addUser(id_user: number, info:addUserDto)
+	{
+		try{
+			const join = await this.isGroupMember(id_user, info.id_group);
+			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
+			{
+				// const dto = new joinGroupDto;
+				// dto.id_group = info.id_group;
+				// if (info.password)
+				// 	dto.password = info.password;
+				const dto:joinGroupDto = info;
+				return await this.joinGroup(id_user, dto);
+			}
+			//! I may should throw an exception
+			return null;
+		}
+		catch(e)
+		{
+			console.log("Error addUser");
+		}
+	}
+	
+	//* ############################################# add User ##############################
+
+	async leaveGroup(id_user: number, groupdto:joinGroupDto){
+		try
+		{
+			const user = await this.userRepository.findOneOrFail(
+				{	where : { id: id_user }	}
+			);
+			const group = await this.groupRepository.findOneOrFail(
+				{ where : {id : groupdto.id_group}}
+			);
+			if (group.privacy == 'dm')
+				throw new Error("You can't leave");
+			if (group.privacy == 'protected')
+			{
+				if (!await bcrypt.compare(groupdto.password, group.password))
+					throw new Error("Wrong password");
+			}
+			const joined = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.delete()
+			.where("user.id = :user_id", {user_id: id_user})
+			.andWhere("group.id = :group_id", {group_id: groupdto.id_group})
+			.execute();
+			return joined;
+		}
+		catch(e)
+		{
+			console.log("Error joinGroup");
 		}
 	}
 }

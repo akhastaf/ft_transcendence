@@ -77,6 +77,7 @@ export class GroupController {
 				arr.push(member);
 			});
 		}
+		return arr;
 	}
 
   }
