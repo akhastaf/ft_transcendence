@@ -117,15 +117,18 @@ export class GroupsService {
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
 			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar', 'group.description'])
-			.where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
-			// .orWhere("user.id = :user_id", {user_id: user_id})
-			.orWhere(
-				new Brackets((qb) => {
-					qb.where("group.privacy = :_privacy", {_privacy: 'private'})
-					.andWhere("user.id = :user_id", {user_id: user_id})
-				}),
-			)
+			.where("group.privacy != :privacy", {privacy: 'dm'})
+			.andWhere("user.id = :user_id", {user_id: user_id})
 			.getMany();
+			// .where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
+			// // .orWhere("user.id = :user_id", {user_id: user_id})
+			// .orWhere(
+			// 	new Brackets((qb) => {
+			// 		qb.where("group.privacy = :_privacy", {_privacy: 'private'})
+			// 		.andWhere("user.id = :user_id", {user_id: user_id})
+			// 	}),
+			// )
+			// .getMany();
 			// console.log("userToGoup", channels);
 			return channels;
 		} catch (error) {
