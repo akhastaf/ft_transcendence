@@ -71,12 +71,12 @@ export class MessagesGateway {
 		this.server.to(client.userId.toString()).emit('joinGroup_sever', message);
 	}
 
-	@SubscribeMessage('checkDm_client')
-	async isDmCreated(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
-		const is_created = await this.groupsService.isDmCreated(client.userId, second_user_id);
-		this.server.to(client.userId.toString()).emit('checkDm_server', is_created);
-		return is_created;
-	}
+	// @SubscribeMessage('checkDm_client')
+	// async isDmCreated(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
+	// 	const is_created = await this.groupsService.isDmCreated(client.userId, second_user_id);
+	// 	this.server.to(client.userId.toString()).emit('checkDm_server', is_created);
+	// 	return is_created;
+	// }
 
 	@SubscribeMessage('createDm_client')
 	async createDm(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
