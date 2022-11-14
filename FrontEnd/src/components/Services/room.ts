@@ -8,7 +8,7 @@ export const getAllRooms = (): Promise<any> => {
 
 
 export const getRoomUsers = (id: string) : Promise<any> => {
-	return localService.get("/channels/members/" + id).then((res) => res.data ).catch(err => console.log(err));	
+	return localService.get("/channels/members/" + id).then((res) => res.data  ).catch(err => console.log(err));	
 }
 // export const getRoomData = (roomName: string): Promise<any> => {
 // 	return axios.get(`/room/${roomName}`).then(res => res.data);

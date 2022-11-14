@@ -158,7 +158,7 @@ const AddChannel: React.FC<{
                     <div>
                       <button type="submit"  onClick={() => {
                            setError("name", { type: "focus", message : "Must not be empty field" },  { shouldFocus: true });
-                      setError("password", { type: "9", message : "Must not be empty field" },  { shouldFocus: true });
+                      // setError("password", { type: "9", message : "Must not be empty field" },  { shouldFocus: true });
         }} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Create</button>
                     </div>
                     <div>
@@ -392,10 +392,10 @@ export const AddChannel1: React.FC<{
 
                   {
                   state === "" && <> <div className='pb-1'>
-                    <button onClick={() => {setState("CREATE");  console.log(`state in create = ${state}`); }} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Create</button>
+                    <button onClick={() => {setState("CREATE");   }} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Create</button>
                   </div>
                   <div>
-                    <button onClick={() => {setState("JOIN");  console.log(`state in join = ${state}`);  }}className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Join</button>
+                    <button onClick={() => {setState("JOIN");   }}className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Join</button>
                   </div> </>
                   }
                 </div>

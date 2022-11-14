@@ -26,6 +26,7 @@ const ChannelIcon: React.FC<{
     // console.log(room._id);
     // console.log(room.password);
     // console.log(room.name);
+
   },[])
 
   return (

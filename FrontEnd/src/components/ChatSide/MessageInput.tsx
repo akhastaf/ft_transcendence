@@ -14,7 +14,7 @@ const MessageInput: React.FC <{
 	const onSubmitForm = (e: any) => {
 		e.preventDefault();
 		sendMessage(inputRef.current!.value);
-		e.target.value.reset();
+		// e.target.value.reset();
 	};
 
     useEffect(() =>
@@ -24,17 +24,17 @@ const MessageInput: React.FC <{
     },[]);
     return <>
 
-<div className="mx-4">
+	<div className="absolute inset-x-0 bottom-0 h-16 ml-96 mr-20">
 			{!isMemberOfRoom && (
 				<div className="mb-3 flex align-items-center justify-content-between">
 					<p className="m-0 font-weight-bold gray-color text-uppercase">
-						You are not member in Room {choosenChat.name}
+						You are not member in Room {choosenChat.username}
 					</p>
 					<button
 						className="btn main-btn font-weight-bold text-uppercase"
 						onClick={() => joinRoomHandler()}
 					>
-						Join {choosenChat.name}
+						Join {choosenChat.username}
 					</button>
 				</div>
 			)}

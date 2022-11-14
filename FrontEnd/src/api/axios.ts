@@ -35,9 +35,9 @@ export const localService = axios.create({
 
 localService.interceptors.request.use((config: AxiosRequestConfig) => {
     if (config) {
-        console.log("hello i am inside the intecptor");
+        // console.log("hello i am inside the intecptor");
         const token = localStorage.getItem("accessToken");
-        console.log(token);
+        // console.log(token);
         if (token && config.headers) {
             config.headers["Authorization"] = "Bearer " + token;
         }
@@ -53,9 +53,9 @@ localService.interceptors.response.use((response: AxiosResponse) => {
     //     console.log("here we are in 400");
     //     console.log('====================================');
     // }
-    console.log('====================================');
-    console.log(response.status);
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log(response.status);
+    // console.log('====================================');
     return response;
 }, function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger

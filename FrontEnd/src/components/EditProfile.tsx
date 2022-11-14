@@ -29,7 +29,7 @@ const EditProfile : React.FC <{
         getCurrentUser(1) // !! to be changed becasue its mr93a (change to connected socket)
         .then((user) => {
             setUserInfo(user[0]);
-            console.log(user);
+            // console.log(user);
         })
         .catch((err) => console.log(err));
     },[]);

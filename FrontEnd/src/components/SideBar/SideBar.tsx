@@ -66,7 +66,7 @@ const SideBar: React.FC <{
     };
     useEffect(() =>
     {
-      // console.log(`users    = ${users}`);
+      // console.log(`users      = ${users}`);
     }
     
     ,[])
@@ -81,10 +81,11 @@ const SideBar: React.FC <{
 
 
 			<div className = "bg-discord_secondSideBar flex flex-col min-win-max">
-				<h2 className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.name } {choosenChat.name === "" && "FRIENDS"} <ChevronDownIcon className="h-4 ml-2"/> </h2>
+				<h2 className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.username } {choosenChat.username === "" && "FRIENDS"} <ChevronDownIcon className="h-4 ml-2"/> </h2>
 					<div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide  ">
 						{/* <div className="flex items-center p-2 mb-2"> */}
                         {
+                          
                                 users.map((user: userModel) => {
                                 if (user.name !== currentUser.username)
 
@@ -92,7 +93,7 @@ const SideBar: React.FC <{
                                         <MemberCard
                                         onClick={() =>
                                             selectedUserDM({
-                                                name: user.name,
+                                                username: user.name,
                                                 _id: user.id.toString(),
                                             })
                                         }

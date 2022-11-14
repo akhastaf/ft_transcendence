@@ -4,7 +4,7 @@ import Hero from "./Hero";
 
 const Welcome : React.FC <{
 
-}> = ({}) => {
+}> = () => {
     return (<>
     <div className="h-full w-full">
         <Header/>

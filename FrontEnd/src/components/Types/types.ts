@@ -14,10 +14,7 @@ export type RoomType = {
 export type MessageType = {
 	_id: string;
 	roomId: string;
-	sendBy: { // in back end its a type User
-		_id: string;
-		username: string;
-	};
+	sendBy: UserType;
 	content: string;
 	updatedAt: Date;
 }
@@ -69,7 +66,7 @@ export type AuthUserType = {
 
 export type ChatType = {
 	_id: string;
-	name: string;
+	username: string;
 }
 
 export interface User {

@@ -24,7 +24,7 @@ class App extends React.Component {
 
 
   render() {
-    console.log('Render lifecycle')
+    // console.log('Render lifecycle')
     return (
           <>
               <Router>

@@ -15,11 +15,11 @@ const ChannelList: React.FC <{
 	setSelectedUserDM: React.Dispatch<React.SetStateAction<ChatType>>,
     rooms: RoomType[];
 	selectRoomHandler: (room: RoomType | string) => void;
-	dmNotifications: number;
+	// dmNotifications: number;
 	createRoomHandler: (roomName: string, private1: Privacy, password? : string ) => void;
 	joinRoomHandler: () => void;
 
-}> =  ({rooms, selectRoomHandler, dmNotifications, createRoomHandler, setChoosenChat, setSelectedUserDM, joinRoomHandler }) => {
+}> =  ({rooms, selectRoomHandler, createRoomHandler, setChoosenChat, setSelectedUserDM, joinRoomHandler }) => {
     
 	
 	const [showModal, setShowModal] = useState(false);
@@ -29,8 +29,8 @@ const ChannelList: React.FC <{
         setShowModal(true);
     };
 	const HomeSweetHome = () => {
-		setChoosenChat({name: "", _id: ""})
-		setSelectedUserDM({name :"", _id: ""});
+		setChoosenChat({ username: "", _id: ""})
+		setSelectedUserDM({username :"", _id: ""});
 	}
 
 	return(<>
