@@ -21,7 +21,7 @@ export class GroupsService {
 		private userToGroupRepository: Repository<UserToGroup>,
 	) {}
 
-	async isDmCreated(id_user: number, id_second_user: number): Promise<boolean> {
+	async isDmCreated(id_user: number, id_second_user: number){
 		try {
 			const group_name = `dm${Math.min(id_user, id_second_user)}${Math.max(id_user, id_second_user)}`;
 			const group = await this.groupRepository.findOne({
@@ -29,7 +29,7 @@ export class GroupsService {
 					privacy: Privacy.DM,
 					name : group_name}
 				});
-			return group ? true : false;
+			return group;
 		} catch (error) {
 			console.log("dmExists: Error");
 		}
@@ -41,20 +41,24 @@ export class GroupsService {
 				{ where: {id: id_user}	});
 			const second_user = await this.userRepository.findOneOrFail(
 				{ where: {id: id_second_user}	});
-			let group = new Group();
-			group.name = `dm${Math.min(user.id,second_user.id)}${Math.max(user.id,second_user.id)}`;
-			group.privacy = Privacy.DM;
-			group.owner = user;
-			group = await this.groupRepository.save(group);
-			//* join the users to the dm
-			let joinDm = new UserToGroup();
-			joinDm.user = user;
-			joinDm.group = group;
-			await this.userToGroupRepository.save(joinDm);
-			joinDm = new UserToGroup();
-			joinDm.user = second_user;
-			joinDm.group = group;
-			await this.userToGroupRepository.save(joinDm);
+			let group = await this.isDmCreated(id_user, id_second_user);
+			if (!group)
+			{
+				group = new Group();
+				group.name = `dm${Math.min(user.id,second_user.id)}${Math.max(user.id,second_user.id)}`;
+				group.privacy = Privacy.DM;
+				group.owner = user;
+				group = await this.groupRepository.save(group);
+				//* join the users to the dm
+				let joinDm = new UserToGroup();
+				joinDm.user = user;
+				joinDm.group = group;
+				await this.userToGroupRepository.save(joinDm);
+				joinDm = new UserToGroup();
+				joinDm.user = second_user;
+				joinDm.group = group;
+				await this.userToGroupRepository.save(joinDm);
+			}
 			let channel = new channelModel();
 			channel.id = group.id;
 			channel.name = second_user.username;
