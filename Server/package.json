@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "na7la chama"
   "proxy": "http://localhost:3001",
   "scripts": {
     "prebuild": "rimraf dist",
