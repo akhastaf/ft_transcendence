@@ -16,6 +16,9 @@ const MessagesSection : React.FC <{
 
 	useEffect(() => {
 		messageListRef.current?.scrollIntoView({ behavior: "smooth" });
+		console.log('===============================messages=====');
+		console.log(messages);
+		console.log('====================================');
 	}, [messages]);
 
 
@@ -23,7 +26,8 @@ const MessagesSection : React.FC <{
     
     <div className="flex-grow m-4 flex flex-col my-10 gap-12 overflow-y-scroll scrollbar-hide ">
 			{messages.map((message: MessageType, idx) => (
-				<MessageCard
+				
+				messages && <MessageCard
 					key={message._id + "" + idx}
 					time={moment(message.updatedAt).format(
 						"MMM D, YYYY [at] HH:mm"

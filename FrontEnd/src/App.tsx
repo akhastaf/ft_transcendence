@@ -1,7 +1,7 @@
 
 import './App.css';
 import React from 'react';
-import Header from './components/Header';
+import Welcome from './components/Welcome/Welcome';
 import {
   BrowserRouter as Router,
   // Switch,
@@ -9,8 +9,7 @@ import {
   Routes,
   // Link,
 } from "react-router-dom";
-import Hero from './components/Hero';
-import LowerHero from './components/lowerHero';
+
 import Home from './components/Home';
 import Callback from './components/auth/42/callback';
 import EditProfile from './components/EditProfile';
@@ -25,24 +24,26 @@ class App extends React.Component {
 
 
   render() {
-    console.log('Render lifecycle')
+    // console.log('Render lifecycle')
     return (
-          <>
-              <Router>
-              <Routes>
-                  <Route path='/' element={<><Header/><Hero/> <LowerHero/> </>}>
-                  </Route>
-                  <Route path='/channels' element={<> <Home/></>}>
-                  </Route>
-                  <Route path='/channels/:' element={<> </>}>
-                  </Route>
-                  <Route path='/callback' element={<> <Callback/> </>} >
-                  </Route>
-                  <Route path='/EditInfo' element={<> <EditProfile/> </>} >
-                  </Route>
-              </Routes>
-              </Router>
-            </>
+      <>
+        <Router>
+          <Routes>
+            <Route path='/' element={<><Welcome /> </>}>
+            </Route>
+            <Route path='/channels' element={<> <Home state="" /></>}>
+            </Route>
+            <Route path='/channels/:' element={<> </>}>
+            </Route>
+            <Route path='/callback' element={<> <Callback /> </>} >
+            </Route>
+            <Route path='/EditInfo' element={<> <EditProfile /> </>} >
+            </Route>
+            <Route path='channels/allChannels' element={<> <Home state="allChannels" /> </>} >
+            </Route>
+          </Routes>
+        </Router>
+      </>
     );
   }
 }
@@ -87,4 +88,3 @@ class App extends React.Component {
 
 // }
 export default App;
- 

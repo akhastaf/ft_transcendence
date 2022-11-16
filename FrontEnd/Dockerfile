@@ -2,7 +2,7 @@ FROM node:16-alpine as builder
 
 # RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY package*.json ./
+COPY package* ./
 RUN npm install mask-email-phone
 RUN npm install --silent
 COPY  . .
