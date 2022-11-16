@@ -6,6 +6,7 @@ export type RoomType = {
 	createdBy: UserType;
 	members: UserType[];
 	createdAt: Date;
+	avatar?: string;
 	updatedAt: Date;
 	messages: string[];
 	notifications?: number;
@@ -110,6 +111,15 @@ export interface userModel
 	avatar: string;
 	status : string;
 	notifications: number
+}
+
+export interface roomModal {
+	id: number;
+	name: string;
+	privacy: string;
+	avatar: string;
+	description: string;
+
 }
 //   export class CreateGroupDto {
 

@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
-import { ChatType } from "../Types/types";
+import { ChatType, RoomType } from "../Types/types";
 
 
 
 const MessageInput: React.FC <{
-    joinRoomHandler: () => void;
+    // joinRoomHandler: (room: RoomType) => void;
     choosenChat: ChatType;
     isMemberOfRoom:  boolean
     sendMessage: (a: string) => void;
-}> = ({joinRoomHandler, choosenChat, isMemberOfRoom, sendMessage}) => {
+}> = ({ choosenChat, isMemberOfRoom, sendMessage}) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
 	const onSubmitForm = (e: any) => {
@@ -32,7 +32,7 @@ const MessageInput: React.FC <{
 					</p>
 					<button
 						className="btn main-btn font-weight-bold text-uppercase"
-						onClick={() => joinRoomHandler()}
+						
 					>
 						Join {choosenChat.username}
 					</button>

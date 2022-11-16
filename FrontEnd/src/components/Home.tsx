@@ -4,12 +4,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 // import {IoCompassOutline } from 'react-icons/io5';
 // import  MemberCard  from './MemberCard';
 // import AddChannel from './AddChannel';
-import { getAllRooms, getRoomUsers } from './Services/room'
+import { AllRooms, getAllRooms, getRoomUsers } from './Services/room'
 import axios from 'axios';
 import { RouteMatch, useNavigate, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
 import ChannelList from './SideBar/ChannelList';
-import { ChatType, MessageType, Privacy, RoomType, userModel, Userstatus, UserType } from './Types/types';
+import { ChatType, MessageType, Privacy, roomModal, RoomType, userModel, Userstatus, UserType } from './Types/types';
 import { io, Socket } from "socket.io-client";
 import ChatHeader from './ChatSide/ChatHeader';
 import { localService } from '../api/axios'
@@ -18,6 +18,8 @@ import { getCurrentUser } from './Services/user';
 import MessageInput from './ChatSide/MessageInput';
 import GameHome from './Game/GameHome';
 import { socket } from './Services/sockets'
+import { SiEmirates } from 'react-icons/si';
+import ChannelsDisplay from './pages/ChannelsDisplay';
 // import { toast } from "react-toastify";
 // import {access} from "../api/access";
 // import ChatPage from "./ChatSide/ChatPage";
@@ -176,7 +178,10 @@ const createNewMsg = (
 };
 
 
-function Home() {
+const Home : React.FC <{
+	state : string
+}> = ({state}) => 
+{
 
 	const navigate = useNavigate();
 
@@ -197,6 +202,7 @@ function Home() {
 	// }
 
 	const [users, setUsers] = useState<any>([]);
+	const [allRooms, setAllRooms] = useState<any>([]);
 
 	// const access  = searchParams.get("accessToken");
 	const [rooms, setRooms] = useState<any>([]);
@@ -381,9 +387,11 @@ function Home() {
 	};
 
 	const chatroomref = useRef(choosenChat);
-	const createRoomHandler = (roomName: string, private1: Privacy, password?: string) => {
-		// console.log(`createRoomHandler: ${roomName}`);
-		// console.log(`createRoomHandler: ${private1}`);
+	const createRoomHandler = (roomName: string, private1: Privacy,  avatar: any, password?: string) => {
+		console.log(`createRoomHandler name: ${roomName}`);
+		console.log(`createRoomHandler privacy : ${private1}`);
+		console.log(`createRoomHandler password: ${password}`);
+		console.log(`createRoomHandler avatar: ${avatar}`);
 		// console.log(`createRoomHandler: ${password}`);
 		// socket.emit("createRoom", {
 		// 	roomName: roomName,
@@ -391,11 +399,13 @@ function Home() {
 		// 	password: password,
 		// 	userId: userInfo._id,
 		// });
+		console.log(avatar);
 		localService.post("/channels", {
 			name: roomName,
-			privacy: private1,
-			// avatar : avatar,
+			avatar : avatar,
 			password: password,
+			desciption: "hello World",
+			privacy: private1,
 		}).then((room) => {
 			// console.log(room.data);
 			setRooms([...rooms, room.data])
@@ -411,12 +421,20 @@ function Home() {
 
 	}
 
-	const joinRoomHandler = () => {
-		console.log(`joinRoomHandler: ${choosenChat.username}`);
+	const joinRoomHandler = (room : roomModal, password?: string) => {
+		// console.log(`joinRoomHandler: ${choosenChat.username}`);
 		// setIsMemberOfRoom(true);
-		socket.emit("joinGroup", {
-			roomName: choosenChat.username,
-			userId: userInfo._id,
+		// let Rroom : roomModal[]; 
+		// AllRooms().then((rooms) => {
+		// 	rooms.map((room: roomModal) =>
+		// 	{
+		// 		if (room.name == channelName)
+		// 			Rroom.push(room);
+		// 	})
+		// });
+		socket.emit("joinGroup_client", {
+			id_group: room.id,
+			password: password,
 		});
 	};
 
@@ -507,26 +525,28 @@ function Home() {
 
 	const sendMessageHandler = async (content: string) => {
 		if (choosenChat.username === "Direct Messages") {
-			let a : boolean = false;
+			let a : roomModal;
 			var b : number = +selectedUserDM._id;
-			let aa = await new Promise((r)=>{
-							socket.emit("checkDm", b, (a:any)=>{
-								r(a)
+			// let aa = await new Promise((r)=>{
+			socket.emit("createDm_client", b);
+			socket.on("createDm_server", (data) =>
+			{
+				// a = data;
+				socket.emit("sendMessage_client", {
+					content: content,
+					// room: { ...choosenChat, _id: selectedUserDM._id },
+					receiver_id: data.id ,
+					// isPrivateDm: choosenChat.username === "Direct Messages",
+				}
+				);
 			})
 
-			});
-			console.log("check if dm exist");
+			//  });
+			// console.log("check if dm exist");
 			
-			console.log(aa);
-			if (aa === false)
-				socket.emit("createDm", b);
-			socket.emit("sendMessage", {
-				content: content,
-				// room: { ...choosenChat, _id: selectedUserDM._id },
-				receiver_id: choosenChat._id,
-				// isPrivateDm: choosenChat.username === "Direct Messages",
-			}
-			);
+			// console.log(aa);
+			// if (aa === false)
+			// 	socket.emit("createDm", b);
 		} else {
 			socket.emit("sendMessage", {
 				content: content,
@@ -555,7 +575,7 @@ function Home() {
 					selectRoomHandler={selectRoomHandler}
 					// dmNotifications={getNumberOfDmNotifications()}
 					createRoomHandler={createRoomHandler}
-					joinRoomHandler={joinRoomHandler}
+					// joinRoomHandler={joinRoomHandler}
 
 				/>
 				{/* //! setUsers to friend when defaulted */}
@@ -582,7 +602,7 @@ function Home() {
 							)}
 
 						{
-							choosenChat.username == "" && selectedUserDM.username == ""
+							state=== "HomeGAME" && choosenChat.username == "" && selectedUserDM.username == ""
 							&& (
 								<GameHome currentUser={userInfo} />
 							)
@@ -607,8 +627,11 @@ function Home() {
 								/>
 						)}
 					 */}
+					 {
+						state === "allChannels" && <ChannelsDisplay joinRoomHandler={joinRoomHandler}/>
+
+					 }
 						<MessageInput
-							joinRoomHandler={joinRoomHandler}
 							choosenChat={choosenChat}
 							isMemberOfRoom={isMemberOfRoom}
 							sendMessage={sendMessageHandler}
@@ -622,4 +645,4 @@ function Home() {
 	)
 }
 
-export default Home
+export default Home/////////////////////////////////////////////////////////////////////////////////////////////

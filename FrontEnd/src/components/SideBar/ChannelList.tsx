@@ -1,10 +1,11 @@
 import React, {  useState } from "react";
 import {  ChatType, Privacy, RoomType } from "../Types/types";
-import AddChannel, { AddChannel1 } from '../AddChannel';
+import AddChannel from '../AddChannel';
 import {IoCompassOutline } from 'react-icons/io5';
 import ChannelIcon from '../ChannelIcon';
 import {PlusIcon } from '@heroicons/react/outline';
 import { GiSecurityGate } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -16,12 +17,12 @@ const ChannelList: React.FC <{
     rooms: RoomType[];
 	selectRoomHandler: (room: RoomType | string) => void;
 	// dmNotifications: number;
-	createRoomHandler: (roomName: string, private1: Privacy, password? : string ) => void;
-	joinRoomHandler: () => void;
+	createRoomHandler: (roomName: string, private1: Privacy,currentImage: any , password? : string  ) => void;
+	// joinRoomHandler: () => void;
 
-}> =  ({rooms, selectRoomHandler, createRoomHandler, setChoosenChat, setSelectedUserDM, joinRoomHandler }) => {
+}> =  ({rooms, selectRoomHandler, createRoomHandler, setChoosenChat, setSelectedUserDM }) => {
     
-	
+	const navigate = useNavigate();
 	const [showModal, setShowModal] = useState(false);
 
     const openModal = () => {
@@ -29,8 +30,12 @@ const ChannelList: React.FC <{
         setShowModal(true);
     };
 	const HomeSweetHome = () => {
-		setChoosenChat({ username: "", _id: ""})
-		setSelectedUserDM({username :"", _id: ""});
+		navigate("/channels");
+		// setChoosenChat({ username: "", _id: ""})
+		// setSelectedUserDM({username :"", _id: ""});
+	}
+	const redirect = () => {
+		navigate("allChannels")
 	}
 
 	return(<>
@@ -58,10 +63,10 @@ const ChannelList: React.FC <{
 			 } 
 			<div className="server-default hover:bg-discord_green group">
 				<button onClick={openModal} ><PlusIcon className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
-				{showModal ? <AddChannel1 setShowModal={setShowModal} createRoomHandler={createRoomHandler} joinRoomHandler={joinRoomHandler} /> : null}
+				{showModal ? <AddChannel setShowModal={setShowModal} createRoomHandler={createRoomHandler}  /> : null}
 			</div>
 			<div className="server-default hover:bg-discord_green group">
-				<button><IoCompassOutline className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
+				<button onClick={redirect} ><IoCompassOutline className="text-emerald-400 h-7 w-12 group-hover:text-white"/></button>
 			</div>
 			</div> 
         </div>

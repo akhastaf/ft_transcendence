@@ -26,22 +26,24 @@ class App extends React.Component {
   render() {
     // console.log('Render lifecycle')
     return (
-          <>
-              <Router>
-              <Routes>
-                  <Route path='/' element={<><Welcome/> </>}>
-                  </Route>
-                  <Route path='/channels' element={<> <Home/></>}>
-                  </Route>
-                  <Route path='/channels/:' element={<> </>}>
-                  </Route>
-                  <Route path='/callback' element={<> <Callback/> </>} >
-                  </Route>
-                  <Route path='/EditInfo' element={<> <EditProfile/> </>} >
-                  </Route>
-              </Routes>
-              </Router>
-            </>
+      <>
+        <Router>
+          <Routes>
+            <Route path='/' element={<><Welcome /> </>}>
+            </Route>
+            <Route path='/channels' element={<> <Home state="" /></>}>
+            </Route>
+            <Route path='/channels/:' element={<> </>}>
+            </Route>
+            <Route path='/callback' element={<> <Callback /> </>} >
+            </Route>
+            <Route path='/EditInfo' element={<> <EditProfile /> </>} >
+            </Route>
+            <Route path='channels/allChannels' element={<> <Home state="allChannels" /> </>} >
+            </Route>
+          </Routes>
+        </Router>
+      </>
     );
   }
 }
@@ -86,4 +88,3 @@ class App extends React.Component {
 
 // }
 export default App;
- 

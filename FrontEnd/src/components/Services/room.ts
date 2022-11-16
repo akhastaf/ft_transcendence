@@ -17,3 +17,7 @@ export const getRoomUsers = (id: string) : Promise<any> => {
 export const joinRoom = () : Promise<any> => {
 	return localService.post("")
 }
+
+export const AllRooms = (): Promise<any> =>{
+	return localService.get("channels/guild-discovery").then(res => res.data).catch(err => console.log(err));
+}

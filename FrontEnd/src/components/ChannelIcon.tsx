@@ -41,7 +41,7 @@ const ChannelIcon: React.FC<{
       <Avatar size="md"
         onClick={onClick.bind(null, room)} 
         variant="circular"
-      	src={image}
+      	src={room.avatar}
       	alt=""
 		className=" bg-white bg-opacity-25 cursor-pointer rounded-3xl hover:rounded-md transition-all duration-100 ease-out  "
 		/>
