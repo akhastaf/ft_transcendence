@@ -19,6 +19,15 @@ export type MessageType = {
 	content: string;
 	updatedAt: Date;
 }
+export type MessageModal = {
+	roomId: string,
+	message: string;
+	userId: number;
+	userName: string;
+	date: Date;
+	currentUser: boolean;
+	avatar: string;
+}
 
 export type Game = {
 	_id : string,

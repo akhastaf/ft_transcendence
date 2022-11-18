@@ -22,3 +22,14 @@ Main page of components/Home.tsx
         .catch((err) => console.log(err));)
 
 // leaderboard
+
+// i need friends for home page -> we have getAllDms in back but it returns array of channel modal . (adding friends block friend routes)
+// souinia said its bad practice what we do to get id of chat room (front emit (create) ->  back emit id )
+// throw an error if password given for protected channel is wrong
+
+-- BETTER ROUTING 
+
+
+
+
+i clicked on Room/user -> /channels/choosenChat.id     display chat with {of the room}

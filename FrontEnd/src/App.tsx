@@ -31,7 +31,7 @@ class App extends React.Component {
           <Routes>
             <Route path='/' element={<><Welcome /> </>}>
             </Route>
-            <Route path='/channels' element={<> <Home state="" /></>}>
+            <Route path='/channels' element={<> <Home state="HomeGAME" /></>}>
             </Route>
             <Route path='/channels/:' element={<> </>}>
             </Route>
@@ -40,6 +40,10 @@ class App extends React.Component {
             <Route path='/EditInfo' element={<> <EditProfile /> </>} >
             </Route>
             <Route path='channels/allChannels' element={<> <Home state="allChannels" /> </>} >
+            </Route>
+            <Route path='channels/DM/:id' element={<> <Home state="DM" /> </>} >
+            </Route>
+            <Route path='channels/ROOM/:id' element={<> <Home state="ROOM" /> </>} >
             </Route>
           </Routes>
         </Router>
