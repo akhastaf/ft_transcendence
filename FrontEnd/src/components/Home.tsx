@@ -290,13 +290,14 @@ const Home: React.FC<{
 		});
 	const {id} = useParams<{id: string}>();
 	const id2 : string = id ? id : "";
+	const [dmId, setDmId] = useState<number>(-1);
 	const [messageRef, setMessageRef] = useState<{name : string, message : string}>({ name: "", message: ""});
 	// const [change , setChange] = useState<boolean> (false);
 
 	useEffect(() => {
 
 		socket.on("sendMessage_server", (data) =>{
-			// console.log("hello\n");
+			// console.log("hello\n")
 			setMessageRef(data);
 			socket.off();
 		})
@@ -307,7 +308,9 @@ const Home: React.FC<{
 		if (state === "DM") {
 			console.log(`user id = ${id2}`)
 			socket.emit("createDm_client", parseInt(id2), (data : any) => {
+				setDmId(data.id);
 				setChoosenChat(() => ({ username: "Direct Messages", _id: id2}));
+				
 				getAUser(parseInt(id2)).then((data) =>
 				{
 					setSelectedUserDM(data);
@@ -316,9 +319,11 @@ const Home: React.FC<{
 				// setSelectedUserDM()
 				// console.log(`data id = ${data.id}`);
 				getDmMessages(data.id)
-					.then((res) => {
-						// console.log("Message = ", res);
-						setMessages1(res);
+					.then((res : MessageModal[]) => {
+						console.log(`Message = ${res}`);
+						let sorted = res.sort((d1 : MessageModal, d2 : MessageModal) => (d1.date > d2.date ? 1 : d1.date < d2.date ? - 1 : 0));
+						setMessages1(sorted);
+						// console.log(`Message  sorted = ${sorted}`);
 					})
 					.catch((err) => console.log(err));
 			});
@@ -327,7 +332,7 @@ const Home: React.FC<{
 
 		if (state == "ROOM")
 		{
-			setChoosenChat(() => ({ username: "random", _id: id2 }));
+			// setChoosenChat(() => ({ username: "random", _id: id2 }));
 			getAllRooms().then((data) =>
 			{
 				// console.log(data);
@@ -348,7 +353,8 @@ const Home: React.FC<{
 				;
 			getRoomMessages(parseInt(id2))
 			.then ((res) => {
-				setMessages1(res);
+				let sorted = res.sort((d1 : MessageModal, d2 : MessageModal) => (d1.date > d2.date ? 1 : d1.date < d2.date ? - 1 : 0));
+				setMessages1(sorted);
 			})
 			.catch((err) => console.log(err));
 		}
@@ -553,14 +559,13 @@ const Home: React.FC<{
 		let a : boolean  = false;
 		if (choosenChat.username === "Direct Messages") {
 			var b: number = +selectedUserDM._id;
-			socket.emit("createDm_client", b, (a: roomModal) => {
+			// socket.emit("createDm_client", b, (a: roomModal) => {
 
 				socket.emit("sendMessage_client", {
 					content: content,
-					receiver_id: a.id,
-				}
-				);
-			});
+					receiver_id: dmId,
+				});
+			// });
 		} else {
 			a = true;
 			socket.emit("sendMessage_client", {
@@ -568,7 +573,8 @@ const Home: React.FC<{
 				receiver_id : parseInt(choosenChat._id),
 			});
 		}
-
+		
+		setMessageRef({name : "name",message: "message"});
 		const createdMsg = createNewMsg(
 			content,
 			choosenChat._id,

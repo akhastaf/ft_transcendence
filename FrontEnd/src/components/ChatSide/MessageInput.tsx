@@ -14,8 +14,11 @@ const MessageInput: React.FC <{
 	const onSubmitForm = (e: any) => {
 		e.preventDefault();
 		sendMessage(inputRef.current!.value);
-		// e.target.value.reset();
+		e.target.reset();
 	};
+	const onChangeForm = (e: any) => {
+		
+	}
 
     useEffect(() =>
     {
@@ -46,6 +49,7 @@ const MessageInput: React.FC <{
 						id="exampleFormControlInput1"
 						placeholder={`Message @${choosenChat.username}`}
 						ref={inputRef}
+				
 					/>
 				</form>
 			)}

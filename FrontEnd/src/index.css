@@ -46,6 +46,33 @@
     .server-default {
       @apply h-12 bg-discord_serverBg rounded-full flex justify-center items-center cursor-pointer hover:rounded-2xl transition-all duration-100 ease-out;
     }
+
+    .main-input {
+      background-color: #40444B !important;
+      border: none !important;
+      color: white !important;
+      border-radius: 8px !important;
+    }
+    
+    .dark-input {
+    
+      background-color: hsl(216,7.2%,13.5%) !important;
+      height: 46px !important;
+      border-radius: 4px !important;
+    }
+    
+    .dark-input,
+    .main-input {
+      border: none !important;
+      color: white !important;
+    }
+    
+    .dark-input:focus,
+    .main-input:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    
   
   }
 @layer components { 
