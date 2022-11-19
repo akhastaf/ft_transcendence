@@ -51,6 +51,7 @@ export class MessagesController {
 				message.userName = element.sender.username;
 				message.date = element.createdAt;
 				message.currentUser = element.sender.id == req.user.id ? true : false;
+				message.avatar = element.sender.avatar;
 				arr.push(message);
 				// console.log("channel",element);
 			});
