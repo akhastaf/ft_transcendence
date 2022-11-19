@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { BasicButtons, BasicButtons1 } from "../EditProfil/SideBarE";
 import { AllRooms, joinRoom } from "../Services/room";
+import { socket } from "../Services/sockets";
 import { Privacy, roomModal } from "../Types/types";
 
 const logo = require("../../images/searchImage.jpeg");
@@ -51,23 +52,17 @@ const ChannelCard: React.FC<{
         setState(true);
         else
             joinRoomHandler(room);
-        
-        console.log(` name = ${room.name}`);
-        console.log(` privacy = ${room.privacy}`);
-        console.log(` avatar = ${room.avatar}`);
-        console.log(` lul = ${room.description}`);
-        // console.log(` qqqq = ${room.name}`);
     }
 
     return <>
 
-        <div className=" bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        <div className=" bg-white rounded-lg w-fit h-fit sm:w-40  lg:w-[28rem] lg:h-96 border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
             <a href="#">
-                <img className="rounded-t-lg" src={room.avatar} alt="" />
+                <img className="rounded-t-lg object-cover sm:w-40 sm:h-48 lg:w-[28rem] lg:h-48" src={room.avatar} alt="" />
             </a>
             <div className="p-5">
                 <a href="#">
-                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{room.name}</h5>
+                    <h5 className="mb-2  text-md lg:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{room.name}</h5>
                 </a>
                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{room.description}</p>
                 <button onClick={joinRoom} className="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-emerald-500 rounded-lg hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -144,6 +139,11 @@ const PasswordInput : React.FC <{
 
     const submitForm : SubmitHandler<{password : string}> = (data) => {
          joinRoomHandler(room, data.password);
+
+        //  socket.on("joinGroup_sever", (data) =>
+        //  {
+        //     if (data.name)
+        //  })
     }
 
     return <>

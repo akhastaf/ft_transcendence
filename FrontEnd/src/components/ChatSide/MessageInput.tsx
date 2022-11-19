@@ -14,13 +14,16 @@ const MessageInput: React.FC <{
 	const onSubmitForm = (e: any) => {
 		e.preventDefault();
 		sendMessage(inputRef.current!.value);
-		// e.target.value.reset();
+		e.target.reset();
 	};
+	const onChangeForm = (e: any) => {
+		
+	}
 
     useEffect(() =>
     {
-        console.log(isMemberOfRoom);
-        console.log(`chosenChat = ${choosenChat._id}`)
+        // console.log(isMemberOfRoom);
+        // console.log(`chosenChat = ${choosenChat._id}`)
     },[]);
     return <>
 
@@ -44,8 +47,9 @@ const MessageInput: React.FC <{
 						type="text"
 						className="form-control main-input"
 						id="exampleFormControlInput1"
-						placeholder="Message @Tmc Trevor"
+						placeholder={`Message @${choosenChat.username}`}
 						ref={inputRef}
+				
 					/>
 				</form>
 			)}

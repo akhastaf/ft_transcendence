@@ -10,7 +10,7 @@ const logo = require('../images/ponglogo.png');
 
 const AddChannel: React.FC<{
 
-  createRoomHandler: (roomName: string, private1: Privacy, currentImage: any, password?: string) => void;
+  createRoomHandler: (roomName: string, private1: Privacy, currentImage: any, password?: string, desciption?: string) => void;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   
 
@@ -44,7 +44,7 @@ const AddChannel: React.FC<{
   //   });
   // }
     // console.log(avatarRef);
-    createRoomHandler(data.name,p , currentImage, data.password);
+    createRoomHandler(data.name,p , currentImage, data.password, data.description);
     closeModal();
 
   };
@@ -55,7 +55,7 @@ const AddChannel: React.FC<{
     let reader = new FileReader();
     reader.addEventListener("load", (ev : any)=>{
         SetCurrentImage(ev.target['result']);
-        console.log(`image = ${currentImage}`);
+        // console.log(`image = ${currentImage}`);
     });
     reader.readAsDataURL(event.target.files[0]);
   }
@@ -160,6 +160,17 @@ const AddChannel: React.FC<{
                           </div>
                         </div> : null
                     }
+                    <div>
+                      <label htmlFor="text" className="block text-sm font-medium text-gray-700">Descrition</label>
+                      <div className="mt-1">
+                        {/* <input ref={roomNameRef} id="channelName" name="channelName" type="text" required className="" /> */}
+                        <input className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("description")} />
+                        {errors.name && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-1" role="alert">
+                            <p className="font-semibold">Error</p>
+                            <p>{errors.name.message}</p>
+                          </div>}
+                      </div>
+                    </div>
 
                     <div className="mt-1">
                       <label htmlFor="img">Select image:</label>

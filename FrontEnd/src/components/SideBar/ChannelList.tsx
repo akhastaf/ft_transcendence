@@ -35,7 +35,7 @@ const ChannelList: React.FC <{
 		// setSelectedUserDM({username :"", _id: ""});
 	}
 	const redirect = () => {
-		navigate("allChannels")
+		navigate("/channels/allChannels");
 	}
 
 	return(<>
@@ -50,6 +50,7 @@ const ChannelList: React.FC <{
 			<hr className="bg-angol_main border w-8 mx-auto" />
 			<div className="flex flex-col items-center space-y-3">
 			 {
+				
 				rooms.map((room: RoomType, index: number) => (
 					// console.log(room.name);
 					<ChannelIcon 
