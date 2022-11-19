@@ -82,6 +82,7 @@ export class MessagesGateway {
 	async createDm(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
 		const dm = await this.groupsService.createDm(client.userId, second_user_id);
 		this.server.to(client.userId.toString()).emit('createDm_server', dm);
+		return dm;
 	}
 
 	//* ################################################# Client connected ###############################################################

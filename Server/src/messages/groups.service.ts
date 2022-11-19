@@ -37,6 +37,8 @@ export class GroupsService {
 
 	async createDm(id_user: number, id_second_user: number) {
 		try {
+			if (id_user === id_second_user)
+				return null;
 			const user = await this.userRepository.findOneOrFail(
 				{ where: {id: id_user}	});
 			const second_user = await this.userRepository.findOneOrFail(
