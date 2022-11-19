@@ -235,6 +235,7 @@ const Home: React.FC<{
 			getCurrentUser(data)
 				.then((user) => {
 					setUserInfo(user);
+					console.log(user);
 				})
 				.catch((err) => console.log(err));
 
@@ -299,8 +300,12 @@ const Home: React.FC<{
 			setMessageRef(data);
 			socket.off();
 		})
+		if (state === "")
+		{
+			setUsers(userInfo.friends);
+		}
 		if (state === "DM") {
-			// console.log(`user id = ${id2}`)
+			console.log(`user id = ${id2}`)
 			socket.emit("createDm_client", parseInt(id2), (data : any) => {
 				setChoosenChat(() => ({ username: "Direct Messages", _id: id2}));
 				getAUser(parseInt(id2)).then((data) =>
@@ -309,10 +314,10 @@ const Home: React.FC<{
 				})
 
 				// setSelectedUserDM()
-				console.log(`data id = ${data.id}`);
+				// console.log(`data id = ${data.id}`);
 				getDmMessages(data.id)
 					.then((res) => {
-						console.log("Message = ", res);
+						// console.log("Message = ", res);
 						setMessages1(res);
 					})
 					.catch((err) => console.log(err));
@@ -323,6 +328,17 @@ const Home: React.FC<{
 		if (state == "ROOM")
 		{
 			setChoosenChat(() => ({ username: "random", _id: id2 }));
+			getAllRooms().then((data) =>
+			{
+				// console.log(data);
+				data.map((room : roomModal) => {
+					if (room.id === parseInt(id2))
+					{
+						setChoosenChat(() => ({username : room.name, _id: id2}));
+						
+					}
+				})
+			})
 			getRoomUsers(id2)
 				.then((res) => {
 

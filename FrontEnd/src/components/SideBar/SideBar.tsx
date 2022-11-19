@@ -99,10 +99,8 @@ const SideBar: React.FC <{
                                         }
                                         coll = "BIOS"
                                         key={user.id.toString()}
-                                        name={user.name}
-                                        notifications={user.notifications}
-                                        img={user.avatar}
-                                        onlineUsers={onlineUsers}
+                                        user = {user}
+                                        // onlineUsers={onlineUsers}
                                     />
                                     );
 
