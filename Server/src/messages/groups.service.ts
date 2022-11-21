@@ -349,14 +349,14 @@ export class GroupsService {
 			if (group.privacy == Privacy.DM)
 			{
 				// * check if the sender is included in the receiver's blocked list
-				const receiver_user = await this.userToGroupRepository
+				const join = await this.userToGroupRepository
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
 				.leftJoinAndSelect("userToGroup.group", "group")
 				.where("group.id = :group_id", {group_id : id_group})
 				.andWhere("user.id != :user_id", {user_id: id_user})
 				.getOne();
-				if (receiver_user?.user?.bloked?.includes(is_member.user))
+				if (join?.user?.bloked?.includes(is_member.user))
 				{
 					console.log("You are Bloked By this user");
 					return false;
