@@ -1,11 +1,12 @@
 export type RoomType = {
-	_id: string;
+	id: string;
 	name: string;
 	private: boolean;
 	password: string;
 	createdBy: UserType;
 	members: UserType[];
 	createdAt: Date;
+	avatar?: string;
 	updatedAt: Date;
 	messages: string[];
 	notifications?: number;
@@ -14,12 +15,18 @@ export type RoomType = {
 export type MessageType = {
 	_id: string;
 	roomId: string;
-	sendBy: { // in back end its a type User
-		_id: string;
-		username: string;
-	};
+	sendBy: UserType;
 	content: string;
 	updatedAt: Date;
+}
+export type MessageModal = {
+	roomId: string,
+	message: string;
+	userId: number;
+	userName: string;
+	date: Date;
+	currentUser: boolean;
+	avatar: string;
 }
 
 export type Game = {
@@ -69,7 +76,7 @@ export type AuthUserType = {
 
 export type ChatType = {
 	_id: string;
-	name: string;
+	username: string;
 }
 
 export interface User {
@@ -96,4 +103,61 @@ export enum Privacy {
 	PUBLIC = 'public',
 	PRIVATE = 'private',
 	PROTECTED = 'protected'
-}  
+} 
+
+export interface IFormInput {
+	name: string;
+	avatar?: string;
+	password?: string;
+	description?: string;
+	privacy: Privacy;
+  }
+
+export interface userModel
+{
+	id: number;
+	name: string;
+	avatar: string;
+	status : string;
+	notifications: number
+}
+
+export interface roomModal {
+	id: number;
+	name: string;
+	privacy: string;
+	avatar: string;
+	description: string;
+
+}
+//   export class CreateGroupDto {
+
+//     @ApiProperty()
+//     @MinLength(3)
+//     @MaxLength(20)
+//     @IsAlphanumeric()
+//     name: string;
+
+//     @ApiProperty()
+//     @IsOptional()
+//     @IsString()
+//     avatar?: string;
+
+//     @ApiProperty()
+//     @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)
+//     @IsNotEmpty()
+// 	@IsString()
+// 	@MinLength(8)
+//     @MaxLength(20)
+//     password?: string;
+
+//     @ApiProperty()
+//     @IsOptional()
+// 	@MaxLength(500)
+//     @IsString()
+//     description?: string;
+
+//     @ApiProperty()
+//     @IsOptional()
+//     @IsString()
+//     privacy?: Privacy;

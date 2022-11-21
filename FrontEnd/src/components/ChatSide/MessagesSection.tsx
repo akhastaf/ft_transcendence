@@ -1,35 +1,39 @@
 
 import { useEffect, useRef } from "react";
-import { MessageType } from "../Types/types";
+import { MessageModal, MessageType } from "../Types/types";
 import moment from 'moment';
 
 
 
-const channel1 = require('../../images/wolf.png');
+
 const MessagesSection : React.FC <{
-    messages: MessageType[];
+    messages: MessageModal[];
 
 }> = ({messages}) => {
 
 
 	const messageListRef = useRef<HTMLDivElement>(null);
+	// let rev : MessageModal[] = messages.reverse();
 
 	useEffect(() => {
 		messageListRef.current?.scrollIntoView({ behavior: "smooth" });
+
 	}, [messages]);
 
 
     return (<>
     
     <div className="flex-grow m-4 flex flex-col my-10 gap-12 overflow-y-scroll scrollbar-hide ">
-			{messages.map((message: MessageType, idx) => (
-				<MessageCard
-					key={message._id + "" + idx}
-					time={moment(message.updatedAt).format(
+			{messages.map((message: MessageModal, idx) => (
+				
+				message && <MessageCard
+					key={message.userId + "" + idx}
+					time={moment(message.date).format(
 						"MMM D, YYYY [at] HH:mm"
 					)}
-					sender={message.sendBy.username}
-					content={message.content}
+					sender={message.userName}
+					content={message.message}
+					img={message.avatar}
 				/>
 			))}
 			<div ref={messageListRef} />
@@ -42,7 +46,9 @@ const MessageCard: React.FC<{
 	content: string;
 	sender: string;
 	time: string;
-}> = ({ content, sender, time }) => {
+	img : string;
+}> = ({ content, sender, time , img}) => {
+	
 	return (
 		<div className="flex items-center p-1 pl-5 my-0 mr-2 hover:bg-[#32353B] group">
 			<img
@@ -50,7 +56,7 @@ const MessageCard: React.FC<{
 				height={40}
 				className="h-10 rounded-full cursor-pointer mr-3 hover:shadow-2x"
 				// src={`${process.env.REACT_APP_AVATARS_URL}/api/avatar?name=${sender}`}
-				 src={channel1}
+				 src={img}
 				alt=""
 			/>
 			<div>

@@ -61,7 +61,7 @@ const UserCard: React.FC<{
     }
 
     return <>
-        <div className="md:invisible flex h-full flex-col gap-5 ">
+        <div className=" invisible sm:visible flex h-full flex-col gap-5 ">
             <div id="up div" className="flex flex-row  justify-around ">
                 <h1 className="float-left font-bold left-0"> My Account </h1>
                 <button

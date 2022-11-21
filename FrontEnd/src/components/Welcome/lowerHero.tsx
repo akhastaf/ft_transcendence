@@ -1,10 +1,10 @@
 import React from 'react';
-import '../index.css';
+// import '../index.css';
 
 function LowerHero() {
   return (
     <>
-    <div className="bg-gradient-to-r from-green-400 to-blue-500 sm:h-[50vh] md:h-[55vh] lg:flex lg:flex-col lg:items-center paa">
+    <div className="hidden sm:visible bg-gradient-to-r from-green-400 to-blue-500 sm:h-[50vh] md:h-[55vh] lg:flex lg:flex-col lg:items-center">
     <hr className="border-gray-700 border w-100 mx-auto" />
         <div className="flex-row lg:justify-content">
           <div>

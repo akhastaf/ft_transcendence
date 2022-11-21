@@ -1,8 +1,8 @@
 import React from 'react';
 import { GiPingPongBat } from "react-icons/gi";
 import {GiChatBubble} from "react-icons/gi";
-import TeamSection from './Home/DevCard';
-import DevCard from './Home/DevCard';
+import TeamSection from '../Home/DevCard';
+// import DevCard from '../Home/DevCard';
 // import ReactPlayer from 'react-player';
 // import LowerHero from './lowerHero.js';
 // import Video from './video.js'
@@ -13,7 +13,7 @@ function Hero() {
    
     <div className="bg-gradient-to-r from-green-400 to-blue-500 pb-8 md:pb-0 lg:flex lg:flex-col lg:items-center paa">
       
-        <div className="p-7 py-9 h-screen sm:h-[60vh] md:h-[40vh] md:flex lg:items-center">
+        <div className="p-7 py-9  h-full sm:h-[60vh] md:h-[40vh] md:flex lg:items-center">
             <div className="flex flex-col gap-7 md:max-w-md lg:max-w-none lg:justify-center">
                 <h1 className="text-5xl text-white font-bold"> Enjoy The Arcade World </h1>
                 <h2 className="text-white arcade text-lg font-light tracking-wide lg:max-w-3xl w-full"> 

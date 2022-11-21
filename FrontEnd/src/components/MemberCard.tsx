@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatType, UserType } from './Types/types';
+import { ChatType, userModel, UserType } from './Types/types';
 
 
 
@@ -7,51 +7,52 @@ import { ChatType, UserType } from './Types/types';
 
 const MemberCard : React.FC<{
     //choosenChat: ChatType,
-    notifications: number | undefined;
-	name: string;
-	img: string;
-    coll: string;
-    key: string
+   
+	
+	
+    user : userModel,
+    // key: string
+    coll : string
 	onClick: (user: string) => void;
-	onlineUsers: string[];
-}> =  ({ notifications, name , key, img, onClick, onlineUsers, coll }) => {
+	// onlineUsers: string[];
+}> =  ({ user, onClick, coll  }) => {
 
-    const isOnline =  onlineUsers.includes(name) ? "online" : "offline";
-    const Memberstat = isOnline === "online" ? "online text-green-400" : isOnline === "offline" ? "offline text-red-500" :  "in-game text-blue-500" ;
+    // const isOnline =  onlineUsers.includes(name) ? "online" : "offline";
+    const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" :  "in-game text-blue-500" ;
     const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" :  coll === "Pandora" ? "text-[#b61282]" : "None";
     return (
 
-        <div  className={ key + " " + `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
+        <div  className={ `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
                             
                             
 
                             
                             <div className="flex items-center p-2 gap-3" 
                             onClick={() => {
-                                onClick(name);
+                                onClick(user.name);
                             }}
                             >
                                 {/* to work on css bellow */}
                             <div className="position-relative">
-                                 {notifications && notifications > 0 ? (
+                                 {user.notifications && user.notifications > 0 ? (
 						             <div className="notification-bubble"> 
                                     
-						             	{notifications}
+						             	{user.notifications}
 						             </div>
 					             ) : null}
 					            <img
 					            	width={32}
 					            	height={32}
 					            	className="rounded-circle"
-					            	src={img}
+					            	src={user.avatar}
 					            	alt=""
 					            />
                             </div>
-                            <h4 className={` ${MemberColl} + font-semibold text-white important `} >{name}</h4>
+                            <h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
                             </div>
                             <div className="ml-auto">
                             <h6 className={`${ Memberstat} +  text-xs `}>
-                                {isOnline === "online" ? "Online" :  isOnline === "offline" ? "Offline" : "in-game"}
+                                {user.status === "online" ? "Online" :  user.status === "offline" ? "Offline" : "in-game"}
                             </h6>
 						</div>
                 </div>
