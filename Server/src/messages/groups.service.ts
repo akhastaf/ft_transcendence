@@ -330,4 +330,57 @@ export class GroupsService {
 			console.log("Error joinGroup");
 		}
 	}
+
+	// * ############################################# isAllowed ##############################
+
+	async isAllowed(id_user: number, id_group: number)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, id_group);
+			if (!is_member)
+			{
+				console.log("You are not allowed to send a message to this group");
+				return false;
+			}
+			const group = await this.groupRepository.findOneOrFail(
+				{ where : {id : id_group}}
+			);
+			if (group.privacy == Privacy.DM)
+			{
+				// * check if the sender is included in the receiver's blocked list
+				const receiver_user = await this.userToGroupRepository
+				.createQueryBuilder("userToGroup")
+				.leftJoinAndSelect("userToGroup.user", "user")
+				.leftJoinAndSelect("userToGroup.group", "group")
+				.where("group.id = :group_id", {group_id : id_group})
+				.andWhere("user.id != :user_id", {user_id: id_user})
+				.getOne();
+				if (receiver_user?.user?.bloked?.includes(is_member.user))
+				{
+					console.log("You are Bloked By this user");
+					return false;
+				}
+				return true;
+			}
+			let date = new Date;
+			if (is_member.status == Status.BANNED || is_member.status == Status.MUTED)
+			{
+				if (is_member.until > date)
+					return false;
+				else
+				{
+					is_member.status = Status.ACCEPTED;
+					is_member.until = null;
+					await this.userToGroupRepository.save(is_member);
+					return true;
+				}
+			}
+			return true;
+		}
+		catch(e)
+		{
+			console.log("Error isAllowed");
+		}
+	}
 }
