@@ -80,4 +80,15 @@ export class GroupController {
 		return arr;
 	}
 
+	//* get blocked users
+	@Get('blocked-users/:id')
+	async getBlockedUsers(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id_group: number) {
+		return await this.groupsService.getBockedUser(req.user.id, id_group);
+	}
+
+	//* Get user role by channel
+	@Get('role/:id')
+	async getRole(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id_group: number) {
+		return await this.groupsService.getUserRole(req.user.id, id_group);
+	}
   }

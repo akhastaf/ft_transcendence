@@ -4,7 +4,7 @@ import { Group, Privacy } from './entities/group.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { Role, Status, UserToGroup } from './entities/usertogroup.entity';
 import { User } from 'src/user/entities/user.entity';
-import { channelModel } from 'src/types';
+import { channelModel, memberModel } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import * as bcrypt from 'bcryptjs';
 import { addUserDto } from './dto/add-user.dto';
@@ -166,7 +166,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar', 'user.status'])
+			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar', 'user.status', 'userToGroup.role'])
 			.where("group.id = :group_id", {group_id : group_id})
 			.getMany();
 			
@@ -281,10 +281,6 @@ export class GroupsService {
 			const join = await this.isGroupMember(id_user, info.id_group);
 			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
 			{
-				// const dto = new joinGroupDto;
-				// dto.id_group = info.id_group;
-				// if (info.password)
-				// 	dto.password = info.password;
 				const dto:joinGroupDto = info;
 				return await this.joinGroup(id_user, dto);
 			}
@@ -296,9 +292,82 @@ export class GroupsService {
 			console.log("Error addUser");
 		}
 	}
-	
-	//* ############################################# add User ##############################
 
+//* ############################################# getUserRole ##############################
+
+	async getUserRole(id_user: number, id_group: number){
+		try
+		{
+			const role = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("group.id = :group_id", {group_id : id_group})
+			.andWhere("user.id = :user_id", {user_id: id_user})
+			.getOne();
+			return role?.role;	
+		}
+		catch(e)
+		{
+			console.log("Error getUserRole");
+		}
+	}
+
+
+	//* ############################################# getBockedUser ##############################
+
+	async getBockedUser(id_user: number, id_group: number){
+		try
+		{
+			const blocked = await this.userRepository
+			.createQueryBuilder("user")
+			.leftJoinAndSelect("user.bloked", "blocked")
+			.where("user.id = :user_id", {user_id: id_user})
+			.select(['user.id', 'blocked.id', 'blocked.username', 'blocked.avatar'])
+			.getOne();
+			if (blocked)
+			{
+				const array = new Array();
+				blocked.bloked.forEach(element => {
+					let user = new memberModel();
+					user.id = element.id;
+					user.name = element.username;
+					user.avatar = element.avatar;
+					array.push(user);
+				});
+				return array;
+			}
+			return null;
+		}
+		catch(e)
+		{
+			console.log("Error getBockedUser");
+		}
+	}
+
+	//* ############################################# remove User ##############################
+
+	async removeUser(id_user: number, info:addUserDto)
+	{
+		try{
+			const join = await this.isGroupMember(id_user, info.id_group);
+			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
+			{
+				const user = await this.getUserRole(info.id_user, info.id_group);
+				if (join?.role === Role.ADMIN && user === Role.OWNER)
+					throw new Error("You can't remove the owner");
+				const kicked = await this.leaveGroup(info.id_user, {... info});
+				return kicked;
+			}
+		}
+		catch(e)
+		{
+			console.log("Error removeUser");
+		}
+	}
+				
+	//* ############################################# leaveGroup ##############################
+//! You should check if the if the user is the owner of the group.
 	async leaveGroup(id_user: number, groupdto:joinGroupDto){
 		try
 		{
@@ -314,6 +383,39 @@ export class GroupsService {
 			{
 				if (!await bcrypt.compare(groupdto.password, group.password))
 					throw new Error("Wrong password");
+			}
+			const role = await this.getUserRole(id_user, groupdto.id_group);
+			if (role === Role.OWNER)
+			{
+				const members = await this.getMemberByChannel(groupdto.id_group, id_user);
+				//! hadi tar9i3a, here i should remove the grp
+				if (members.length == 1)
+					throw new Error("You can't leave the group");
+				else
+				{
+					const admin = await members.find(async element => {
+						if (element.role === Role.ADMIN)
+						{
+							group.owner = element.user;
+							await this.groupRepository.save(group);
+							element.role = Role.OWNER;
+							await this.userToGroupRepository.save(element);
+						}
+					});
+					if (!admin)
+					{
+						await members.find(async element => {
+							if (element.role !== Role.ADMIN)
+							{
+								group.owner = element.user;
+								await this.groupRepository.save(group);
+								element.role = Role.OWNER;
+								await this.userToGroupRepository.save(element);
+							}
+						});
+					}
+				}
+
 			}
 			const joined = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
@@ -349,19 +451,22 @@ export class GroupsService {
 			if (group.privacy == Privacy.DM)
 			{
 				// * check if the sender is included in the receiver's blocked list
-				const receiver_user = await this.userToGroupRepository
+				const join = await this.userToGroupRepository
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
 				.leftJoinAndSelect("userToGroup.group", "group")
+				.leftJoinAndSelect("user.bloked", "blocked")
 				.where("group.id = :group_id", {group_id : id_group})
 				.andWhere("user.id != :user_id", {user_id: id_user})
 				.getOne();
-				if (receiver_user?.user?.bloked?.includes(is_member.user))
-				{
-					console.log("You are Bloked By this user");
-					return false;
-				}
-				return true;
+				const is_blocked = join?.user?.bloked?.some(el => el.id === is_member.user.id);
+				const user = await this.userRepository
+				.createQueryBuilder("user")
+				.leftJoinAndSelect("user.bloked", "blocked")
+				.where("user.id = :user_id", {user_id: id_user})
+				.getOne();
+				const is_blocked2 = user?.bloked?.some(el => el.id === join.user.id);
+				return !is_blocked && !is_blocked2;
 			}
 			let date = new Date;
 			if (is_member.status == Status.BANNED || is_member.status == Status.MUTED)
@@ -383,4 +488,26 @@ export class GroupsService {
 			console.log("Error isAllowed");
 		}
 	}
+
+	// * ############################################# set Admin ##############################
+
+	// async setAdmin(id_user: number, data: addUserDto)
+	// {
+	// 	try
+	// 	{
+	// 		const is_member = await this.isGroupMember(id_user, data.id_group);
+	// 		if (!is_member || is_member.role !== Role.OWNER)
+	// 		{
+	// 			console.log("You are not allowed to set admin");
+	// 			return false;
+	// 		}
+	// 		const join = await this.userToGroupRepository
+
+
+	// 	}
+	// 	catch(e)
+	// 	{
+	// 		console.log("Error setAdmin");
+	// 	}
+	// }
 }
