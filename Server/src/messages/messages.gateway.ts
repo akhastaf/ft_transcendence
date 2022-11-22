@@ -60,30 +60,52 @@ export class MessagesGateway {
 	// }
 
 	//* ################################################# Group ###############################################################
-	//*** 1- joinGoup   *******///
-
-	@SubscribeMessage('joinGroup_client')
-	async joinGroup(@MessageBody() joinGroup:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
-		// console.log('join group ', createUserToGroup, client.id);
-		const group = await this.groupsService.joinGroup(client.userId, joinGroup);
-		const message = await this.messagesService.identify(client.userId);
-		// client.join("__group_"+group.name);
-		this.server.to(client.userId.toString()).emit('joinGroup_sever', message);
-	}
-
-	// @SubscribeMessage('checkDm_client')
-	// async isDmCreated(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
-	// 	const is_created = await this.groupsService.isDmCreated(client.userId, second_user_id);
-	// 	this.server.to(client.userId.toString()).emit('checkDm_server', is_created);
-	// 	return is_created;
-	// }
-
+	
+	
+	//*** 1- createDm */
 	@SubscribeMessage('createDm_client')
 	async createDm(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
 		const dm = await this.groupsService.createDm(client.userId, second_user_id);
 		this.server.to(client.userId.toString()).emit('createDm_server', dm);
 		return dm;
 	}
+	
+	//*** 2- joinGoup   */
+
+	@SubscribeMessage('joinGroup_client')
+	async joinGroup(@MessageBody() joinGroup:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
+		// console.log('join group ', createUserToGroup, client.id);
+		const group = await this.groupsService.joinGroup(client.userId, joinGroup);
+		const message = await this.messagesService.identify(client.userId, 'has joined the channel');
+		// client.join("__group_"+group.name);
+		// this.server.to(client.userId.toString()).emit('joinGroup_sever', message);
+		const members = await this.groupsService.getMemberByChannel(joinGroup.id_group, client.data.id);
+		//* send to all users in the room
+		for (const member of members) {
+			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
+			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
+			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+				this.server.to(member.user.id.toString()).emit('joinGroup_server', message);
+			}
+		}
+	}
+
+	//*** 3- leaveGroup   */
+	@SubscribeMessage('leaveGroup_client')
+	async leaveGroup(@MessageBody() groupdto:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
+		const group = await this.groupsService.leaveGroup(client.userId, groupdto);
+		const message = await this.messagesService.identify(client.userId, 'has left the channel');
+		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
+		//* send to all users in the room
+		for (const member of members) {
+			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
+			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
+			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+				this.server.to(member.user.id.toString()).emit('leaveGroup_server', message);
+			}
+		}
+	}
+
 
 	//* ################################################# Client connected ###############################################################
 
