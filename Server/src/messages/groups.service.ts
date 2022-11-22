@@ -316,7 +316,7 @@ export class GroupsService {
 
 	//* ############################################# getBockedUser ##############################
 
-	async getBockedUser(id_user: number, id_group: number){
+	async getBockedUser(id_user: number){
 		try
 		{
 			const blocked = await this.userRepository
