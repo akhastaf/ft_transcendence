@@ -1,9 +1,14 @@
-import { IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateMessageDto {
-	content: string;
-	// @IsNotEmpty()
-	// sender_id: number;
+	@ApiProperty()
 	@IsNotEmpty()
+	@IsString()
+	content: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsNumber()
 	receiver_id: number;
 }
