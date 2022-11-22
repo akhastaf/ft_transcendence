@@ -47,9 +47,9 @@ export class MessagesService {
 
 // #######################################################################################
 //! hadi still ma5damtch biha, but its usefull 
-	async identify(id : number) {
+	async identify(id : number, msg: string) {
 		const name = await this.getClientName(id);
-		const message = { name, message: 'has joined the chat' };
+		const message = { name, message: msg };
 		return message;
 		// return Object.values(this.clientToUser); // whose connected
 	}
