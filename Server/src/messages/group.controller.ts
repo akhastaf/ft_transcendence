@@ -86,9 +86,20 @@ export class GroupController {
 		return await this.groupsService.getBockedUser(req.user.id);
 	}
 
+	@Get('friend-users')
+	async getFriendsUser(@Req() req: RequestWithUser) {
+		return await this.groupsService.getFriendsUser(req.user.id);
+	}
+
 	//* Get user role by channel
 	@Get('role/:id')
 	async getRole(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id_group: number) {
 		return await this.groupsService.getUserRole(req.user.id, id_group);
+	}
+
+	//* Set admin role
+	@Post('set-admin/:id')
+	async setAdmin(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id_group: number) {
+		return await this.groupsService.setAdmin(req.user.id, id_group);
 	}
   }

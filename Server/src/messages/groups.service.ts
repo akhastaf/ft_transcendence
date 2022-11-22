@@ -344,6 +344,36 @@ export class GroupsService {
 			console.log("Error getBockedUser");
 		}
 	}
+	//* ############################################# getFriendsUser ##############################
+
+	async getFriendsUser(id_user: number){
+		try
+		{
+			const friends = await this.userRepository
+			.createQueryBuilder("user")
+			.leftJoinAndSelect("user.friends", "friends")
+			.where("user.id = :user_id", {user_id: id_user})
+			.select(['user.id', 'friends.id', 'friends.username', 'friends.avatar'])
+			.getOne();
+			if (friends)
+			{
+				const array = new Array();
+				friends.friends.forEach(element => {
+					let user = new memberModel();
+					user.id = element.id;
+					user.name = element.username;
+					user.avatar = element.avatar;
+					array.push(user);
+				});
+				return array;
+			}
+			return null;
+		}
+		catch(e)
+		{
+			console.log("Error getFriendsUser");
+		}
+	}
 
 	//* ############################################# remove User ##############################
 
@@ -491,23 +521,35 @@ export class GroupsService {
 
 	// * ############################################# set Admin ##############################
 
-	// async setAdmin(id_user: number, data: addUserDto)
-	// {
-	// 	try
-	// 	{
-	// 		const is_member = await this.isGroupMember(id_user, data.id_group);
-	// 		if (!is_member || is_member.role !== Role.OWNER)
-	// 		{
-	// 			console.log("You are not allowed to set admin");
-	// 			return false;
-	// 		}
-	// 		const join = await this.userToGroupRepository
-
-
-	// 	}
-	// 	catch(e)
-	// 	{
-	// 		console.log("Error setAdmin");
-	// 	}
-	// }
+	async setAdmin(id_user: number, id_group: number)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to set admin");
+				return false;
+			}
+			const join = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("group.id = :group_id", {group_id : id_group})
+			.andWhere("user.id = :user_id", {user_id: id_user})
+			.getOne();
+			if (!join)
+			{
+				console.log("This user is not a member of this group");
+				return false;
+			}
+			join.role = Role.ADMIN;
+			await this.userToGroupRepository.save(join);
+			return true;
+		}
+		catch(e)
+		{
+			console.log("Error setAdmin");
+		}
+	}
 }
