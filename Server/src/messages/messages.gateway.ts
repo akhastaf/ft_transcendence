@@ -6,6 +6,7 @@ import { GroupsService } from './groups.service';
 import { SocketWithUserId } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import { Userstatus } from 'src/user/entities/user.entity';
+import { addUserDto } from './dto/add-user.dto';
 
 @WebSocketGateway({
 	cors: {
@@ -61,8 +62,16 @@ export class MessagesGateway {
 
 	//* ################################################# Group ###############################################################
 	
+	//*** 1- createDm
+	//*** 2- joinGroup
+	//*** 3- leaveGroup
+	//*** 4- addUser
+	//*** 5- removeUser
+
+	// * ######################################################################################################################
 	
 	//*** 1- createDm */
+
 	@SubscribeMessage('createDm_client')
 	async createDm(@MessageBody() second_user_id:number, @ConnectedSocket() client: SocketWithUserId) {
 		const dm = await this.groupsService.createDm(client.userId, second_user_id);
@@ -82,8 +91,6 @@ export class MessagesGateway {
 		const members = await this.groupsService.getMemberByChannel(joinGroup.id_group, client.data.id);
 		//* send to all users in the room
 		for (const member of members) {
-			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
-			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
 			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
 				this.server.to(member.user.id.toString()).emit('joinGroup_server', message);
 			}
@@ -98,14 +105,46 @@ export class MessagesGateway {
 		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
 		//* send to all users in the room
 		for (const member of members) {
-			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
-			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
 			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
 				this.server.to(member.user.id.toString()).emit('leaveGroup_server', message);
 			}
 		}
 	}
 
+
+	// *** 4- add user   */
+	@SubscribeMessage('addUser_client')
+	async addUser(@MessageBody() data: addUserDto, @ConnectedSocket() client: SocketWithUserId) {
+		const is_added = await this.groupsService.addUser(client.userId, data);
+		if (is_added)
+		{
+			const message = await this.messagesService.identify(data.id_user, 'has been added to the channel');
+			const members = await this.groupsService.getMemberByChannel(data.id_group, client.data.id);
+			//* send to all users in the room
+			for (const member of members) {
+				if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+					this.server.to(member.user.id.toString()).emit('addUser_server', message);
+				}
+			}
+		}
+	}
+
+	// *** 5- remove user   */
+	@SubscribeMessage('removeUser_client')
+	async removeUser(@MessageBody() data: addUserDto, @ConnectedSocket() client: SocketWithUserId) {
+		const is_removed = await this.groupsService.removeUser(client.userId, data);
+		if (is_removed)
+		{
+			const message = await this.messagesService.identify(data.id_user, 'has been removed from the channel');
+			const members = await this.groupsService.getMemberByChannel(data.id_group, client.data.id);
+			//* send to all users in the room
+			for (const member of members) {
+				if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+					this.server.to(member.user.id.toString()).emit('removeUser_server', message);
+				}
+			}
+		}
+	}
 
 	//* ################################################# Client connected ###############################################################
 
