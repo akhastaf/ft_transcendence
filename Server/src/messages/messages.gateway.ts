@@ -34,7 +34,7 @@ export class MessagesGateway {
 	@SubscribeMessage('sendMessage_client')
 	async sendMessage(@MessageBody() createMessageDto: CreateMessageDto, @ConnectedSocket() client: Socket) {
 		//! you can send a message to a group only if you are in it
-		const is_allowed = await this.groupsService.isGroupMember(client.data.id, createMessageDto.receiver_id);
+		const is_allowed = await this.groupsService.isAllowed(client.data.id, createMessageDto.receiver_id);
 		if (!is_allowed)
 		{
 			console.log("You are not allowed to send a message to this group");

@@ -502,7 +502,7 @@ export class GroupsService {
 				const is_blocked2 = user?.bloked?.some(el => el.id === join.user.id);
 				return !is_blocked && !is_blocked2;
 			}
-			let date = new Date;
+			let date = new Date();
 			if (is_member.status == Status.BANNED || is_member.status == Status.MUTED)
 			{
 				if (is_member.until > date)
