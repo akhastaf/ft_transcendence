@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { channelModel, memberModel, RequestWithUser } from 'src/types';
+import { addUserDto } from './dto/add-user.dto';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
@@ -86,9 +87,25 @@ export class GroupController {
 		return await this.groupsService.getBockedUser(req.user.id);
 	}
 
+	@Get('friend-users')
+	async getFriendsUser(@Req() req: RequestWithUser) {
+		return await this.groupsService.getFriendsUser(req.user.id);
+	}
+
 	//* Get user role by channel
 	@Get('role/:id')
 	async getRole(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id_group: number) {
 		return await this.groupsService.getUserRole(req.user.id, id_group);
+	}
+
+	//* Set admin role
+	@Post('set-admin')
+	async setAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
+		return await this.groupsService.setAdmin(req.user.id, data);
+	}
+	//* Unset admin role
+	@Post('unset-admin')
+	async unsetAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
+		return await this.groupsService.unsetAdmin(req.user.id, data);
 	}
   }

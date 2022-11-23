@@ -9,9 +9,14 @@ import { AchievmentModule } from './achievment/achievment.module';
 import { GameModule } from './game/game.module';
 import { CaslModule } from './casl/casl.module';
 import { MessagesModule } from './messages/messages.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     AuthModule,

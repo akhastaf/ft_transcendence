@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { type } from "os";
 import { Socket } from "socket.io";
 import { User } from "./user/entities/user.entity";
 
@@ -38,4 +39,9 @@ export class memberModel
 	name: string;
 	avatar: string;
 	status : string;
+}
+
+export type tokens = {
+	access_token: string,
+	refresh_token: string
 }

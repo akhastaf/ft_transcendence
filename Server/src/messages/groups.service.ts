@@ -344,6 +344,36 @@ export class GroupsService {
 			console.log("Error getBockedUser");
 		}
 	}
+	//* ############################################# getFriendsUser ##############################
+
+	async getFriendsUser(id_user: number){
+		try
+		{
+			const friends = await this.userRepository
+			.createQueryBuilder("user")
+			.leftJoinAndSelect("user.friends", "friends")
+			.where("user.id = :user_id", {user_id: id_user})
+			.select(['user.id', 'friends.id', 'friends.username', 'friends.avatar'])
+			.getOne();
+			if (friends)
+			{
+				const array = new Array();
+				friends.friends.forEach(element => {
+					let user = new memberModel();
+					user.id = element.id;
+					user.name = element.username;
+					user.avatar = element.avatar;
+					array.push(user);
+				});
+				return array;
+			}
+			return null;
+		}
+		catch(e)
+		{
+			console.log("Error getFriendsUser");
+		}
+	}
 
 	//* ############################################# remove User ##############################
 
@@ -351,6 +381,8 @@ export class GroupsService {
 	{
 		try{
 			const join = await this.isGroupMember(id_user, info.id_group);
+			if (!join)
+				return null;
 			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
 			{
 				const user = await this.getUserRole(info.id_user, info.id_group);
@@ -359,6 +391,8 @@ export class GroupsService {
 				const kicked = await this.leaveGroup(info.id_user, {... info});
 				return kicked;
 			}
+			else
+				throw new Error("Permissiom denied");
 		}
 		catch(e)
 		{
@@ -468,7 +502,7 @@ export class GroupsService {
 				const is_blocked2 = user?.bloked?.some(el => el.id === join.user.id);
 				return !is_blocked && !is_blocked2;
 			}
-			let date = new Date;
+			let date = new Date();
 			if (is_member.status == Status.BANNED || is_member.status == Status.MUTED)
 			{
 				if (is_member.until > date)
@@ -491,23 +525,69 @@ export class GroupsService {
 
 	// * ############################################# set Admin ##############################
 
-	// async setAdmin(id_user: number, data: addUserDto)
-	// {
-	// 	try
-	// 	{
-	// 		const is_member = await this.isGroupMember(id_user, data.id_group);
-	// 		if (!is_member || is_member.role !== Role.OWNER)
-	// 		{
-	// 			console.log("You are not allowed to set admin");
-	// 			return false;
-	// 		}
-	// 		const join = await this.userToGroupRepository
+	async setAdmin(id_user: number, data: addUserDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to set admin");
+				return false;
+			}
+			const join = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("group.id = :group_id", {group_id : data.id_group})
+			.andWhere("user.id = :user_id", {user_id: data.id_user})
+			.getOne();
+			if (!join)
+			{
+				console.log("This user is not a member of this group");
+				return false;
+			}
+			join.role = Role.ADMIN;
+			await this.userToGroupRepository.save(join);
+			return true;
+		}
+		catch(e)
+		{
+			console.log("Error setAdmin");
+		}
+	}
 
+	// * ############################################# unset Admin ##############################
 
-	// 	}
-	// 	catch(e)
-	// 	{
-	// 		console.log("Error setAdmin");
-	// 	}
-	// }
+	async unsetAdmin(id_user: number, data: addUserDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to set admin");
+				return false;
+			}
+			const join = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("group.id = :group_id", {group_id : data.id_group})
+			.andWhere("user.id = :user_id", {user_id: data.id_user})
+			.getOne();
+			if (!join)
+			{
+				console.log("This user is not a member of this group");
+				return false;
+			}
+			join.role = Role.MEMBER;
+			await this.userToGroupRepository.save(join);
+			return true;
+		}
+		catch(e)
+		{
+			console.log("Unset setAdmin");
+		}
+	}
 }
