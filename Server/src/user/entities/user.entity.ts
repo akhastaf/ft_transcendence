@@ -61,10 +61,6 @@ export class User {
     @ManyToMany(() => Achievment, (achievment) => achievment.users)
     @JoinTable()
     achievments: Achievment[];
-
-    // @ManyToMany(() => User, (user) => user.friends)
-    // @JoinTable()
-    // friends: User[];
     
     @ManyToMany(() => User, (user) => user.bloked)
     @JoinTable()
@@ -75,15 +71,21 @@ export class User {
     gamesAsFirst: Game[];
     @OneToMany(() => Game, (game) =>game.player2)
     gamesAsSecond: Game[];
-    @OneToMany(type => Message, message => message.sender)
+
+
+    @OneToMany(() => Message, message => message.sender)
 	messages: Message[];
-	@OneToMany(type => Group, group => group.owner)
+	@OneToMany(() => Group, group => group.owner)
 	groups: Group[];
-	@OneToMany(type => UserToGroup, usertogroup => usertogroup.user)
+	@OneToMany(() => UserToGroup, usertogroup => usertogroup.user)
 	usertogroup: UserToGroup[];
+
 	@ManyToMany(() => User, (user) => user.friends)
     @JoinTable()
     friends: User[];
+    @ManyToMany(() => User, (user) => user.userfriends)
+    userfriends: User[];
+
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
