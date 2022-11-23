@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import { io, Socket } from "socket.io-client";
 // import { getAllRomsAndUsersApi } from "../Services/room";
-import {    ChatType, userModel, UserType } from "../Types/types";
+import {    ChatType, Role, userModel, UserType } from "../Types/types";
 import {ChevronDownIcon, CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
 // import ChannelIcon from '../ChannelIcon';
 // import {IoCompassOutline } from 'react-icons/io5';
@@ -14,6 +14,8 @@ import  MemberCard  from '../MemberCard';
 // import {  Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 // import ChannelList from "./ChannelList";
 import SideBarE from "../EditProfil/SideBarE";
+import { useNavigate } from "react-router-dom";
+// import Context from './context'
 
 
 // let socket : Socket;
@@ -33,8 +35,8 @@ import SideBarE from "../EditProfil/SideBarE";
 // 	login :string;
 // 	// channels:  Channels[];
 // }
-const isAdmin = false // TODO to be feteched from localdata
-const show = isAdmin ? null : "invisible";
+// const isAdmin = false // TODO to be feteched from localdata
+// const show = isAdmin ? null : "invisible";
 
 const addUsers = () => {
 	const username = prompt("Enter username");
@@ -53,16 +55,19 @@ const SideBar: React.FC <{
 	selectedUserDM: (user: ChatType) => void;
 	onlineUsers: string[];
 	logoutHandler: () => void;
+  role : Role;
 
-}> =  ({ users, currentUser, choosenChat, selectedUserDM, onlineUsers, logoutHandler }) => {
+}> =  ({ users, currentUser, choosenChat, selectedUserDM, onlineUsers, logoutHandler, role }) => {
 
-	// const Navigate = useNavigate();
+	const Navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
 
     const openModal = () => {
         // console.log("hello world!");
         setShowModal(true);
+        // Navigate("/EditInfo");
+        
     };
     useEffect(() =>
     {
@@ -82,7 +87,7 @@ const SideBar: React.FC <{
 
 			<div className = "bg-discord_secondSideBar flex flex-col min-win-max">
 				<h2 className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.username } {choosenChat.username === "" && "FRIENDS"} <ChevronDownIcon className="h-4 ml-2"/> </h2>
-					<div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide  ">
+          <div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide  ">
 						{/* <div className="flex items-center p-2 mb-2"> */}
                         {
                           
@@ -107,10 +112,12 @@ const SideBar: React.FC <{
 
                                       })
                             }
-						{/* </div> */}
-					<div className={`${show} server-default group`}>
+						
+					{
+            (role === Role.ADMIN || role === Role.OWNER ) && <div className={`server-default group`}>
 						<PlusIcon className="text-emerald-400 h-7 w-12 group-hover:text-white" onClick={addUsers}/>
 					</div>
+          }
 					
 					</div>
 					<div className="bg-[#292b2f] p-2 flex justify-between items-center space-x-8">
