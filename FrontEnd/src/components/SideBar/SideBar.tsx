@@ -105,6 +105,7 @@ const SideBar: React.FC <{
                                         coll = "BIOS"
                                         key={user.id.toString()}
                                         user = {user}
+                                        role={role}
                                         // onlineUsers={onlineUsers}
                                     />
                                     );

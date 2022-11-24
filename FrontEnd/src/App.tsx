@@ -4,16 +4,23 @@ import React from 'react';
 import Welcome from './components/Welcome/Welcome';
 import {
   BrowserRouter as Router,
+  Navigate,
+  Outlet,
   // Switch,
   Route,
   Routes,
+  useLocation,
   // Link,
 } from "react-router-dom";
 
 import Home from './components/Home';
 import Callback from './components/auth/42/callback';
 import EditProfile from './components/EditProfile';
-
+import useLocalStorage from './hooks/useLocalStorage';
+import { UserType } from './components/Types/types';
+import {socket, SocketContext} from './components/Services/sockets'
+import { useAuth } from './components/Services/auth';
+import { current } from '@reduxjs/toolkit';
 
 class App extends React.Component {
 
@@ -28,67 +35,127 @@ class App extends React.Component {
     return (
       <>
         <Router>
+              <SocketContext.Provider value={socket}>
           <Routes>
-            <Route path='/' element={<><Welcome /> </>}>
-            </Route>
-            <Route path='/channels' element={<> <Home state="HomeGAME" /></>}>
-            </Route>
-            <Route path='/channels/:' element={<> </>}>
+
+            <Route
+						path="/"
+						element={
+							<RequireNoAuth>
+								<Welcome />
+							</RequireNoAuth>
+						}
+					/>
+
+            {/* <Route path='/' element={<><Welcome /> </>}> </Route> */}
+            <Route
+						element={
+							<RequireAuth>
+								<Home state="HomeGAME" />
+							</RequireAuth>
+						}
+					>
+                <Route path='/channels' element={<>  <Home state="HomeGAME" /></>}>
+                </Route>
+                <Route path='/channels/:' element={<> </>}>
+                </Route>
+                {/* <Route path='/callback' element={<> <Callback /> </>} >
+                </Route> */}
+                <Route path='/EditInfo' element={<> <EditProfile /> </>} >
+                </Route>
+                <Route path='channels/allChannels' element={<> <Home state="allChannels" /> </>} >
+                </Route>
+                <Route path='channels/DM/:id' element={<> <Home state="DM" /> </>} >
+                </Route>
+                <Route path='channels/ROOM/:id' element={<> <Home state="ROOM" /> </>} >
+                </Route>
+                {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Route>
             <Route path='/callback' element={<> <Callback /> </>} >
-            </Route>
-            <Route path='/EditInfo' element={<> <EditProfile /> </>} >
-            </Route>
-            <Route path='channels/allChannels' element={<> <Home state="allChannels" /> </>} >
-            </Route>
-            <Route path='channels/DM/:id' element={<> <Home state="DM" /> </>} >
-            </Route>
-            <Route path='channels/ROOM/:id' element={<> <Home state="ROOM" /> </>} >
-            </Route>
+                </Route>
           </Routes>
+            </SocketContext.Provider>
         </Router>
       </>
     );
   }
 }
 
-// const App: React.FC = () => {
-
-//   componentDidMount() {
-//     console.log('componentDidMount() lifecycle');
-
-//     // Trigger update
-//     this.setState({ foo: !this.state.foo });
-//   }
-// // function App() {
-//   return (
-//     <>
-//         <Router>
-//         <Routes>
-//             <Route path='/' element={<><Header/><Hero/> <LowerHero/> </>}>
-//             </Route>
-//             <Route path='/channels' element={<> <Home/></>}>
-//             </Route>
-//             <Route path='/channels/:id' element={<> </>}>
-//             </Route>
-//         </Routes>
-//         </Router>
-//       </>
-//     // <div>
-//   );
-// };
 
 
-// const App: React.FC  {
-//   return (
-//     <Router>
-//     <Routes>
-//         <Route exact path='/' element={<><Header/><Hero/> <LowerHero/> </>}>
-//         </Route>
-//     </Routes>
-//     </Router>
-// // <div>
-// );
+export const RequireAuth = ({ children } : { children: JSX.Element } ) => {
 
+  const user : any = localStorage.getItem("currentUser");
+
+  console.log("req", user);
+  const location = useLocation();
+
+  if (isUserLoggedIn(user) === false)
+    return <Navigate to="/" state={{ from: location }} />;
+  // if (children)
+  //   return children;
+  return <Outlet />;
+};
+
+/**
+ * @param {object} children
+ * @breif will render the children login page if user is unauthenticated
+ * 			else will redirect to previous page
+ */
+export const RequireNoAuth = ({ children } : { children: JSX.Element }) => {
+  const user : any = localStorage.getItem("currentUser");
+  // console.log("not req", auth);
+  console.log("user in no req = ",user)
+  const location = useLocation();
+
+  if (isUserLoggedIn(user) === true)
+    return <Navigate to={"/channels"} />;
+
+    if (children)
+      return children;
+    return <Outlet />;
+};
+
+// eslint-disable-next-line
+// function RequireAuth({ children }: { children: JSX.Element }) {
+//   console.log("well rup")
+// 	const userData: string | null = localStorage.getItem("accessToken");
+//   // console.log("accessToken = ", userData);
+// 	let location = useLocation();
+
+// 	if (isUserLoggedIn(userData) === false) {
+// 		return <Navigate to="/" state={{ from: location }} replace />;
+// 	}
+
+// 	if (children) {
+// 		return children;
+// 	}
+// 	return children;
 // }
+// // eslint-disable-next-line
+// function NotRequireAuth({ children }: { children?: JSX.Element }) {
+// 	const userData: string | null = localStorage.getItem("accessToken");
+
+// 	let location = useLocation();
+
+// 	if (isUserLoggedIn(userData) === true) {
+// 		return <Navigate to="/channels" state={{ from: location }} replace />;
+// 	}
+
+// 	return children;
+// }
+
+const isUserLoggedIn = (userData: any): boolean => {
+  console.log(userData)
+	if (
+		userData &&
+		userData !== null
+    && userData !== undefined
+	) {
+		return true;
+	}
+
+	return false;
+};
+
 export default App;

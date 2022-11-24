@@ -11,53 +11,11 @@ var scrollTrigger = 60;
 class Header extends React.PureComponent {
 
 
-//   componentWillUnmount() {
-//     window.removeEventListener('scroll', this.handleScroll);
-// }
 
-//   componentDidMount() {
-//    // console.log('componentDidMount() lifecycle');
-//   //  this.state.scrolling = false;
-//    window.addEventListener('scroll', this.handleScroll);
-   
-//     // Trigger update
-//     // this.setState({ foo: !this.state.foo });
-//   }
-
-  // handleScroll(event) {
-
-  //   if (window.scrollY >= scrollTrigger || window.pageYOffset >= scrollTrigger) {
-  //     document.getElementsByTagName('Header')[0].classList.remove('bg-emerald-400');
-  //     document.getElementsByTagName('Header')[0].classList.add('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500');
-
-  //     // document.getElementsByTagName('Header')[0].classList.add('bg-angol_main');
-
-  //     // this.setState({scrolling: false});
-  //   }
-  //   else {
-  //     document.getElementsByTagName('Header')[0].classList.remove('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500');
-  //   document.getElementsByTagName('Header')[0].classList.add('bg-emerald-400');
-  //     // this.setState({scrolling: true});
-  // }
-  //   // let scrollTop = event.srcElement.body.scrollTop,
-  //   //     itemTranslate = Math.min(0, scrollTop/3 - 60);
-
-  //   // this.setState({
-  //   //   transform: itemTranslate
-  //   // });
-  // }
 
   async Login(event : any) {
-    // const form = new FormData(event.target);
-    window.location.assign("http://localhost:3000/auth/login/42");
-    
-    // const info = await localService.get("/auth/login/42")
-    // .then (() => {
-    //   console.log("hello ===>" + info.data);
-    // const accessToken = info?.data?.accessToken;
-    // console.log(accessToken)
-    // }).catch ((err) => {console.log("error ss = " + err)});
 
+    window.location.assign("http://localhost:3000/auth/login/42");
   }
 
   render() {

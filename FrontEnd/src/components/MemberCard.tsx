@@ -1,286 +1,220 @@
-import React, { useEffect } from 'react';
-import { ChatType, userModel, Userstatus, UserType } from './Types/types';
-// import Context from './SideBar/context';
-import { ContextMenuComponent, MenuEventArgs, MenuItemModel } from '@syncfusion/ej2-react-navigations';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { AddFriend, BlockFriend, GetBlockedFriends, GetFriends } from './Services/user';
+import { ChatType, Role, userModel, Userstatus, UserType } from './Types/types';
 
 
 
+const MemberCard: React.FC<{
 
+	user: userModel,
 
-// const Menu = [
-
-//  {
-//         // iconCss: 'e-cart-icon e-link',
-//         text: 'Flipkart',
-//         // url: 'https://www.google.co.in/search?q=flipkart'
-//     },
-//     {
-//         // iconCss: 'e-cart-icon e-link',
-//         text: 'Amazon',
-//         // url: 'https://www.google.co.in/search?q=amazon'
-//     },
-//     {
-//         // iconCss: 'e-cart-icon e-link',
-//         text: 'Snapdeal',
-//         // url: 'https://www.google.co.in/search?q=snapdeal'
-//     }
-// ];
-
-const MemberCard : React.FC<{
-    //choosenChat: ChatType,
-   
-	
-	
-    user : userModel,
-    // key: string
-    coll : string
+	coll: string
 	onClick: (user: string) => void;
-	// onlineUsers: string[];
-}> =  ({ user, onClick, coll  }) => {
+	role : Role,
+
+}> = ({ user, onClick, coll, role }) => {
 
 
-    // const displayList = (args: MenuEventArgs) => {
-    //   args.element.getElementsByTagName('a')[0].setAttribute('target', '_blank');
-    // }
-    // const isOnline =  onlineUsers.includes(name) ? "online" : "offline";
-    useEffect(() => {
-        // displayList
-    },[])
 
-    
-    const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" :  "in-game text-blue-500" ;
-    const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" :  coll === "Pandora" ? "text-[#b61282]" : "None";
-    return (
-      <div  id="element" className={ `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
-                            
-          {/* <Context> */}
-                            
+	useEffect(() => {
 
-                        
-                            <div  id="target" className="flex items-center p-2 gap-3" 
-                            onClick={() => {
-                                onClick(user.name);
-                            }}
-                            >
-                                {/* to work on css bellow */}
-                            <div className="position-relative">
-                                 {user.notifications && user.notifications > 0 ? (
-						             <div className="notification-bubble"> 
-                                    
-						             	{user.notifications}
-						             </div>
-					             ) : null}
-					            <img
-					            	width={32}
-					            	height={32}
-					            	className="rounded-circle"
-					            	src={user.avatar}
-					            	alt=""
-					            />
-                            </div>
-                            <h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
-                            </div>
-            
-            {/* </Context> */}
-                            <div className="ml-auto">
-                            <h6 className={`${ Memberstat} +  text-xs `}>
-                                {user.status === "online" ? "Online" :  user.status === "offline" ? "Offline" : "in-game"}
-                            </h6>
-						</div>
-                </div>
+	}, [])
 
-    );
+
+	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
+	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
+	return (<App1 role={role} user={user} coll={coll} onClick={onClick} />);
+};
+
+
+
+const App1: React.FC<{
+
+
+	user: userModel,
+
+	coll: string
+	onClick: (user: string) => void;
+	role : Role
+
+}> = ({ user, onClick, coll , role}) => {
+	// Show or hide the custom context menu
+	const [isShown, setIsShown] = useState(false);
+
+	// The position of the custom context menu
+	const [position, setPosition] = useState({ x: 0, y: 0 });
+
+	// Show the custom context menu
+	const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+		// Disable the default context menu
+		event.preventDefault();
+
+		setIsShown(false);
+		const newPosition = {
+			x: event.pageX,
+			y: event.pageY,
+		};
+
+		setPosition(newPosition);
+		setIsShown(true);
+	};
+
+	// Hide the custom context menu
+	const hideContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+		setIsShown(false);
+	};
+	
+	const [blocked, setBlocked] = useState<UserType[]>();
+	const [friends, setFriends] = useState<UserType[]>();
+
+	// Do what you want when an option in the context menu is selected
+	const [selectedValue, setSelectedValue] = useState<String>();
+	const doSomething = (selectedValue: String) => {
+		setSelectedValue(selectedValue);
+	};
+
+	const AddFriendf = (id : number) => {
+		AddFriend(id).then((res) =>
+		{
+			console.log(res);
+			toast.success("You are now friends", {
+				position: toast.POSITION.TOP_CENTER,
+			  });
+		}).catch(err => console.log(err))
+		setIsShown(false)
+	}
+
+
+	const BlockFriend1 = (id :  number) => {
+			BlockFriend(id).then((res) =>{
+				toast.success("User Blocked", {
+					position: toast.POSITION.TOP_CENTER,
+				  });
+			})
+			setIsShown(false)
+	}
+	useEffect (() => {
+	const checkIfFriend = (id : number) => {
+		
+		GetFriends().then((res)=> {
+			setFriends(res)
+		}).catch(err => console.log(err))
+
+		const check = (friends && friends.filter(friend => parseInt(friend._id) === id) ? true : false)
+		return check;
+	}
+	const checkIfBlocked = (id : number) => {
+		GetBlockedFriends().then((res)=> {
+			setBlocked(res)
+		}).catch(err => console.log(err))
+
+		const check = (blocked && blocked.filter(blocked => parseInt(blocked._id) === id) ? true : false)
+		return check;
+	}
+	checkIfBlocked();
+	checkIfFriend();
+	}, [friends, blocked])
+	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
+	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
+	return (
+
+
+		<>
+			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}
+				onContextMenu={showContextMenu}
+				onClick={hideContextMenu}>
+				<div id="target" className="flex items-center p-2 gap-3"
+					onClick={() => {
+						onClick(user.name);
+					}}>
+					<div className="position-relative">
+						{user.notifications && user.notifications > 0 ? (
+							<div className="notification-bubble">
+								{user.notifications}
+							</div>
+						) : null}
+						<img
+							width={32}
+							height={32}
+							className="rounded-circle"
+							src={user.avatar}
+							alt=""
+						/>
+					</div>
+					<h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
+				</div>
+
+				<div className="ml-auto">
+					<h6 className={`${Memberstat} +  text-xs `}>
+						{user.status === "online" ? "Online" : user.status === "offline" ? "Offline" : "in-game"}
+					</h6>
+				</div>
+
+
+			</div>
+			{isShown && (<>
+				<div
+					style={{ top: position.y, left: position.x }}
+					className="custom-context-menu flex flex-col absolute bg-[#5c5e62] flex-end"
+				>
+
+					<ul
+						className=" min-w-max absolute  text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1  m-0 bg-clip-padding border-none bg-black"
+					>
+						
+						{!checkIfFriend(user.id) && <MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/>}
+						<MemberWork nameService={"Check Profil"} id={user.id} function1={AddFriend}/>
+						<MemberWork nameService={"Invite to Game"} id={user.id} function1={AddFriend}/>
+						
+						<li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" /></li>
+						
+						{!checkIfBlocked(user.id) && <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/>}
+						{(role === Role.ADMIN || role === Role.OWNER) &&
+						<><li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />AdminPannel</li>
+						<MemberWork nameService={"Mute"} id={user.id} function1={AddFriend}/>
+						<MemberWork nameService={"Ban"} id={user.id} function1={AddFriend}/>
+						<MemberWork nameService={"Kick"} id={user.id} function1={AddFriend}/></>
+						}
+						{(role === Role.OWNER) &&
+						<>
+						<li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />OwnerPannel</li>
+						{<MemberWork nameService={"Mute"} id={user.id} function1={AddFriend}/>}
+						{<MemberWork nameService={"Ban"} id={user.id} function1={AddFriend}/>}
+						</>
+						}
+					</ul>
+				</div>
+			</>)}
+		</>
+	);
+};
+
+
+const MemberWork : React.FC <{
+	nameService : string,
+	id : number
+	function1? : (id : number) => void,
+	function2? : (id : number) => boolean,
+
+}> = ({nameService, function1, id, function2}) =>
+{
+
+	const f = () => {
+		console.log(id)
+		if (function1)
+			function1(id)
+		if (function2)
+			function2(id)
+	}
+
+	return (<>
+		<li>
+			<button onClick={f} className="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-300 hover:bg-[#5c5e62] hover:text-white focus:text-white focus:bg-gray-700"
+			>{nameService}
+			</button>
+		</li>
+	</>)
 }
 
-// function MemberCard(props: any) {
-//     const Memberstat = props.isMemberOnline === "online" ? "online text-green-400" : props.isMemberOnline === "offline" ? "offline text-red-500" : props.isMemberOnline === "in-game" ? "in-game text-blue-500" : "None";
-//     const MemberColl = props.coll === "bios" ? "text-[#02cdd1]" : props.coll === "freax" ? "text-[#f5bc39]" : props.coll === "comodore" ? "text-[#235a16]" :  props.coll === "Pandora" ? "text-[#b61282]" : "None";
-//   return (
-// 						<div className="flex items-center p-2 mb-2 w-60 hover:bg-[#5c5e62]">
-//                             <div className="flex items-center p-2 gap-3">
-//                             <img
-//                                 width={32}
-//                                 height={32}
-//                                 className="rounded-circle"
-//                                 src={props.img}
-//                                 alt=""
-//                             />
-//                             <h4 className={` ${MemberColl} + font-semibold text-white important `} >{props.name}</h4>
-//                             </div>
-//                             <div className="ml-auto">
-//                             <h6 className={`${ Memberstat} +  text-xs `}>
-//                                 {props.isMemberOnline === "online" ? "Online" :  props.isMemberOnline === "offline" ? "Offline" : "in-game"}
-//                             </h6>
-// 						</div>
-//                         </div>
-				
-//   )
-// }
-
-
 export default MemberCard
-
-
-
-// import { Button } from '@material-tailwind/react';
-// import React from 'react';
-// import { ChatType, userModel, UserType } from './Types/types';
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-// import Menu, { MenuProps } from '@mui/material/Menu';
-// import { alpha, styled } from '@mui/material/styles';
-// import MenuItem from '@mui/material/MenuItem';
-// import Context from './SideBar/context'
-
-
-
-
-
-// const MemberCard : React.FC<{
-//     //choosenChat: ChatType,
-   
-	
-	
-//     user : userModel,
-//     // key: string
-//     coll : string
-// 	onClick: (user: string) => void;
-// 	// onlineUsers: string[];
-// }> =  ({ user, onClick, coll  }) => {
-
-//     // const isOnline =  onlineUsers.includes(name) ? "online" : "offline";
-//     const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" :  "in-game text-blue-500" ;
-//     const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" :  coll === "Pandora" ? "text-[#b61282]" : "None";
-    
-//     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-//     const open = Boolean(anchorEl);
-//     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-
-//       console.log("i am here");
-//       setAnchorEl(event.currentTarget);
-//     };
-//     const handleClose = () => {
-//       setAnchorEl(null);
-//     };
-    
-//     return (
-
-//         <div  className={ `flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
-                            
-                            
-
-//                             <Button
-//                                 id="demo-customized-button"
-//                                 aria-controls={open ? 'demo-customized-menu' : undefined}
-//                                 aria-haspopup="true"
-//                                 aria-expanded={open ? 'true' : undefined}
-//                                 onClick={handleClick}
-                                
-//                             >
-//                             <MenuItem onClick={handleClose} disableRipple>
-//                             <div className="flex items-center p-2 gap-3" 
-//                             // onClick={() => {
-//                             //     onClick(user.name);
-//                             // }}
-//                             >
-//                                 {/* to work on css bellow */}
-                            
-//                             <div className="position-relative">
-//                                  {user.notifications && user.notifications > 0 ? (
-// 						             <div className="notification-bubble"> 
-                                    
-// 						             	{user.notifications}
-// 						             </div>
-// 					             ) : null}
-// 					            <img
-// 					            	width={32}
-// 					            	height={32}
-// 					            	className="rounded-circle"
-// 					            	src={user.avatar}
-// 					            	alt=""
-// 					            />
-//                             </div>
-//                             <h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
-//                             </div>
-                            
-//                             <div className="ml-auto">
-//                             <h6 className={`${ Memberstat} +  text-xs `}>
-//                                 {user.status === "online" ? "Online" :  user.status === "offline" ? "Offline" : "in-game"}
-//                             </h6>
-// 						    </div>
-//                         </MenuItem>
-//                         </Button>
-//                 </div>
-
-//     );
-// }
-
-
-// const StyledMenu = styled((props: MenuProps) => (
-//     <Menu
-//       elevation={0}
-//       anchorOrigin={{
-//         vertical: 'bottom',
-//         horizontal: 'right',
-//       }}
-//       transformOrigin={{
-//         vertical: 'top',
-//         horizontal: 'right',
-//       }}
-//       {...props}
-//     />
-//   ))(({ theme }) => ({
-//     '& .MuiPaper-root': {
-//       borderRadius: 6,
-//       marginTop: theme.spacing(1),
-//       minWidth: 180,
-//       color:
-//         theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
-//       boxShadow:
-//         'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-//       '& .MuiMenu-list': {
-//         padding: '4px 0',
-//       },
-//       '& .MuiMenuItem-root': {
-//         '& .MuiSvgIcon-root': {
-//           fontSize: 18,
-//           color: theme.palette.text.secondary,
-//           marginRight: theme.spacing(1.5),
-//         },
-//         '&:active': {
-//           backgroundColor: alpha(
-//             theme.palette.primary.main,
-//             theme.palette.action.selectedOpacity,
-//           ),
-//         },
-//       },
-//     },
-//   }));
-  
-
-// // function MemberCard(props: any) {
-// //     const Memberstat = props.isMemberOnline === "online" ? "online text-green-400" : props.isMemberOnline === "offline" ? "offline text-red-500" : props.isMemberOnline === "in-game" ? "in-game text-blue-500" : "None";
-// //     const MemberColl = props.coll === "bios" ? "text-[#02cdd1]" : props.coll === "freax" ? "text-[#f5bc39]" : props.coll === "comodore" ? "text-[#235a16]" :  props.coll === "Pandora" ? "text-[#b61282]" : "None";
-// //   return (
-// // 						<div className="flex items-center p-2 mb-2 w-60 hover:bg-[#5c5e62]">
-// //                             <div className="flex items-center p-2 gap-3">
-// //                             <img
-// //                                 width={32}
-// //                                 height={32}
-// //                                 className="rounded-circle"
-// //                                 src={props.img}
-// //                                 alt=""
-// //                             />
-// //                             <h4 className={` ${MemberColl} + font-semibold text-white important `} >{props.name}</h4>
-// //                             </div>
-// //                             <div className="ml-auto">
-// //                             <h6 className={`${ Memberstat} +  text-xs `}>
-// //                                 {props.isMemberOnline === "online" ? "Online" :  props.isMemberOnline === "offline" ? "Offline" : "in-game"}
-// //                             </h6>
-// // 						</div>
-// //                         </div>
-				
-// //   )
-// // }
-
-
-// export default MemberCard
