@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { channelModel, memberModel, RequestWithUser } from 'src/types';
 import { addUserDto } from './dto/add-user.dto';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
+import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
 
@@ -109,5 +111,35 @@ export class GroupController {
 	async unsetAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
 		console.log("unsetAdmin", data);
 		return await this.groupsService.unsetAdmin(req.user.id, data);
+	}
+
+	@Post('set-status')
+	async setStatus(@Req() req: RequestWithUser, @Body() data: setStatusDto) {
+		console.log("setStatus", data);
+		return await this.groupsService.setStatus(req.user.id, data);
+	}
+
+	@Post('unset-status')
+	async unsetStatus(@Req() req: RequestWithUser, @Body() data: unsetStatusDto) {
+		console.log("setStatus", data);
+		return await this.groupsService.unsetStatus(req.user.id, data);
+	}
+
+	@Post('password')
+	async setPassword(@Req() req: RequestWithUser, @Body() data: passwordDto) {
+		console.log("setPassword", data);
+		return await this.groupsService.setPwd(req.user.id, data);
+	}
+
+	@Patch('password')
+	async updatePassword(@Req() req: RequestWithUser, @Body() data: updatePasswordDto) {
+		console.log("updatePassword", data);
+		return await this.groupsService.updatePwd(req.user.id, data);
+	}
+
+	@Delete('password')
+	async deletePassword(@Req() req: RequestWithUser, @Body() data: passwordDto) {
+		console.log("deletePassword", data);
+		return await this.groupsService.deletePwd(req.user.id, data);
 	}
   }

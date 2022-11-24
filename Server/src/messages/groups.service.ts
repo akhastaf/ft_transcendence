@@ -10,6 +10,7 @@ import * as bcrypt from 'bcryptjs';
 import { addUserDto } from './dto/add-user.dto';
 import { HttpException } from '@nestjs/common';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
+import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
 
 
 export class GroupsService {
@@ -622,7 +623,7 @@ export class GroupsService {
 
 	// * ############################################# set Status ##############################
 	
-	async setMuted(id_user: number, data: setStatusDto)
+	async setStatus(id_user: number, data: setStatusDto)
 	{
 		try
 		{
@@ -692,6 +693,79 @@ export class GroupsService {
 		}
 	}
 
-	// * ############################################# update pwd ##############################
+	// * ############################################# set pwd ##############################
+	
+	async setPwd(id_user: number, data: passwordDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to update password");
+				return null;
+			}
+			const group = is_member.group;
+			if (group.privacy === Privacy.PROTECTED || group.privacy === Privacy.DM)
+				throw new Error("You can't set pwd");
+			group.password = data.password;
+			group.privacy = Privacy.PROTECTED;
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error setPwd");
+		}
+	}
 
+	// * ############################################# update pwd ##############################
+	async updatePwd(id_user: number, data: updatePasswordDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to update password");
+				return null;
+			}
+			const group = is_member.group;
+			if (group.privacy !== Privacy.PROTECTED)
+				throw new Error("You can't change pwd");
+			if (!await bcrypt.compare(data.old_password, group.password))
+				throw new Error("Wrong password");
+			group.password = data.new_password;
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error updatePwd");
+		}
+	}
+	// * ############################################# Delete pwd  ##############################
+	
+	async deletePwd(id_user: number, data: passwordDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to update password");
+				return null;
+			}
+			const group = is_member.group;
+			if (group.privacy !== Privacy.PROTECTED)
+				throw new Error("You can't delete pwd");
+			if (!await bcrypt.compare(data.password, group.password))
+				throw new Error("Wrong password");
+			group.password = null;
+			group.privacy = Privacy.PUBLIC;
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error updatePwd");
+		}
+	}
 }
