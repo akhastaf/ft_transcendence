@@ -101,11 +101,13 @@ export class GroupController {
 	//* Set admin role
 	@Post('set-admin')
 	async setAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
+		console.log("setAdmin", data);
 		return await this.groupsService.setAdmin(req.user.id, data);
 	}
 	//* Unset admin role
 	@Post('unset-admin')
 	async unsetAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
+		console.log("unsetAdmin", data);
 		return await this.groupsService.unsetAdmin(req.user.id, data);
 	}
   }

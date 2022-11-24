@@ -43,6 +43,7 @@ const createTokenMiddleware = (jwtService: JwtService, configService: ConfigServ
     (socket: SocketWithUserId, next:any) => {
         const token = socket.handshake.auth.token || socket.handshake.headers['token'];
         logger.log(token);
+		// console.log("token", token);
         try {
             const payload = jwtService.verify(token, {
                 secret: configService.get('JWT_SECRET'),

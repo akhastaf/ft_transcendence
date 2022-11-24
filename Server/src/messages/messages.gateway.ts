@@ -115,6 +115,7 @@ export class MessagesGateway {
 	// *** 4- add user   */
 	@SubscribeMessage('addUser_client')
 	async addUser(@MessageBody() data: addUserDto, @ConnectedSocket() client: SocketWithUserId) {
+		//! U should check the return of this function.
 		const is_added = await this.groupsService.addUser(client.userId, data);
 		if (is_added)
 		{
