@@ -4,6 +4,7 @@ import { IoCloseCircleSharp } from "react-icons/io5";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Privacy, IFormInput } from './Types/types';
 import { avatar } from '@material-tailwind/react';
+import { setConsent } from 'firebase/analytics';
 const formImage = require('../images/form.gif');
 
 const logo = require('../images/ponglogo.png');
@@ -44,20 +45,31 @@ const AddChannel: React.FC<{
   //   });
   // }
     // console.log(avatarRef);
-    createRoomHandler(data.name,p , currentImage, data.password, data.description);
+
+    let formData = new FormData();
+    formData.append('customFile', imageFile);
+    createRoomHandler(data.name,p , formData, data.password, data.description);
     closeModal();
 
   };
   let [currentImage , SetCurrentImage] = useState<any>();
+  const [imagePreview, setImagePreview] = useState<any>();
+  const [imageFile, setImageFile] = useState<any>();
 
    const upload = (event : any) =>
    {
-    let reader = new FileReader();
-    reader.addEventListener("load", (ev : any)=>{
-        SetCurrentImage(ev.target['result']);
-        // console.log(`image = ${currentImage}`);
-    });
-    reader.readAsDataURL(event.target.files[0]);
+
+    let image_as_base64 = URL.createObjectURL(event.target.files[0])
+      let image_as_files = event.target.files[0];
+
+        setImagePreview(image_as_base64)
+        setImageFile(image_as_files)
+    // let reader = new FileReader();
+    // reader.addEventListener("load", (ev : any)=>{
+    //     SetCurrentImage(ev.target['result']);
+    //     // console.log(`image = ${currentImage}`);
+    // });
+    // reader.readAsDataURL(event.target.files[0]);
   }
 
   const closeModal = () => {
