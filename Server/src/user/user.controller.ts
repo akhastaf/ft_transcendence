@@ -85,7 +85,7 @@ export class UserController {
         @Req() req: RequestWithUser,
         @UploadedFile(SharpPipe) avatar: string) : Promise<User>
     {
-        if (avatar)
+        if (avatar && avatar.length)
             updateUserDTO.avatar = this.configService.get('SERVER_HOST') + avatar;
         return await this.userService.updateUser(req.user, updateUserDTO);
     }

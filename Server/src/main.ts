@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { JWTGuard } from './auth/guards/jwt.guard';
 import { SocketIoAdapter } from './messages/socket-io-adapter';
 import * as cookieParser from 'cookie-parser';
+import { UserService } from './user/user.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -15,7 +16,8 @@ async function bootstrap() {
     }
   });
   const configService = app.get(ConfigService);
-  app.useWebSocketAdapter(new SocketIoAdapter(app, configService))
+  const userService = app.get(UserService);
+  app.useWebSocketAdapter(new SocketIoAdapter(app, configService, userService))
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     transform: true
