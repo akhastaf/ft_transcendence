@@ -708,7 +708,7 @@ export class GroupsService {
 			const group = is_member.group;
 			if (group.privacy === Privacy.PROTECTED || group.privacy === Privacy.DM)
 				throw new Error("You can't set pwd");
-			group.password = data.password;
+			group.password = await bcrypt.hash(data.password, 10);
 			group.privacy = Privacy.PROTECTED;
 			return await this.groupRepository.save(group);
 		}
@@ -734,7 +734,7 @@ export class GroupsService {
 				throw new Error("You can't change pwd");
 			if (!await bcrypt.compare(data.old_password, group.password))
 				throw new Error("Wrong password");
-			group.password = data.new_password;
+			group.password = await bcrypt.hash(data.new_password, 10);
 			return await this.groupRepository.save(group);
 		}
 		catch(e)
