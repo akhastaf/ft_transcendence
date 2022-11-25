@@ -5,7 +5,7 @@ export class TwofaVerificationDTO {
     @ApiProperty()
     @IsString()
     @IsNumberString()
-    
+    @Length(6, 6)
     token: string;
 
 }
