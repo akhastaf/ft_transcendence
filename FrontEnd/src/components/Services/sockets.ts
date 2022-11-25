@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 let token = null;
 if (typeof window !== 'undefined') {
   token = localStorage.getItem('accessToken');
-
+	console.log(token);
 }
 
 // let backendHost = process.env.NEXT_PUBLIC_API_BASE_URL;

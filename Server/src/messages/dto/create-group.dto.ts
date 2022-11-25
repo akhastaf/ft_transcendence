@@ -13,7 +13,6 @@ export class CreateGroupDto {
 
     @ApiProperty()
     @IsOptional()
-    @IsString()
     avatar?: any;
 
     @ApiProperty()
