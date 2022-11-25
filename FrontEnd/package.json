@@ -3,15 +3,17 @@
   "homepage": ".",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3000",
+  "proxy": "http://127.0.0.1:3000/",
   "dependencies": {
     "@chakra-ui/react": "^2.3.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@heroicons/react": "^1.0.6",
     "@material-tailwind/react": "^1.2.4",
+    "@mui/icons-material": "^5.10.15",
     "@mui/material": "^5.10.12",
     "@reduxjs/toolkit": "^1.8.5",
+    "@syncfusion/ej2-react-navigations": "^20.3.58",
     "@tailwindcss/forms": "^0.5.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
@@ -43,7 +45,8 @@
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean": "rimraf dist/bundle.js && nodetouch dist/bundle.js"
   },
   "eslintConfig": {
     "extends": [

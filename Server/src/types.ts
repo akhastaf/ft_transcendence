@@ -8,7 +8,8 @@ export interface RequestWithUser extends Request {
 }
 
 export interface SocketWithUserId extends Socket {
-    userId: number;
+    userId: number,
+	user: User,
 }
 export interface SocketWithUser extends Socket {
     user: User,

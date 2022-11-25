@@ -1,6 +1,6 @@
-import { ChevronDownIcon } from "@heroicons/react/outline";
+// import { ChevronDownIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
-import { IoCloseCircleSharp } from "react-icons/io5";
+// import { IoCloseCircleSharp } from "react-icons/io5";
 import { UserType } from "../Types/types";
 // import SideBar from "../SideBar/SideBar";
 import {IoIosLogOut} from "react-icons/io";
@@ -8,7 +8,7 @@ import Settings1 from "./Settings";
 // import Button from '@mui/material/Button';
 
 
-const logo = require('../../images/wolf.png');
+// const logo = require('../../images/wolf.png');
 const SideBarE: React.FC<{
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
     currentUser: UserType;
@@ -25,19 +25,22 @@ const SideBarE: React.FC<{
     return (<>
 
         <div
-            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+            className="justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed inset-0 z-50 outline-none focus:outline-none"
             onClick={() => { closeModal(); }}
         >
             <div className="flex w-full h-full items-center" onClick={e => { e.stopPropagation(); }} >
                 <div className="grow invisible lg:visible">
 
                 </div>
-                <div className="w-full flex flex-row my-6 mx-auto h-full " >
+                <div className="w-full flex flex-row my-6 mx-auto   h-full " >
                     <div className="bg-discord_secondSideBar  lg:w-[13rem] h-full border-0"></div>
-                    <div className="  h-full shadow-lg  w-[20rem] flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    {/*
+                            side bar hidden
+                    */}
+                    <div className=" invisible md:visible h-full shadow-lg  w-[20rem] flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         <div className="flex flex-col ml-10 mt-8 gap-20">
                             <h1> USER SETTINGS </h1>
-                            <div className="flex flex-col mt-20 gap-20 ">
+                            <div className="flex flex-col mt-20 sm:gap-5 md:gap-10 lg:gap-20 overflow-auto ">
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Account"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Profile"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="Friend List"/>
@@ -50,7 +53,7 @@ const SideBarE: React.FC<{
                         </div>
 
                     </div>
-                    <div className="h-full shadow-lg  flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    <div className="h-full shadow-lg w-screen overflow-y-auto flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         
                         <div className="flex justify-center h-28"></div>
                         <div className="flex h-4/5 flex-row">
@@ -60,17 +63,8 @@ const SideBarE: React.FC<{
                                 <Settings1 closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/>
 
                             </div>
-
-                        {/* <button
-                                className=" bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
-                                onClick={closeModal}
-                            >
-                                <IoCloseCircleSharp className="text-emerald-400" />
-                            </button> */}
                         </div>
-                        {/* <div className="flex flex-col align-center justify-start w-1/5">
-
-                        </div> */}
+    
                         </div>
                     </div>
                 </div>

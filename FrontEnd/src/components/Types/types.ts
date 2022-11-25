@@ -130,6 +130,12 @@ export interface roomModal {
 	description: string;
 
 }
+
+export enum Role {
+	OWNER = 'owner',
+	ADMIN = 'admin',
+	MEMBER = 'member'
+}
 //   export class CreateGroupDto {
 
 //     @ApiProperty()

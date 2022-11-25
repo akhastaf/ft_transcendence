@@ -1,30 +1,61 @@
 // import { useRouter } from "next/router";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { getCurrentUser } from "../../Services/user";
+
+import useLocalStorage from "../../../hooks/useLocalStorage";
+import { toast } from "react-toastify";
+import { useAuth } from "../../Services/auth";
+
 
 export default function Callback() {
-//   const router = useRouter();
-const navigate = useNavigate();
-const [searchParams, setSearchParams] = useSearchParams();
+  //   const router = useRouter();
+  const navigate = useNavigate();
+  // eslint-disable-next-line
+  const [searchParams, setSearchParams] = useSearchParams();
+  let auth = useAuth();
+  // eslint-disable-next-line
+  const [errordata, seterrordata] = useState(false);
+  // eslint-disable-next-line
+  const [userInfo, setUserInfo] = useLocalStorage("currentUser");
+  
+  // const a = () => {
+  //         useLocalStoraga("currentUser", userInfo);
+  //   }
+  console.log("{}{}{}{}{}}");
 
-  useEffect(() => {
-    // const queryParams = new URLSearchParams(window.location.search)
-    // const access_token = queryParams.get('accessToken');
-    const access_token  = searchParams.get("accessToken");
-    if (access_token)
-    {
-      localStorage.setItem('accessToken', access_token);
-      // ! get User connected -> check if tfa is enabled ( yes ? navigate to /tfa : navigate /channels)
-    //   router.push('/channels');
-     navigate("/channels");
-    } else {
-      //TODO: display error for receiving invalid access_token
-      alert('received invalid access token')
-    }
-  })
+useEffect(() => {
+      // const access_token = queryParams.get('accessToken');
+      const access_token  = searchParams.get("accessToken");
+      if (access_token)
+      { 
+        console.log("aaaaaaa");
+        // localStorage.setItem(keyPrefix, JSON.stringify(value));
+        localStorage.setItem('accessToken', access_token);
 
+        
+        getCurrentUser().then((res) => {
+          console.log(res);
+          setUserInfo(res);
+          localStorage.setItem("currentUser", res);
+          toast.success("You login success !!", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        })
+        .catch(err => console.log(err))
+        navigate("/channels");
+      } else {
+        alert('received invalid access token')
+      }
+    }, [])
+
+
+
+    
   return (
     <>
     </>
   );
 }
+
