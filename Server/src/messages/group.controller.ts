@@ -1,11 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { channelModel, memberModel, RequestWithUser } from 'src/types';
+import { SharpPipe } from 'src/user/pipes/sharp.pipe';
 import { addUserDto } from './dto/add-user.dto';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
+import { Group } from './entities/group.entity';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
 
@@ -15,13 +19,49 @@ import { MessagesService } from './messages.service';
 @Controller('channels')
 export class GroupController {
   constructor(
-		private readonly groupsService: GroupsService
+		private readonly groupsService: GroupsService,
+		private readonly configService: ConfigService
 	) {}
 
 	@Post()//* create channel
-	async createChannel(@Req() req: RequestWithUser, @Body() body: CreateGroupDto) {
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                name : {
+                    type: 'string',
+                    format: 'string'
+                },
+                avatar: {
+                    type: 'string',
+                    format: 'binary'
+                },
+                password: {
+                    type: 'string',
+                    format: 'string'
+                },
+				description: {
+					type: 'string',
+					format: 'string'
+				},
+				privacy: {
+					type: 'string',
+					format: 'string'
+				}
+            },
+        },
+    })
+    @UseInterceptors(FileInterceptor('avatar'))
+	async createChannel(
+		@Req() req: RequestWithUser,
+		@Body() body: CreateGroupDto,
+        @UploadedFile(SharpPipe) avatar: string)
+	{
 		console.log("##########  createChannel  ##########", req.user.id);
 		console.log("body", body);
+		if (avatar)
+			body.avatar = this.configService.get('SERVER_HOST') + avatar;
 		const group = await this.groupsService.createGroup(req.user, body);
 		const channel = new channelModel();
 		channel.id = group.id;
