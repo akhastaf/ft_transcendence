@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 import { JWTGuard } from './auth/guards/jwt.guard';
 import { SocketIoAdapter } from './messages/socket-io-adapter';
 import * as cookieParser from 'cookie-parser';
-import { UserService } from './user/user.service';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -23,6 +23,8 @@ async function bootstrap() {
     transform: true
   }));
   app.use(cookieParser());
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
   const config = new DocumentBuilder()
                     .setTitle('Pong API Docs')
                     .setDescription('This is the documentation of Pong API')

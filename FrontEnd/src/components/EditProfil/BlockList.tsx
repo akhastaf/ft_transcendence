@@ -1,14 +1,32 @@
+import { useEffect, useState } from "react"
 import { IoCloseCircleSharp } from "react-icons/io5"
-import { UserType } from "../Types/types"
+import { getBlockedList } from "../Services/user"
+import { userModel, UserType } from "../Types/types"
 
 
 const BlockList : React.FC <{
     currentUser : UserType
     closeModal: () => void
 }> = ({currentUser, closeModal}) => {
+
+    const [blocked , setBlocked] = useState<any>([{
+    
+            id: 1,
+            name: "random",
+            avatar: "none",
+            status : "off",
+            notifications: 0,
+
+    }]);
+    useEffect(() => {
+    getBlockedList().then ((res) => {
+        setBlocked(res);
+        console.log(res);
+    })
+    .catch(err=> console.log(err));
+    },[]);
     return(
     <>
-
 <div className="flex h-full flex-col gap-5 ">
             <div id="up div" className="flex flex-row  justify-around ">
                 <h1 className="float-left font-bold left-0"> My Block List </h1>
@@ -31,8 +49,8 @@ const BlockList : React.FC <{
                     <div className="flow-root">
                          <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
-                                (currentUser.bloked.length === 0) ? <li className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</li> : 
-                                currentUser.bloked.map((blocked: UserType) => (
+                                (!blocked) ? <li className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</li> : 
+                                blocked.map((blocked: userModel) => (
                                    <li> <BlockCard currentUser={blocked}/></li>
 
                                 ))
@@ -69,7 +87,7 @@ const BlockList : React.FC <{
 
 
 const BlockCard : React.FC <{
-    currentUser : UserType
+    currentUser : userModel
 }> = ({currentUser}) => {
     return(
     <>
@@ -80,10 +98,10 @@ const BlockCard : React.FC <{
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-lg font-medium arcade text-white truncate dark:text-white">
-                            {currentUser.username}
+                            {currentUser.name}
                         </p>
                         <p className="text-sm  text-beige_color truncate dark:text-gray-400">
-                            {currentUser.email}
+                            {currentUser.status}
                         </p>
                     </div>
                     {/* <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">

@@ -31,8 +31,6 @@ const ChannelList: React.FC <{
     };
 	const HomeSweetHome = () => {
 		navigate("/channels");
-		// setChoosenChat({ username: "", _id: ""})
-		// setSelectedUserDM({username :"", _id: ""});
 	}
 	const redirect = () => {
 		navigate("/channels/allChannels");

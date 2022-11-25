@@ -13,9 +13,9 @@ export class addUserDto
 	@IsNotEmpty()
 	id_group: number;
 
-    @ApiProperty()
-	@IsString()
-	@MinLength(8)
-    @MaxLength(20)
-    password?: string;	
+    // @ApiProperty()
+	// @IsString()
+	// @MinLength(8)
+    // @MaxLength(20)
+    // password?: string;	
 }

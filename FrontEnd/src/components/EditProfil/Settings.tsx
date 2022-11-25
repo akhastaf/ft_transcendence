@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoCloseCircleSharp } from "react-icons/io5";
-import { SiWappalyzer } from "react-icons/si";
-import { User, UserType } from "../Types/types";
+// import { SiWappalyzer } from "react-icons/si";
+import { UserType } from "../Types/types";
 import BlockList from "./BlockList";
 import FriendList from "./FriendList";
 import FriendListRequest from "./FriendRequest";
@@ -61,7 +61,7 @@ const UserCard: React.FC<{
     }
 
     return <>
-        <div className=" invisible sm:visible flex h-full flex-col gap-5 ">
+        <div className=" sm:w-screen flex h-screen flex-col gap-5 ">
             <div id="up div" className="flex flex-row  justify-around ">
                 <h1 className="float-left font-bold left-0"> My Account </h1>
                 <button
@@ -71,13 +71,13 @@ const UserCard: React.FC<{
                     <IoCloseCircleSharp className="text-emerald-400" />
                 </button>
             </div>
-            <div className="flex h-full ">
+            <div className="flex h-screen ">
                 <div id="down div" className="h-full flex w-full m-auto  flex-row ">
-                    <div className="w-1/6"></div>
-                    <div className="flex flex-col h-[40rem] w-[80rem]">
+                    <div className="w-1/6 h-screen"></div>
+                    <div className="flex flex-col h-[40rem] w-full md:w-[80rem]">
                        <div className="flex flex-col rounded-lg h-[25rem] bg-gradient-to-r gap-5 from-sky-500 to-indigo-500 " style={{ backgroundImage: `url(${logo}) ` }}>
 
-                             <div className="flex gap-x-1 w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
+                             <div className="flex gap-x-1 w-full md:w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
                                 <div className="flex flex-row jusifty-start gap-x-1 w-auto ">
                                     <img
                                         src={currentUser.avatar}
@@ -333,44 +333,44 @@ const SettingModal: React.FC<{
 }
 
 
-const CardSection1 : React.FC <{
-    currentUser : UserType
+// const CardSection1 : React.FC <{
+//     currentUser : UserType
 
 
 
-}> = ({currentUser}) => {
+// }> = ({currentUser}) => {
 
 
-    return <>
+//     return <>
     
-<a href="#" className="flex flex-col items-center w-[80rem] bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-    <img className="object-cover w-full h-96 rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-l-lg" src={currentUser.username} alt=""/>
-    <div className="flex flex-col justify-between p-4 leading-normal">
-    {/* <div className="flex flex-col rounded-lg h-[25rem] bg-gradient-to-r gap-5 from-sky-500 to-indigo-500 " style={{ backgroundImage: `url(${logo}) ` }}> */}
+// <a href="#" className="flex flex-col items-center w-[80rem] bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+//     <img className="object-cover w-full h-96 rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-l-lg" src={currentUser.username} alt=""/>
+//     <div className="flex flex-col justify-between p-4 leading-normal">
+//     {/* <div className="flex flex-col rounded-lg h-[25rem] bg-gradient-to-r gap-5 from-sky-500 to-indigo-500 " style={{ backgroundImage: `url(${logo}) ` }}> */}
 
-<div className="flex gap-x-1 w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
-    <div className="flex flex-row jusifty-start gap-x-1 w-auto ">
-        <h1 className="arcade  text-white pt-12 "> {currentUser.username}</h1>
-        <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser._id}</h1>
- </div>
+// <div className="flex gap-x-1 w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
+//     <div className="flex flex-row jusifty-start gap-x-1 w-auto ">
+//         <h1 className="arcade  text-white pt-12 "> {currentUser.username}</h1>
+//         <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser._id}</h1>
+//  </div>
 
 
-    {/* <div className="flex flex-row pt-5 pb-5"> 
-        <BasicButtons  onClick={changeImage} text="Modify Your Profil" />
-    </div> */}
-</div>
-<div id="mail setting" className="border-5 rounded-lg  m-auto p-4 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
-    <SettingInfo type="mail" CurrentUser={currentUser} />
-    <SettingInfo1 type="mail" CurrentUser={currentUser} />
-    <SettingInfo2 type="mail" CurrentUser={currentUser} />
-    {/* <div id="username"></div>
-<div id="email"></div>
-<div id="phoneNumber"></div> */}
+//     {/* <div className="flex flex-row pt-5 pb-5"> 
+//         <BasicButtons  onClick={changeImage} text="Modify Your Profil" />
+//     </div> */}
+// </div>
+// <div id="mail setting" className="border-5 rounded-lg  m-auto p-4 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
+//     <SettingInfo type="mail" CurrentUser={currentUser} />
+//     <SettingInfo1 type="mail" CurrentUser={currentUser} />
+//     <SettingInfo2 type="mail" CurrentUser={currentUser} />
+//     {/* <div id="username"></div>
+// <div id="email"></div>
+// <div id="phoneNumber"></div> */}
 
-</div>
-</div>
+// </div>
+// </div>
 
-</a>
+// </a> 
 
-    </>
-}
+//     </>
+// }

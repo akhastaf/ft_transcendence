@@ -13,8 +13,7 @@ export class CreateGroupDto {
 
     @ApiProperty()
     @IsOptional()
-    @IsString()
-    avatar?: string;
+    avatar?: any;
 
     @ApiProperty()
     @ValidateIf(obj => obj.privacy === Privacy.PROTECTED)

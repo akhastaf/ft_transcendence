@@ -4,6 +4,7 @@ import { IoCloseCircleSharp } from "react-icons/io5";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Privacy, IFormInput } from './Types/types';
 import { avatar } from '@material-tailwind/react';
+import { setConsent } from 'firebase/analytics';
 const formImage = require('../images/form.gif');
 
 const logo = require('../images/ponglogo.png');
@@ -28,36 +29,23 @@ const AddChannel: React.FC<{
   {
      let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
 
-    // // e.preventDefault();
-    // let pass: string | null;
-    // if (passwordRef.current)
-    //   pass = passwordRef.current!.value;
-    // else
-    //   pass = null;
-  // if (data.avatar)
-  // {
-  //   const file = data.avatar[0];
-  //   const storageRef = app.storage().ref();
-  //   const fileRef = storageRef.child(file.name);
-  //   fileRef.put(file).then(() => {
-  //     console.log("Uploaded a file");
-  //   });
-  // }
-    // console.log(avatarRef);
-    createRoomHandler(data.name,p , currentImage, data.password, data.description);
+    
+    createRoomHandler(data.name,p , imageFile, data.password, data.description);
     closeModal();
 
   };
   let [currentImage , SetCurrentImage] = useState<any>();
+  const [imagePreview, setImagePreview] = useState<any>();
+  const [imageFile, setImageFile] = useState<any>();
 
    const upload = (event : any) =>
    {
-    let reader = new FileReader();
-    reader.addEventListener("load", (ev : any)=>{
-        SetCurrentImage(ev.target['result']);
-        // console.log(`image = ${currentImage}`);
-    });
-    reader.readAsDataURL(event.target.files[0]);
+
+    let image_as_base64 = URL.createObjectURL(event.target.files[0])
+      let image_as_files = event.target.files[0];
+
+        setImagePreview(image_as_base64)
+        setImageFile(image_as_files)
   }
 
   const closeModal = () => {
@@ -65,27 +53,7 @@ const AddChannel: React.FC<{
     setShowModal(false);
 
   };
-
-  // React.useEffect(() => {
-  //   setError("name", {
-  //     type: "manual",
-  //     message: "Dont Forget Your Username Should Be Cool!"
-  //   });
-  // }, [setError])
-
-  // const formSubmit = (e: any) => {
-	// let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
-
-  //   e.preventDefault();
-  //   let pass: string | null;
-  //   if (passwordRef.current)
-  //     pass = passwordRef.current!.value;
-  //   else
-  //     pass = null;
-  //   createRoomHandler(roomNameRef.current!.value, p, pass);
-  //   closeModal();
-  // };
-
+  
   const showdiv = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPrivacy(event.target.value);
   }
