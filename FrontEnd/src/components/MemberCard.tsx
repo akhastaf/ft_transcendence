@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { AddFriend, BlockFriend, GetBlockedFriends, GetFriends } from './Services/user';
+import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends } from './Services/user';
 import { ChatType, Role, userModel, Userstatus, UserType } from './Types/types';
 
 
@@ -68,8 +68,28 @@ const App1: React.FC<{
 	const [blocked, setBlocked] = useState<UserType[]>();
 	const [friends, setFriends] = useState<UserType[]>();
 
+
+	const checkIfFriend = (id : number) => {
+		
+		GetFriends().then((res)=> {
+			setFriends(res)
+		}).catch(err => console.log(err))
+
+		const check = (friends && friends.filter(friend => parseInt(friend._id) === id) ? true : false)
+		return check;
+	}
+	const checkIfBlocked = (id : number) => {
+		getBlockedList().then((res)=> {
+			setBlocked(res)
+		}).catch(err => console.log(err))
+
+		const check = (blocked && blocked.filter(blocked => parseInt(blocked._id) === id) ? true : false)
+		return check;
+	}
 	// Do what you want when an option in the context menu is selected
 	const [selectedValue, setSelectedValue] = useState<String>();
+	const [isblocked, setIsBlocked] = useState<boolean>();
+	const [isFriend, setIsFriend] = useState<boolean>();
 	const doSomething = (selectedValue: String) => {
 		setSelectedValue(selectedValue);
 	};
@@ -95,25 +115,10 @@ const App1: React.FC<{
 			setIsShown(false)
 	}
 	useEffect (() => {
-	const checkIfFriend = (id : number) => {
-		
-		GetFriends().then((res)=> {
-			setFriends(res)
-		}).catch(err => console.log(err))
-
-		const check = (friends && friends.filter(friend => parseInt(friend._id) === id) ? true : false)
-		return check;
-	}
-	const checkIfBlocked = (id : number) => {
-		GetBlockedFriends().then((res)=> {
-			setBlocked(res)
-		}).catch(err => console.log(err))
-
-		const check = (blocked && blocked.filter(blocked => parseInt(blocked._id) === id) ? true : false)
-		return check;
-	}
-	checkIfBlocked();
-	checkIfFriend();
+		setIsFriend(checkIfFriend(user.id));
+		setIsBlocked(checkIfBlocked(user.id));
+	// checkIfBlocked();
+	// checkIfFriend();
 	}, [friends, blocked])
 	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
@@ -163,13 +168,13 @@ const App1: React.FC<{
 						className=" min-w-max absolute  text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1  m-0 bg-clip-padding border-none bg-black"
 					>
 						
-						{!checkIfFriend(user.id) && <MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/>}
+						{!isFriend && <MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/>}
 						<MemberWork nameService={"Check Profil"} id={user.id} function1={AddFriend}/>
 						<MemberWork nameService={"Invite to Game"} id={user.id} function1={AddFriend}/>
 						
 						<li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" /></li>
 						
-						{!checkIfBlocked(user.id) && <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/>}
+						{!isblocked && <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/>}
 						{(role === Role.ADMIN || role === Role.OWNER) &&
 						<><li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />AdminPannel</li>
 						<MemberWork nameService={"Mute"} id={user.id} function1={AddFriend}/>

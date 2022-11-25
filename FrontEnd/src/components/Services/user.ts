@@ -22,7 +22,7 @@ export const BlockFriend = (id: number) : Promise<any> => {
 	return localService.get("user/add/" +id).then((res) => res.data).catch(err => console.log(err));
 }
 export const GetFriends = () : Promise<any> => {
-	return localService.get("user/friends").then((res) => res.data).catch(err => console.log(err));
+	return localService.get("channels/friend-users").then((res) => {console.log(res); return res.data}).catch(err => console.log(err));
 }
 export const GetBlockedFriends = () : Promise<any> => {
 	return localService.get("user/blocked/" ).then((res) => res.data).catch(err => console.log(err));

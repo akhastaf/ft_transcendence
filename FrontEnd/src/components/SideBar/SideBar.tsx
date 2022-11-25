@@ -71,7 +71,7 @@ const SideBar: React.FC <{
     };
     useEffect(() =>
     {
-      // console.log(`users      = ${users}`);
+      console.log("users = .    ", users);
     }
     
     ,[])
@@ -91,7 +91,7 @@ const SideBar: React.FC <{
 						{/* <div className="flex items-center p-2 mb-2"> */}
                         {
                           
-                                users.map((user: userModel) => {
+                              users.length > 0 &&  users.map((user: userModel) => {
                                 if (user.name !== currentUser.username)
 
                                     return (

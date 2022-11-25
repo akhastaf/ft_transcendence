@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 
 export const localService = axios.create({
-    baseURL: 'http://localhost:3000/',
+    baseURL: 'http://localhost:3000',
     headers: {
         crossdomain: true,
     },
@@ -37,7 +37,7 @@ localService.interceptors.request.use((config: AxiosRequestConfig) => {
     if (config) {
         // console.log("hello i am inside the intecptor");
         const token = localStorage.getItem("accessToken");
-        console.log(" i am in the intercept = ", token);
+        // console.log(" i am in the intercept = ", token);
         if (token && config.headers) {
             config.headers["Authorization"] = "Bearer " + token;
         }
@@ -47,7 +47,7 @@ localService.interceptors.request.use((config: AxiosRequestConfig) => {
 
 // intercept local service responses
 localService.interceptors.response.use((response: AxiosResponse) => {
-    // if (response.data.status === 400)
+    if (response.data.status > 400)
     // {
     //     console.log('====================================');
     //     console.log("here we are in 400");

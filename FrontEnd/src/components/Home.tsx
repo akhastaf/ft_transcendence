@@ -214,12 +214,13 @@ const Home: React.FC<{
 		})
 		if (state === "HomeGAME")
 		{
-			// setUsers(userInfo.friends);
-			GetFriends().then((res) => {
-				console.log("users = ", res);
-				setUsers(res)
+			// GetFriends().then((res) => {
+			// 	console.log("users =       ", res);
+
+			// 	setUsers(res)
 				
-			}).catch(err => console.log(err))
+			// }).catch(err => console.log(err))
+			console.log("aaaaaaaaaaaaaa");
 			setChoosenChat(() => ({username: "", _id: ""}))
 			setSelectedUserDM(() => ({_id: "",
 			username: "" }))
@@ -279,7 +280,7 @@ const Home: React.FC<{
 		}
 
 
-	},[ id2, state ,messageRef, userInfo.friends])
+	},[ id2, state ,messageRef, users.friends])
 
 
 
@@ -319,15 +320,18 @@ const Home: React.FC<{
 
 
 	const createRoomHandler = (roomName: string, private1: Privacy, avatar: any, password?: string, description?: string) => {
-		console.log(avatar);
-		localService.post("/channels", {
-			name: roomName,
-			avatar: avatar,
-			password: password,
-			description: description,
-			privacy: private1,
-		}).then((room) => {
-			setRooms([...rooms, room.data])
+		console.log("avatar =" ,avatar);
+
+		let formData = new FormData();
+    	formData.append('name', roomName);
+    	formData.append('avatar', avatar);
+    	formData.append('password', password? password : "");
+    	formData.append('description', description ? description : "");
+    	formData.append('privacy', private1);
+
+		localService.post("/channels", 
+		formData).then((room) => {
+			// setRooms([...rooms, room.data])
 		})
 			.catch((err) =>
 				console.log(err.response.data.message));

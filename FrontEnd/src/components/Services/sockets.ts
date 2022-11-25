@@ -8,7 +8,7 @@ if (typeof window !== 'undefined') {
 	console.log(token);
 }
 
-const URL = "http://localhost:3000/";
+const URL = "http://localhost:3000";
 
 export const socket = io(URL, {
   withCredentials: true,
