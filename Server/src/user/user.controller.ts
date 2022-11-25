@@ -33,12 +33,14 @@ export class UserController {
     async getBlocked(@Req() req: RequestWithUser) {
         return this.userService.getBlocked(req.user);
     }
-    @Get('add/:id')
-    async addFriend(@Param('id', ParseIntPipe) id, @Req() req: RequestWithUser) {
+    @Get('add/:id') 
+    async addFriend(@Param('id', ParseIntPipe) id:number, @Req() req: RequestWithUser) {
+        console.log("done");
         return this.userService.addFriend(req.user, id);
+         
     }
     @Get('block/:id')
-    async blockFriend(@Param('id', ParseIntPipe) id, @Req() req: RequestWithUser) {
+    async blockFriend(@Param('id', ParseIntPipe) id:number, @Req() req: RequestWithUser) {
         return this.userService.blockFriend(req.user, id);
     }
 
