@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Group, Privacy } from './entities/group.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { Role, Status, UserToGroup } from './entities/usertogroup.entity';
@@ -9,6 +9,8 @@ import { joinGroupDto } from './dto/join-group.dto';
 import * as bcrypt from 'bcryptjs';
 import { addUserDto } from './dto/add-user.dto';
 import { HttpException } from '@nestjs/common';
+import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
+import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
 
 
 export class GroupsService {
@@ -126,16 +128,6 @@ export class GroupsService {
 			.where("group.privacy != :privacy", {privacy: 'dm'})
 			.andWhere("user.id = :user_id", {user_id: user_id})
 			.getMany();
-			// .where("group.privacy IN (:...privacy)", {privacy: ['public', 'protected']})
-			// // .orWhere("user.id = :user_id", {user_id: user_id})
-			// .orWhere(
-			// 	new Brackets((qb) => {
-			// 		qb.where("group.privacy = :_privacy", {_privacy: 'private'})
-			// 		.andWhere("user.id = :user_id", {user_id: user_id})
-			// 	}),
-			// )
-			// .getMany();
-			// console.log("userToGoup", channels);
 			return channels;
 		} catch (error) {
 			console.log("getChannelByUser: Error");
@@ -240,7 +232,7 @@ export class GroupsService {
 					channel.avatar = element.avatar;
 					channel.privacy = element.privacy;
 					channel.description = element.description;
-					console.log("make it Heeeere", channel);
+					// console.log("make it Heeeere", channel);
 					array.push(channel);
 				});
 				// console.log("getGroups", array);
@@ -282,7 +274,7 @@ export class GroupsService {
 			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
 			{
 				const dto:joinGroupDto = info;
-				return await this.joinGroup(id_user, dto);
+				return await this.joinGroup(info.id_user, dto);
 			}
 			//! I may should throw an exception
 			return null;
@@ -509,7 +501,7 @@ export class GroupsService {
 					return false;
 				else
 				{
-					is_member.status = Status.ACCEPTED;
+					is_member.status = Status.ACTIVE;
 					is_member.until = null;
 					await this.userToGroupRepository.save(is_member);
 					return true;
@@ -523,12 +515,50 @@ export class GroupsService {
 		}
 	}
 
+	async isAllowedR(id_user: number, id_group: number)
+	{
+		try{
+			const group = await this.groupRepository.findOneOrFail(
+				{ where : {id : id_group}}
+			);
+			if (group.privacy == Privacy.PUBLIC)
+				return true;
+			const is_member = await this.isGroupMember(id_user, id_group);
+			if (!is_member)
+			{
+				console.log("You are not a member of this group");
+				return false;
+			}
+			let date = new Date();
+			if (is_member.status == Status.BANNED)
+			{
+				if (is_member.until > date)
+					return false;
+				else
+				{
+					is_member.status = Status.ACTIVE;
+					is_member.until = null;
+					await this.userToGroupRepository.save(is_member);
+					return true;
+				}
+			}
+			return true;
+		}
+		catch(e)
+		{
+			console.log("Error isAllowedR");
+		}
+	}
+
+
 	// * ############################################# set Admin ##############################
 
 	async setAdmin(id_user: number, data: addUserDto)
 	{
 		try
 		{
+			if (id_user == data.id_user)
+				return false;
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
@@ -588,6 +618,154 @@ export class GroupsService {
 		catch(e)
 		{
 			console.log("Unset setAdmin");
+		}
+	}
+
+	// * ############################################# set Status ##############################
+	
+	async setStatus(id_user: number, data: setStatusDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
+			{
+				console.log("You are not allowed to set muted");
+				return false;
+			}
+			const join = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("group.id = :group_id", {group_id : data.id_group})
+			.andWhere("user.id = :user_id", {user_id: data.id_user})
+			.getOne();
+			if (!join)
+			{
+				console.log("This user is not a member of this group");
+				return false;
+			}
+			if (join.role == Role.OWNER || join.role == Role.ADMIN)
+			{
+				console.log("You can't mute an admin or an owner");
+				return false;
+			}
+			join.status = data.status;
+			join.until = data.until;
+			return await this.userToGroupRepository.save(join);
+		}
+		catch(e)
+		{
+			console.log("Error setMuted");
+		}
+	}
+
+	// * ############################################# unset Status ##############################
+	
+	async unsetStatus(id_user: number, data: unsetStatusDto)
+	{
+		try{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
+			{
+				console.log("You are not allowed to set muted");
+				return false;
+			}
+			const join = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("group.id = :group_id", {group_id : data.id_group})
+			.andWhere("user.id = :user_id", {user_id: data.id_user})
+			.getOne();
+			if (!join)
+			{
+				console.log("This user is not a member of this group");
+				return false;
+			}
+			join.status = Status.ACTIVE;
+			join.until = null;
+			return await this.userToGroupRepository.save(join);
+		}
+		catch(e)
+		{
+			console.log("Error unsetMuted");
+		}
+	}
+
+	// * ############################################# set pwd ##############################
+	
+	async setPwd(id_user: number, data: passwordDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to update password");
+				return null;
+			}
+			const group = is_member.group;
+			if (group.privacy === Privacy.PROTECTED || group.privacy === Privacy.DM)
+				throw new Error("You can't set pwd");
+			group.password = data.password;
+			group.privacy = Privacy.PROTECTED;
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error setPwd");
+		}
+	}
+
+	// * ############################################# update pwd ##############################
+	async updatePwd(id_user: number, data: updatePasswordDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to update password");
+				return null;
+			}
+			const group = is_member.group;
+			if (group.privacy !== Privacy.PROTECTED)
+				throw new Error("You can't change pwd");
+			if (!await bcrypt.compare(data.old_password, group.password))
+				throw new Error("Wrong password");
+			group.password = data.new_password;
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error updatePwd");
+		}
+	}
+	// * ############################################# Delete pwd  ##############################
+	
+	async deletePwd(id_user: number, data: passwordDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to update password");
+				return null;
+			}
+			const group = is_member.group;
+			if (group.privacy !== Privacy.PROTECTED)
+				throw new Error("You can't delete pwd");
+			if (!await bcrypt.compare(data.password, group.password))
+				throw new Error("Wrong password");
+			group.password = null;
+			group.privacy = Privacy.PUBLIC;
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error updatePwd");
 		}
 	}
 }

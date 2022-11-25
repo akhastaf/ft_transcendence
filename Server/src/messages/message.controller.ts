@@ -64,10 +64,17 @@ export class MessagesController {
 	@Get('rooms/:id') //* get messages of a room
 	async getRoomMessages(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
 		// console.log("##########  getRoomMessages  ##########", id);
-		let arr = new Array();
+		//! hna i should check if the user is allowed to the msgs.
+		//* if the  room is public => ok
+		// * otherwise => check if the user is in the room
+		//* if so you should check if he is not banned
+		const is_allowed = await this.groupsService.isAllowedR(req.user.id, id);
+		if (!is_allowed)
+			return null;
 		const messages = await this.messagesService.getRoomMessages(id);//id here is the id of the group
 		if (messages)
 		{
+			let arr = new Array();
 			messages.forEach(element => {
 				let message = new messageModel();
 				message.message = element.content;

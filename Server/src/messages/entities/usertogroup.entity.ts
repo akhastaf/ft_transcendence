@@ -3,10 +3,10 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { Group } from "./group.entity";
 
 export enum Status {
-	ACCEPTED = 'accepted',
+	ACTIVE = 'active',
 	BANNED = 'banned',
 	MUTED = 'muted',
-	KICKED = 'kicked',
+	// KICKED = 'kicked',
 }
 export enum Role {
 	OWNER = 'owner',
@@ -29,7 +29,7 @@ export class UserToGroup {
 	@Column({
 		type: 'enum',
 		enum: Status,
-		default: Status.ACCEPTED
+		default: Status.ACTIVE
 	})	
 	status: Status;
 

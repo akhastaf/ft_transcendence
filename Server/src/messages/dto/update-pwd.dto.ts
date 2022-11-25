@@ -18,6 +18,22 @@ export class updatePasswordDto
 	@MinLength(8)
     @MaxLength(20)
 	@IsNotEmpty()
-    password: string;
+    new_password: string;
+
+}
+
+export class passwordDto
+{
+	@ApiProperty()
+	@IsNumber()
+	@IsNotEmpty()
+	id_group: number;
+
+	@ApiProperty()
+	@IsString()
+	@MinLength(8)
+	@MaxLength(20)
+	@IsNotEmpty()
+	password: string;
 
 }
