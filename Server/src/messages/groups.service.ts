@@ -184,11 +184,17 @@ export class GroupsService {
 				{ where : {id : groupdto.id_group}}
 			);
 			if (group.privacy == 'dm')
-				throw new Error("You can't join");
+			{
+				return null;
+				// throw new Error("You can't join");
+			}
 			if (group.privacy == 'protected')
 			{
 				if (!await bcrypt.compare(groupdto.password, group.password))
+				{
+					return null;
 					throw new Error("Wrong password");
+				}
 			}
 			const joined = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
@@ -205,7 +211,7 @@ export class GroupsService {
 				await this.userToGroupRepository.save(joinGroup);
 				return joinGroup;
 			}
-			return joined;
+			return null;
 		}
 		catch(e)
 		{
