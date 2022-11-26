@@ -47,7 +47,7 @@ const SideBarE: React.FC<{
                                  <SettingCard setSelected={setSelected} selected={selected}  text="Block List"/>
                                  <SettingCard setSelected={setSelected} selected={selected}  text="Friend Request"/>
                                  <div className="bg-rose-600 border-2 border-rose-600 hover:bg-rose-800">
-                                 <SettingCard setSelected={setSelected} selected={selected}  text="Disconnect"/>
+                                 <SettingCard setSelected={setSelected} selected={selected} logout={logoutHandler} text="Disconnect"/>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +78,8 @@ const SettingCard : React.FC <{
     setSelected: React.Dispatch<React.SetStateAction<string>>
     selected:string
     text:string
-}> = ({selected,text, setSelected}) => {
+    logout? : () => void;
+}> = ({selected,text, setSelected, logout}) => {
     
     let modif : string | null;
 
@@ -88,7 +89,7 @@ const SettingCard : React.FC <{
     });
     return (<>
 
-        <div onClick={ () => { if ( text !== "Disconnect") setSelected(text) } } className={`flex items-center p-2 mb-2 ${modif}`}  >
+        <div onClick={ () => { if ( text !== "Disconnect") setSelected(text) ; else if (logout) logout()} } className={`flex items-center p-2 mb-2 ${modif}`}  >
             <div className="flex justify-center items-center p-2 gap-[7rem]">
             <h1 className="arcade text-white">{text}</h1>
 

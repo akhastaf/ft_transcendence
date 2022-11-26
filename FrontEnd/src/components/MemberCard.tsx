@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends } from './Services/user';
-import { ChatType, Role, userModel, Userstatus, UserType } from './Types/types';
+import { toast, ToastContainer } from 'react-toastify';
+import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from './Services/user';
+import { ChatType, Role, Status, userModel, Userstatus, UserType } from './Types/types';
+
 
 
 
@@ -12,8 +13,12 @@ const MemberCard: React.FC<{
 	coll: string
 	onClick: (user: string) => void;
 	role : Role,
+	state : string,
+	isShown : boolean
+	setIsShown : React.Dispatch<React.SetStateAction<boolean>>
+	choosenChat : ChatType
 
-}> = ({ user, onClick, coll, role }) => {
+}> = ({isShown, user, onClick, coll, role, state, setIsShown, choosenChat }) => {
 
 
 
@@ -21,10 +26,51 @@ const MemberCard: React.FC<{
 
 	}, [])
 
+	const setadminAction = (id: number, status : string , time : string) => {
+		let formData = new FormData();
+		var currentDate = new Date();
+		var time_in_minut = 1;
+		currentDate.setTime(currentDate.getTime() + time_in_minut *60*1000);
+		formData.append("id_user", id.toString());
+		formData.append("id_group", choosenChat._id);
+		formData.append("status", Status.MUTED)
+		formData.append("until", time)
+		console.log("i am in the muted fucntion")
+
+		setStatus(id, parseInt(choosenChat._id), Status.MUTED, currentDate).then((res) => {
+			console.log("he is banned/muted")
+		})
+
+	}
+	const unsetadminAction = (id: number) => {
+		let formData = new FormData();
+		formData.append("id_user", id.toString());
+		formData.append("id_group", choosenChat._id);
+		unsetStatus(formData).then((res) => {
+			console.log("he is unbanned/unmuted")
+		})
+	}
+
+	const setAdmin = (id: number) => {
+		let formData = new FormData();
+		formData.append("id_user", id.toString());
+		formData.append("id_group", choosenChat._id);
+
+		setADmin(formData).then(() => console.log("new admin is set"))
+	}
+	const unsetAdmin = (id: number) => {
+		let formData = new FormData();
+		formData.append("id_user", id.toString());
+		formData.append("id_group", choosenChat._id);
+		unsetADmin(formData).then(() => console.log("admin is unset"))
+	}
+	
+
+
 
 	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
-	return (<App1 role={role} user={user} coll={coll} onClick={onClick} />);
+	return (<App1 setAdmin ={setAdmin} unsetAdmin={unsetAdmin} setAdminAction={setadminAction} unsetAdminAction={unsetadminAction} isShown={isShown} role={role} user={user} coll={coll} onClick={onClick} setIsShown={setIsShown} state={state} />);
 };
 
 
@@ -37,10 +83,17 @@ const App1: React.FC<{
 	coll: string
 	onClick: (user: string) => void;
 	role : Role
+	state : string,
+	setIsShown : React.Dispatch<React.SetStateAction<boolean>>
+	isShown : boolean
+	setAdminAction : (id: number, status: string, time: string) => void
+	unsetAdminAction : (id: number, status: string, time: string) => void
+	setAdmin : (id : number) => void
+	unsetAdmin : (id : number) => void
 
-}> = ({ user, onClick, coll , role}) => {
+}> = ({ setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction}) => {
 	// Show or hide the custom context menu
-	const [isShown, setIsShown] = useState(false);
+	const [isShow, setIsShow] = useState(false);
 
 	// The position of the custom context menu
 	const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -58,6 +111,7 @@ const App1: React.FC<{
 
 		setPosition(newPosition);
 		setIsShown(true);
+
 	};
 
 	// Hide the custom context menu
@@ -90,19 +144,36 @@ const App1: React.FC<{
 	const [selectedValue, setSelectedValue] = useState<String>();
 	const [isblocked, setIsBlocked] = useState<boolean>();
 	const [isFriend, setIsFriend] = useState<boolean>();
+	const [FBUpdate, setFBUpdate] = useState<boolean>(false);
 	const doSomething = (selectedValue: String) => {
 		setSelectedValue(selectedValue);
 	};
 
+	// const contextClass = {
+	// 	success: "bg-blue-600",
+	// 	error: "bg-red-600",
+	// 	info: "bg-gray-600",
+	// 	warning: "bg-orange-400",
+	// 	default: "bg-indigo-600",
+	// 	dark: "bg-white-600 font-gray-300",
+	//   };
+
 	const AddFriendf = (id : number) => {
 		AddFriend(id).then((res) =>
 		{
-			console.log(res);
-			toast.success("You are now friends", {
-				position: toast.POSITION.TOP_CENTER,
-			  });
+			console.log("res ====== ", res);
+			<ToastContainer
+			toastClassName={
+			  " absolute flex p-1 min-h-10 rounded-md justify-between overflow-hidden cursor-pointer"
+			}
+			bodyClassName={() => "text-sm font-white font-med block p-3"}
+			position="bottom-left"
+			autoClose={3000}
+		  />
+			toast("Wow so easy!");
 		}).catch(err => console.log(err))
 		setIsShown(false)
+		setFBUpdate(!FBUpdate)
 	}
 
 
@@ -113,13 +184,32 @@ const App1: React.FC<{
 				  });
 			})
 			setIsShown(false)
+
+			setFBUpdate(!FBUpdate)
 	}
+
+	
+	// const mute = (id: number) => {
+	// 	let formData = new FormData();
+	// 	formData.append("id_user", id.toString());
+	// 	formData.append("id_group", id)
+	// }
+
+	const ban = (id: number) => {
+		
+	}
+
+	
+
+
+
 	useEffect (() => {
 		setIsFriend(checkIfFriend(user.id));
 		setIsBlocked(checkIfBlocked(user.id));
 	// checkIfBlocked();
 	// checkIfFriend();
-	}, [friends, blocked])
+	}, [FBUpdate])
+
 	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
 	return (
@@ -177,15 +267,19 @@ const App1: React.FC<{
 						{!isblocked && <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/>}
 						{(role === Role.ADMIN || role === Role.OWNER) &&
 						<><li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />AdminPannel</li>
-						<MemberWork nameService={"Mute"} id={user.id} function1={AddFriend}/>
-						<MemberWork nameService={"Ban"} id={user.id} function1={AddFriend}/>
-						<MemberWork nameService={"Kick"} id={user.id} function1={AddFriend}/></>
+						<MemberWork nameService={"Mute"} id={user.id}  AdminAction={setAdminAction}/>
+						<MemberWork nameService={"Ban"} id={user.id} AdminAction={setAdminAction}/>
+						<MemberWork nameService={"Kick"} id={user.id} function1={AddFriend}/>
+						 {
+							<MemberWork nameService={"Set As ADMIN"} id={user.id} function1={setAdmin}/>
+						 }
+						 </>
 						}
 						{(role === Role.OWNER) &&
 						<>
 						<li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />OwnerPannel</li>
-						{<MemberWork nameService={"Mute"} id={user.id} function1={AddFriend}/>}
-						{<MemberWork nameService={"Ban"} id={user.id} function1={AddFriend}/>}
+						{<MemberWork nameService={"Set As Owner"} id={user.id} function1={AddFriend}/>}
+						{<MemberWork nameService={"Unset Admin"} id={user.id} function1={unsetAdmin}/>}
 						</>
 						}
 					</ul>
@@ -201,16 +295,21 @@ const MemberWork : React.FC <{
 	id : number
 	function1? : (id : number) => void,
 	function2? : (id : number) => boolean,
+	AdminAction? : (id: number, status: string, time: string) => void
 
-}> = ({nameService, function1, id, function2}) =>
+}> = ({nameService, function1, id, function2, AdminAction}) =>
 {
-
+	// var currentDate = new Date();
+	// var time_in_minut = 20;
+	// currentDate.setTime(currentDate.getTime() + time_in_minut *60*1000);
 	const f = () => {
 		console.log(id)
 		if (function1)
 			function1(id)
 		if (function2)
 			function2(id)
+		if (AdminAction)
+			AdminAction(id,nameService,"aaa")
 	}
 
 	return (<>

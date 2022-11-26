@@ -44,7 +44,7 @@ export class AuthController {
             // res.status(200).send(access.access_token);
             res.redirect("http://localhost:3001/callback?accessToken=" + access["access_token"]);
         }
-      //  res.redirect(this.configService.get('CILENT_HOST') + '/channels?user_id=' + user.id + '&twfa=true');
+       res.redirect(this.configService.get('CILENT_HOST') + '/callback?user_id=' + user.id + '&twfa=true');
     }
     
     @UseGuards(JWTGuard)

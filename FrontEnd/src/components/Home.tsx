@@ -14,6 +14,7 @@ import GameHome from './Game/GameHome';
 import { SocketContext } from './Services/sockets'
 import ChannelsDisplay from './pages/ChannelsDisplay';
 import { getDmMessages, getRoomMessages } from './Services/messages';
+import { toast } from 'react-toastify';
 
 
 // const channel2 = require('../images/yoko.png');
@@ -125,7 +126,7 @@ const Home: React.FC<{
 	const navigate = useNavigate();
 	
 	
-	
+	const [isShown, setIsShown] = useState(false);
 	const socket = useContext(SocketContext);
 	
 	const [messages1, setMessages1] = useState<MessageModal[]> (
@@ -159,13 +160,14 @@ const Home: React.FC<{
 
 	useEffect(() => {
 		 socket.on("connection", () => {
-
+				
 			getCurrentUser()
 				.then((user) => {
 					setUserInfo(user);
 					console.log(user);
 				})
 				.catch((err) => console.log(err));
+				socket.off()
 
 		 })
 
@@ -177,6 +179,7 @@ const Home: React.FC<{
 
 			getAllRooms()
 				.then((res) => {
+					console.log("her spam");
 					setRooms(res);
 				})
 				.catch(err => console.log(err));
@@ -214,12 +217,12 @@ const Home: React.FC<{
 		})
 		if (state === "HomeGAME")
 		{
-			// GetFriends().then((res) => {
-			// 	console.log("users =       ", res);
+			GetFriends().then((res) => {
+				console.log("users =       ", res);
 
-			// 	setUsers(res)
+				setUsers(res)
 				
-			// }).catch(err => console.log(err))
+			}).catch(err => console.log(err))
 			console.log("aaaaaaaaaaaaaa");
 			setChoosenChat(() => ({username: "", _id: ""}))
 			setSelectedUserDM(() => ({_id: "",
@@ -229,6 +232,7 @@ const Home: React.FC<{
 		if (state === "DM") {
 			console.log(`user id = ${id2}`)
 			socket.emit("createDm_client", parseInt(id2), (data : any) => {
+				console.log("aaaa");
 				setDmId(data.id);
 				setChoosenChat(() => ({ username: "Direct Messages", _id: id2}));
 				
@@ -251,6 +255,7 @@ const Home: React.FC<{
 			// eslint-disable-next-line
 			getAllRooms().then((data) =>
 			{
+				console.log("her spam 1");
 				// eslint-disable-next-line
 				data.map((room : roomModal) => {
 					if (room.id === parseInt(id2))
@@ -267,6 +272,8 @@ const Home: React.FC<{
 				.then((res) => {
 
 					setUsers(res);
+					console.log("userrrrr = ", res
+					)
 				}
 				).catch(err => console.log(err))
 				;
@@ -316,7 +323,7 @@ const Home: React.FC<{
 			.catch((err) => console.log(err));
 
 		// ! getAllFriends aka users  (in bac)
-	},[rooms]);
+	},[state]);
 
 
 	const createRoomHandler = (roomName: string, private1: Privacy, avatar: any, password?: string, description?: string) => {
@@ -338,8 +345,15 @@ const Home: React.FC<{
 	};
 
 	const logoutHandler = () => {
-		navigate("/");
 		socket.emit("disconnect_client");
+	
+		localStorage.removeItem("currentUser")
+		localStorage.removeItem("accessToken")
+		toast.success("You are Disconnected", {
+			position: toast.POSITION.TOP_CENTER,
+		  });
+		navigate("/");
+
 		// ! probably need to contact socket with message 'logout' then forward to first page
 
 	}
@@ -377,7 +391,7 @@ const Home: React.FC<{
 	return (
 		<>
 		<div className='h-full w-full'>
-			<div className="flex h-screen">
+			<div className="flex h-screen" onClick={() => {setIsShown(false)}}>
 				 <ChannelList
 					setChoosenChat={setChoosenChat}
 					setSelectedUserDM={setSelectedUserDM}
@@ -396,7 +410,9 @@ const Home: React.FC<{
 					selectedUserDM={selectedUserDMHandler}
 					logoutHandler={logoutHandler}
 					role={myRole}
-
+					state={state}
+					isShown = {isShown}
+					setIsShown={setIsShown}
 				/>
 
 
