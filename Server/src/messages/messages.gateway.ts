@@ -7,6 +7,7 @@ import { SocketWithUserId } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import { Userstatus } from 'src/user/entities/user.entity';
 import { addUserDto } from './dto/add-user.dto';
+import { Status } from './entities/usertogroup.entity';
 
 @WebSocketGateway({
 	cors: {
@@ -46,7 +47,7 @@ export class MessagesGateway {
 		for (const member of members) {
 			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
 			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
-			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+			if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED ) {
 				this.server.to(member.user.id.toString()).emit('sendMessage_server', message);
 			}
 		}
@@ -95,7 +96,7 @@ export class MessagesGateway {
 		if (members)
 		{
 			for (const member of members) {
-				if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 					this.server.to(member.user.id.toString()).emit('joinGroup_server', message);
 				}
 			}
@@ -110,7 +111,7 @@ export class MessagesGateway {
 		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
 		//* send to all users in the room
 		for (const member of members) {
-			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+			if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 				this.server.to(member.user.id.toString()).emit('leaveGroup_server', message);
 			}
 		}
@@ -128,7 +129,7 @@ export class MessagesGateway {
 			const members = await this.groupsService.getMemberByChannel(data.id_group, client.data.id);
 			//* send to all users in the room
 			for (const member of members) {
-				if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 					this.server.to(member.user.id.toString()).emit('addUser_server', message);
 				}
 			}
@@ -145,7 +146,7 @@ export class MessagesGateway {
 			const members = await this.groupsService.getMemberByChannel(data.id_group, client.data.id);
 			//* send to all users in the room
 			for (const member of members) {
-				if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 					this.server.to(member.user.id.toString()).emit('removeUser_server', message);
 				}
 			}
