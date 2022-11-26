@@ -117,6 +117,8 @@ export class GroupController {
 				member.name = element.user.username;
 				member.avatar = element.user.avatar;
 				member.status = element.user.status;
+				member.role = element.role;
+				member.action = element.status;
 				arr.push(member);
 			});
 		}

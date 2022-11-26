@@ -158,7 +158,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar', 'user.status', 'userToGroup.role'])
+			.select(['userToGroup.id','user.id', 'user.username', 'user.avatar', 'user.status', 'userToGroup.role', 'userToGroup.status'])
 			.where("group.id = :group_id", {group_id : group_id})
 			.getMany();
 			
