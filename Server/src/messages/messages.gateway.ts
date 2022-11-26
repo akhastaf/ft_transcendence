@@ -85,14 +85,19 @@ export class MessagesGateway {
 	async joinGroup(@MessageBody() joinGroup:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
 		// console.log('join group ', createUserToGroup, client.id);
 		const group = await this.groupsService.joinGroup(client.userId, joinGroup);
+		if (!group)
+			return false;
 		const message = await this.messagesService.identify(client.userId, 'has joined the channel');
 		// client.join("__group_"+group.name);
 		// this.server.to(client.userId.toString()).emit('joinGroup_sever', message);
 		const members = await this.groupsService.getMemberByChannel(joinGroup.id_group, client.data.id);
 		//* send to all users in the room
-		for (const member of members) {
-			if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
-				this.server.to(member.user.id.toString()).emit('joinGroup_server', message);
+		if (members)
+		{
+			for (const member of members) {
+				if (client.data.id != member.user.id && this.connectedList.has(member.user.id)) {
+					this.server.to(member.user.id.toString()).emit('joinGroup_server', message);
+				}
 			}
 		}
 	}
