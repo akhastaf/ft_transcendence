@@ -28,6 +28,11 @@ export default function Callback() {
 useEffect(() => {
       // const access_token = queryParams.get('accessToken');
       const access_token  = searchParams.get("accessToken");
+      const twfa = searchParams.get("twfa");
+      if (twfa)
+      {
+        
+      }
       if (access_token)
       { 
         console.log("aaaaaaa");
@@ -38,15 +43,13 @@ useEffect(() => {
         getCurrentUser().then((res) => {
           console.log(res);
           setUserInfo(res);
-          localStorage.setItem("currentUser", res);
+          localStorage.setItem("currentUser", JSON.stringify(res));
           toast.success("You login success !!", {
             position: toast.POSITION.TOP_CENTER,
           });
         })
         .catch(err => console.log(err))
         navigate("/channels");
-      } else {
-        alert('received invalid access token')
       }
     }, [])
 

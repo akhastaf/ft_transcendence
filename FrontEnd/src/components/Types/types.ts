@@ -136,6 +136,13 @@ export enum Role {
 	ADMIN = 'admin',
 	MEMBER = 'member'
 }
+
+export enum Status {
+	ACTIVE = 'active',
+	BANNED = 'banned',
+	MUTED = 'muted',
+	// KICKED = 'kicked',
+}
 //   export class CreateGroupDto {
 
 //     @ApiProperty()

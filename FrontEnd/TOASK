@@ -11,3 +11,20 @@
 
 
 
+const [message , setMessage] = useState<<string, MessageModal[]>>();
+
+
+
+message[user1.id, [sadasd]];
+
+
+<div>
+    message.map((message : MessageModal) => {
+        <li> message.name message.conent</li>
+    })
+</div>
+
+
+// 
+
+
