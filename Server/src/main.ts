@@ -7,6 +7,7 @@ import { JWTGuard } from './auth/guards/jwt.guard';
 import { SocketIoAdapter } from './messages/socket-io-adapter';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
+import { UserService } from './user/user.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
