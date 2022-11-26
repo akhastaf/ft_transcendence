@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
 import { IsDate, IsNotEmpty, IsNumber, IsString, MinDate} from "class-validator";
 import { Status } from "../entities/usertogroup.entity";
 
@@ -20,9 +21,10 @@ export class setStatusDto
 	status: Status;
 
 	@ApiProperty()
+	@IsNotEmpty()
+	@Transform( ({ value }) => new Date(value))
 	@IsDate()
 	@MinDate(new Date())
-	@IsNotEmpty()
 	until: Date;
 }
 

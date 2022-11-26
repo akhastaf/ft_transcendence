@@ -527,8 +527,8 @@ export class GroupsService {
 			const group = await this.groupRepository.findOneOrFail(
 				{ where : {id : id_group}}
 			);
-			if (group.privacy == Privacy.PUBLIC)
-				return true;
+			// if (group.privacy == Privacy.PUBLIC)
+			// 	return true;
 			const is_member = await this.isGroupMember(id_user, id_group);
 			if (!is_member)
 			{
