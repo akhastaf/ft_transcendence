@@ -96,7 +96,7 @@ export class MessagesGateway {
 		if (members)
 		{
 			for (const member of members) {
-				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
+				if (this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 					this.server.to(member.user.id.toString()).emit('joinGroup_server', message);
 				}
 			}
@@ -107,11 +107,15 @@ export class MessagesGateway {
 	@SubscribeMessage('leaveGroup_client')
 	async leaveGroup(@MessageBody() groupdto:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
 		const group = await this.groupsService.leaveGroup(client.userId, groupdto);
+		// console.log('leave group ', group);
+		// console.log('leave group ', groupdto);
+		if (!group)
+			return false;
 		const message = await this.messagesService.identify(client.userId, 'has left the channel');
 		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
 		//* send to all users in the room
 		for (const member of members) {
-			if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
+			if (this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 				this.server.to(member.user.id.toString()).emit('leaveGroup_server', message);
 			}
 		}
@@ -129,7 +133,7 @@ export class MessagesGateway {
 			const members = await this.groupsService.getMemberByChannel(data.id_group, client.data.id);
 			//* send to all users in the room
 			for (const member of members) {
-				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
+				if (this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 					this.server.to(member.user.id.toString()).emit('addUser_server', message);
 				}
 			}
@@ -146,7 +150,7 @@ export class MessagesGateway {
 			const members = await this.groupsService.getMemberByChannel(data.id_group, client.data.id);
 			//* send to all users in the room
 			for (const member of members) {
-				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
+				if (this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 					this.server.to(member.user.id.toString()).emit('removeUser_server', message);
 				}
 			}

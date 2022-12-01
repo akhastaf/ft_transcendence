@@ -36,9 +36,9 @@ export class UserToGroup {
 	@Column({nullable: true})
 	until: Date;
 
-	@ManyToOne(type => User, user => user.usertogroup)
+	@ManyToOne(type => User, user => user.usertogroup, {onDelete: 'CASCADE'})
 	user: User;
 
-	@ManyToOne(type => Group, group => group.usertogroup)
+	@ManyToOne(type => Group, group => group.usertogroup, {onDelete: 'CASCADE'})
 	group: Group;
 }

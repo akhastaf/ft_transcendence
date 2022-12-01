@@ -190,10 +190,11 @@ export class GroupsService {
 			}
 			if (group.privacy == 'protected')
 			{
+				console.log("protected");
 				if (!await bcrypt.compare(groupdto.password, group.password))
 				{
-					return null;
 					throw new Error("Wrong password");
+					return null;
 				}
 			}
 			const joined = await this.userToGroupRepository
@@ -283,6 +284,7 @@ export class GroupsService {
 				return await this.joinGroup(info.id_user, dto);
 			}
 			//! I may should throw an exception
+			console.log("You are not allowed to add user");
 			return null;
 		}
 		catch(e)
@@ -394,7 +396,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error removeUser");
+			console.log("Error removeUser : ", e.message);
 		}
 	}
 				
@@ -406,17 +408,23 @@ export class GroupsService {
 			const user = await this.userRepository.findOneOrFail(
 				{	where : { id: id_user }	}
 			);
+			// console.log(user);
 			const group = await this.groupRepository.findOneOrFail(
 				{ where : {id : groupdto.id_group}}
 			);
 			if (group.privacy == 'dm')
 				throw new Error("You can't leave");
-			if (group.privacy == 'protected')
-			{
-				if (!await bcrypt.compare(groupdto.password, group.password))
-					throw new Error("Wrong password");
-			}
+			// if (group.privacy == 'protected')
+			// {
+				// 	console.log("group");
+				// 	if (!await bcrypt.compare(groupdto.password, group.password))
+				// 	throw new Error("Wrong password");
+				// 	console.log("group");
+				// }
 			const role = await this.getUserRole(id_user, groupdto.id_group);
+			// console.log(`!role ${role} id user ${id_user} id group ${groupdto.id_group} id `);
+			if (!role)
+				throw new Error("You are not a member of this group");
 			if (role === Role.OWNER)
 			{
 				const members = await this.getMemberByChannel(groupdto.id_group, id_user);
@@ -461,7 +469,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error joinGroup");
+			console.log("Error leaveGroup : ", e.message);
 		}
 	}
 
@@ -772,6 +780,31 @@ export class GroupsService {
 		catch(e)
 		{
 			console.log("Error updatePwd");
+		}
+	}
+
+	// * ############################################# delete members ##############################
+	
+	async deleteGroup(id_user: number, id_group: number)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, id_group);
+			if (!is_member || is_member.role !== Role.OWNER)
+			{
+				console.log("You are not allowed to delete this group");
+				return false;
+			}
+			return await this.groupRepository
+			.createQueryBuilder('users')
+			.delete()
+			.from(User)
+			.where("id = :id", { id: 1 })
+			.execute();
+		}
+		catch(e)
+		{
+			console.log("Error deleteGroup : ", e);
 		}
 	}
 }

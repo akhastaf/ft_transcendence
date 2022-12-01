@@ -184,4 +184,10 @@ export class GroupController {
 		console.log("deletePassword", data);
 		return await this.groupsService.deletePwd(req.user.id, data);
 	}
+
+	// @Delete(':id')
+	// async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+	// 	console.log("deleteChannel", id);
+	// 	return await this.groupsService.deleteGroup(req.user.id, id);
+	// }
   }
