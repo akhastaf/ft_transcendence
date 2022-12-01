@@ -3,9 +3,7 @@ import { io } from "socket.io-client";
 
 let token = null;
 if (typeof window !== 'undefined') {
-  console.log("dsadasd");
   token = localStorage.getItem('accessToken');
-	console.log(token);
 }
 
 const URL = "http://localhost:3000";

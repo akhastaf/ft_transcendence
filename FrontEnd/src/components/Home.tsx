@@ -70,28 +70,10 @@ import { toast } from 'react-toastify';
 const DUMMY_MESSAGES:  MessageModal[]  = [
 	// botRoom: [
 		{
-			userId: 1,
-			userName: "Med",
+			userId: 999999,
+			userName: "Jarvis",
 			currentUser: true,
-			message: "We are so happy to see you here",
-			date: new Date(),
-			avatar: "nvm",
-			roomId : "1",
-		},
-		{
-			userId: 1,
-			userName: "Med",
-			currentUser: true,
-			message: "We are so happy to see you here",
-			date: new Date(),
-			avatar: "nvm",
-			roomId : "1",
-		},
-		{
-			userId: 1,
-			userName: "Med",
-			currentUser: true,
-			message: "We are so happy to see you here",
+			message: "Jarvis say Hi , Congrats You are banned",
 			date: new Date(),
 			avatar: "nvm",
 			roomId : "1",
@@ -131,7 +113,7 @@ const Home: React.FC<{
 	
 	const [messages1, setMessages1] = useState<MessageModal[]> (
 		DUMMY_MESSAGES
-		);
+	);
 		const [myRole, setMyRole] = useState<Role>(Role.MEMBER);
 		// eslint-disable-next-line
 						const [searchParams] = useSearchParams();
@@ -176,7 +158,7 @@ const Home: React.FC<{
 
 
 		socket.on("joinGroup_sever", (data) => {
-
+			console.log(data);
 			getAllRooms()
 				.then((res) => {
 					console.log("her spam");
@@ -186,7 +168,7 @@ const Home: React.FC<{
 
 		})
 
-		}, []);
+		}, [rooms]);
 
 		// eslint-disable-next-line
 		const [onlineUsers, setOnlineUsers] = useState<string[]>([]);

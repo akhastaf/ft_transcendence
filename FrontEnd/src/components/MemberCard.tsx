@@ -29,24 +29,25 @@ const MemberCard: React.FC<{
 	const setadminAction = (id: number, status : string , time : string) => {
 		let formData = new FormData();
 		var currentDate = new Date();
-		var time_in_minut = 1;
+		var time_in_minut = 20;
 		currentDate.setTime(currentDate.getTime() + time_in_minut *60*1000);
-		formData.append("id_user", id.toString());
+		formData.append("id_user", id.toString()); 
 		formData.append("id_group", choosenChat._id);
 		formData.append("status", Status.MUTED)
 		formData.append("until", time)
-		console.log("i am in the muted fucntion")
-
-		setStatus(id, parseInt(choosenChat._id), Status.MUTED, currentDate).then((res) => {
+		console.log("i am in the muted fucntion dasdasdasfasdkhhasb")
+		console.log(" i am here time = ddd", currentDate);
+		
+		setStatus(id, parseInt(choosenChat._id), Status.BANNED, currentDate).then((res) => {
 			console.log("he is banned/muted")
 		})
 
 	}
 	const unsetadminAction = (id: number) => {
 		let formData = new FormData();
-		formData.append("id_user", id.toString());
-		formData.append("id_group", choosenChat._id);
-		unsetStatus(formData).then((res) => {
+		// formData.append("id_user", id.toString());
+		// formData.append("id_group", choosenChat._id);
+		unsetStatus(id, parseInt(choosenChat._id)).then((res) => {
 			console.log("he is unbanned/unmuted")
 		})
 	}
@@ -87,7 +88,7 @@ const App1: React.FC<{
 	setIsShown : React.Dispatch<React.SetStateAction<boolean>>
 	isShown : boolean
 	setAdminAction : (id: number, status: string, time: string) => void
-	unsetAdminAction : (id: number, status: string, time: string) => void
+	unsetAdminAction : (id: number) => void
 	setAdmin : (id : number) => void
 	unsetAdmin : (id : number) => void
 
@@ -269,7 +270,7 @@ const App1: React.FC<{
 						<><li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />AdminPannel</li>
 						<MemberWork nameService={"Mute"} id={user.id}  AdminAction={setAdminAction}/>
 						<MemberWork nameService={"Ban"} id={user.id} AdminAction={setAdminAction}/>
-						<MemberWork nameService={"Kick"} id={user.id} function1={AddFriend}/>
+						<MemberWork nameService={"Kick"} id={user.id} function1={unsetAdminAction}/>
 						 {
 							<MemberWork nameService={"Set As ADMIN"} id={user.id} function1={setAdmin}/>
 						 }

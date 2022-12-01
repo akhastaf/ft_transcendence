@@ -17,6 +17,7 @@ import SideBarE, { BasicButtons } from "../EditProfil/SideBarE";
 import { useNavigate } from "react-router-dom";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { socket } from "../Services/sockets";
 // import Context from './context'
 
 
@@ -93,6 +94,11 @@ const SideBar: React.FC <{
 		// 		// Navigate('/EditInfo');
 				// 
 		// }
+    const leaveGroup = () => {
+      socket.emit("leaveGroup_client", parseInt(choosenChat._id),  (data : any) => {
+        console.log("aaaaa = ", data)
+      })
+    }
     return (<>
     
 	
@@ -143,6 +149,11 @@ const SideBar: React.FC <{
           }
 					
 					</div>
+            <div className="flex flex-col flex-grow justify-end">
+              <div className="mb-5 mx-auto">
+              <BasicButtons text={"Leave Group"} onClick={() => {console.log(" i left"); leaveGroup()}} /> 
+              </div>
+            </div>
 					<div className="bg-[#292b2f] p-2 flex justify-between items-center space-x-8">
             <div className="flex items-center space-x-1">
               <img

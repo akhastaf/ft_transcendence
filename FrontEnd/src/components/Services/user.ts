@@ -45,13 +45,19 @@ export const changePassword = (id : number , id_group : number) : Promise<any> =
 // 	return localService.post("channels/set-status/", data ).then((res) => res.data).catch(err => console.log(err));
 // }
 export const setStatus = (id :number , id_group : number , status : Status, until : Date) : Promise<any> => {
-	
-	return localService.post("channels/set-status/", {id, id_group, status, until} ).then((res) => res.data).catch(err => console.log(err));
+	console.log(" id = ", id, "id_group = " , id_group, " status = ", status, " until = ", until)
+	return localService.post("channels/set-status/", 
+	{
+		id_user : id,
+		id_group : id_group,
+		status : status,
+		until : until
+	} ).then((res) => res.data).catch(err => console.log(err));
 }
 
 
-export const unsetStatus = (data : FormData) : Promise<any> => {
-	return localService.post("channels/unset-status/", data ).then((res) => res.data).catch(err => console.log(err));
+export const unsetStatus = (id_user : number , id_group : number) : Promise<any> => {
+	return localService.post("channels/unset-status/", {id_user, id_group} ).then((res) => res.data).catch(err => console.log(err));
 }
 
 
