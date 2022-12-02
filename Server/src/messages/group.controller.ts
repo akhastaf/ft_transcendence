@@ -117,6 +117,8 @@ export class GroupController {
 				member.name = element.user.username;
 				member.avatar = element.user.avatar;
 				member.status = element.user.status;
+				member.role = element.role;
+				member.action = element.status;
 				arr.push(member);
 			});
 		}
@@ -182,4 +184,10 @@ export class GroupController {
 		console.log("deletePassword", data);
 		return await this.groupsService.deletePwd(req.user.id, data);
 	}
+
+	// @Delete(':id')
+	// async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+	// 	console.log("deleteChannel", id);
+	// 	return await this.groupsService.deleteGroup(req.user.id, id);
+	// }
   }

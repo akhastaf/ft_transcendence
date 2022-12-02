@@ -17,8 +17,8 @@ async function bootstrap() {
     }
   });
   const configService = app.get(ConfigService);
-  const userService = app.get(UserService);
-  app.useWebSocketAdapter(new SocketIoAdapter(app, configService, userService))
+//   const userService = app.get(UserService);
+  app.useWebSocketAdapter(new SocketIoAdapter(app, configService))
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     transform: true

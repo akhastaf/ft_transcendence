@@ -1,6 +1,7 @@
 import { Request } from "express";
 import { type } from "os";
 import { Socket } from "socket.io";
+import { Status } from "./messages/entities/usertogroup.entity";
 import { User } from "./user/entities/user.entity";
 
 export interface RequestWithUser extends Request {
@@ -40,6 +41,8 @@ export class memberModel
 	name: string;
 	avatar: string;
 	status : string;
+	action : Status;
+	role: string;
 }
 
 export type tokens = {

@@ -14,9 +14,9 @@ export class Message {
 	@CreateDateColumn()
 	createdAt: Date;
 
-	@ManyToOne(type => User, user => user.messages)
+	@ManyToOne(type => User, user => user.messages, {onDelete: 'CASCADE'})
 	sender: User;
 
-	@ManyToOne(type => Group, group => group.messages)
+	@ManyToOne(type => Group, group => group.messages, {onDelete: 'CASCADE'})
 	receiver: Group;
 } 

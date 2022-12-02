@@ -47,10 +47,10 @@ export class Group {
 	@ManyToOne(type => User, user => user.groups)
 	owner: User;
 //! to check
-	@OneToMany(type => Message, message => message.receiver, {onDelete: 'CASCADE'})
+	@OneToMany(type => Message, message => message.receiver)
 	messages: Message[];
 	
-	@OneToMany(type => UserToGroup, usertogroup => usertogroup.group, {onDelete: 'CASCADE'})
+	@OneToMany(type => UserToGroup, usertogroup => usertogroup.group)
 	usertogroup: UserToGroup[];
 
 	@BeforeInsert()
