@@ -1,4 +1,4 @@
-FROM node:alpine as development
+FROM node:latest as development
 WORKDIR "/app"
 COPY ./package.json ./
 RUN chown root.root .

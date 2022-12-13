@@ -1,3 +1,4 @@
+import { Grid } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
@@ -29,13 +30,20 @@ const ChannelsDisplay: React.FC<{
                     </div>
                     {/* </div> */}
                 </div>
-                <div className="sm:h-auto sm:w-full grid gap-8 mb-6 lg:mb-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {/* <div className="sm:h-auto sm:w-full grid gap-8 mb-6 lg:mb-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {
                         rooms.map((room: roomModal) => (
                             <ChannelCard joinRoomHandler={joinRoomHandler} key={room.id} room={room} />
                         ))
                     }
-                </div>
+                </div> */}
+                 <Grid w={"100%"}  p={"2%"} templateColumns={{ base: 'repeat(autofill, 1fr)', lg :'repeat(3, 1fr)'}} gap={12}>
+                 {
+                        rooms.map((room: roomModal) => (
+                            <ChannelCard joinRoomHandler={joinRoomHandler} key={room.id} room={room} />
+                        ))
+                    }
+                </Grid>
             </div>
         </div>
     </>
@@ -56,9 +64,9 @@ const ChannelCard: React.FC<{
 
     return <>
 
-        <div className=" bg-white rounded-lg w-fit h-fit sm:w-40  lg:w-[28rem] lg:h-96 border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        <div className=" bg-white rounded-lg w-fit h-fit sm:w-40  lg:w-[24rem] lg:h-96 border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
             <a href="#">
-                <img className="rounded-t-lg object-cover sm:w-40 sm:h-48 lg:w-[28rem] lg:h-48" src={room.avatar} alt="" />
+                <img className="rounded-t-lg object-cover sm:w-40 sm:h-48 lg:w-[24rem] lg:h-48" src={room.avatar} alt="" />
             </a>
             <div className="p-5">
                 <a href="#">

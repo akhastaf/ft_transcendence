@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { useToast } from '@chakra-ui/react'
+// import { toast, ToastContainer } from 'react-toastify';
 import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from './Services/user';
 import { ChatType, Role, Status, userModel, Userstatus, UserType } from './Types/types';
 
@@ -94,6 +95,8 @@ const App1: React.FC<{
 }> = ({ setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction}) => {
 	// Show or hide the custom context menu
 	const [isShow, setIsShow] = useState(false);
+	const toast = useToast();
+
 
 	// The position of the custom context menu
 	const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -162,15 +165,14 @@ const App1: React.FC<{
 		AddFriend(id).then((res) =>
 		{
 			console.log("res ====== ", res);
-			<ToastContainer
-			toastClassName={
-			  " absolute flex p-1 min-h-10 rounded-md justify-between overflow-hidden cursor-pointer"
-			}
-			bodyClassName={() => "text-sm font-white font-med block p-3"}
-			position="bottom-left"
-			autoClose={3000}
-		  />
-			toast("Wow so easy!");
+			toast({
+				title: 'Account created.',
+				description: "We've created your account for you.",
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
+		
 		}).catch(err => console.log(err))
 		setIsShown(false)
 		setFBUpdate(!FBUpdate)
@@ -179,9 +181,6 @@ const App1: React.FC<{
 
 	const BlockFriend1 = (id :  number) => {
 			BlockFriend(id).then((res) =>{
-				toast.success("User Blocked", {
-					position: toast.POSITION.TOP_CENTER,
-				  });
 			})
 			setIsShown(false)
 

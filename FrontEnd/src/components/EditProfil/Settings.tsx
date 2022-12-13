@@ -5,6 +5,7 @@ import { UserType } from "../Types/types";
 import BlockList from "./BlockList";
 import FriendList from "./FriendList";
 import FriendListRequest from "./FriendRequest";
+import Profil from "./Profile";
 import { BasicButtons, BasicButtons1 } from "./SideBarE";
 
 // import logo1 from "../../images/cardBack.webp"
@@ -27,7 +28,7 @@ const Settings: React.FC<{
             selected === "My Account" && <UserCard closeModal={closeModal} currentUser={currentUser} />
         }
         {
-            // selected === "My Profile" && <FriendList currentUser={currentUser} />
+            selected === "My Profile" && <Profil currentUser={currentUser} closeModal={closeModal} />
         }
         {
             selected === "Friend List" && <FriendList closeModal={closeModal} currentUser={currentUser} />

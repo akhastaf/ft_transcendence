@@ -128,6 +128,8 @@ const Home: React.FC<{
 	
 	const [isShown, setIsShown] = useState(false);
 	const socket = useContext(SocketContext);
+	const [NewChannel, setNewChannel] = useState(false);
+
 	
 	const [messages1, setMessages1] = useState<MessageModal[]> (
 		DUMMY_MESSAGES
@@ -142,7 +144,21 @@ const Home: React.FC<{
 	// eslint-disable-next-line
 	const [allRooms, setAllRooms] = useState<any>([]);
 
-	const [rooms, setRooms] = useState<any>([]);
+	const [rooms, setRooms] = useState<any>([
+		{
+			id: "1",
+	name: "room1",
+	private: false,
+	password: "1234567",
+	createdBy: null,
+	members: null,
+	createdAt: new Date,
+	avatar: "aaaa",
+	updatedAt: Date,
+	messages: ["aaaaa"],
+	notifications: 1,
+		}
+	]);
 	const [userInfo, setUserInfo] = useState<UserType>({
 		_id: "",
 		username: "",
@@ -323,7 +339,7 @@ const Home: React.FC<{
 			.catch((err) => console.log(err));
 
 		// ! getAllFriends aka users  (in bac)
-	},[state]);
+	},[state, NewChannel]);
 
 
 	const createRoomHandler = (roomName: string, private1: Privacy, avatar: any, password?: string, description?: string) => {
@@ -335,10 +351,12 @@ const Home: React.FC<{
     	formData.append('password', password? password : "");
     	formData.append('description', description ? description : "");
     	formData.append('privacy', private1);
+		
 
 		localService.post("/channels", 
 		formData).then((room) => {
 			// setRooms([...rooms, room.data])
+			setNewChannel(!NewChannel);
 		})
 			.catch((err) =>
 				console.log(err.response.data.message));
@@ -390,8 +408,8 @@ const Home: React.FC<{
 
 	return (
 		<>
-		<div className='h-full w-full'>
-			<div className="flex h-screen" onClick={() => {setIsShown(false)}}>
+		<div className='h-full w-full min-h-screen'>
+			<div className="flex h-full" onClick={() => {setIsShown(false)}}>
 				 <ChannelList
 					setChoosenChat={setChoosenChat}
 					setSelectedUserDM={setSelectedUserDM}
@@ -417,7 +435,7 @@ const Home: React.FC<{
 
 
 				   <div className="bg-[#36393f] flex-grow col-span-2 p-0">
-					<div className="flex flex-col h-screen">
+					<div className="flex flex-col min-h-screen">
 						<ChatHeader
 							selectedUserDM={selectedUserDM}
 							choosenChat={choosenChat}

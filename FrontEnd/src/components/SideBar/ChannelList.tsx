@@ -49,7 +49,7 @@ const ChannelList: React.FC <{
 			<div className="flex flex-col items-center space-y-3">
 			 {
 				
-				rooms.map((room: RoomType, index: number) => (
+				rooms && rooms.map((room: RoomType, index: number) => (
 					// console.log(room.name);
 					<ChannelIcon 
 						room={room}

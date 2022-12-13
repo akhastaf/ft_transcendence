@@ -8,20 +8,13 @@ const GameHome : React.FC <{
     const [state, setState] = useState(false);
     return <>
         {
-             !state && <><div className="flex flex-col devide-x-2">
-            <div className="">
-                    <Leaderboard currentUser={currentUser}/>
-            </div>
-            <div className="">
-                    <p>hello </p>
-            </div>
+             !state && <>
+            <div className="flex flex-col px-10">
+                <Leaderboard currentUser={currentUser}/>
+                <div className="">
 
-        </div>
-            </>
-        }
-        {
-            state && <>
-            
+                </div>
+            </div>
             </>
         }
     </>
