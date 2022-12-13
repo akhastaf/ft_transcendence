@@ -47,20 +47,23 @@ localService.interceptors.request.use((config: AxiosRequestConfig) => {
 
 // intercept local service responses
 localService.interceptors.response.use((response: AxiosResponse) => {
-    if (response.data.status > 400)
-    // {
-    //     console.log('====================================');
-    //     console.log("here we are in 400");
-    //     console.log('====================================');
-    // }
-    // console.log('====================================');
-    console.log(response.status);
-    // console.log('====================================');
+   
     return response;
 }, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    // console.log("here i am error 400");
+   const originalRequest = error.config;
+   const errMessage = error.response.data.message as string;
+   if (errMessage.includes('Unauthorized') && !originalRequest._retry) {
+    originalRequest._retry =true;
+    // await refreshAccesToken();
+    return localService(originalRequest);
+   }
     return Promise.reject(error);
 });
 
+async function narefreshAccesTokenme() {
+    localService.get('').then((data) => {
+        localStorage.setItem('accessToken', data.data.access_token)
+    }).catch((err) => {
+        console.log(err);
+    })
+}

@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoCloseCircleSharp } from "react-icons/io5";
 // import { SiWappalyzer } from "react-icons/si";
@@ -62,7 +63,7 @@ const UserCard: React.FC<{
     }
 
     return <>
-        <div className=" sm:w-screen flex h-screen flex-col gap-5 ">
+        <Flex flexDir={"column"} p={"5%"} className="h-full gap-5">
             <div id="up div" className="flex flex-row  justify-around ">
                 <h1 className="float-left font-bold left-0"> My Account </h1>
                 <button
@@ -74,7 +75,6 @@ const UserCard: React.FC<{
             </div>
             <div className="flex h-screen ">
                 <div id="down div" className="h-full flex w-full m-auto  flex-row ">
-                    <div className="w-1/6 h-screen"></div>
                     <div className="flex flex-col h-[40rem] w-full md:w-[80rem]">
                        <div className="flex flex-col rounded-lg h-[25rem] bg-gradient-to-r gap-5 from-sky-500 to-indigo-500 " style={{ backgroundImage: `url(${logo}) ` }}>
 
@@ -107,10 +107,10 @@ const UserCard: React.FC<{
                             <div className="w-full border-b border-gray-500"></div>
                         </div>
                         <div className="flex flex-col">
-                            <span className="float-left font-bold left-0 text-md text-white">Password and Authentification</span>
+                            {/* <span className="float-left font-bold left-0 text-md text-white">Password and Authentification</span>
                             <div className="ml-0 mt-5 w-[20rem]">
                                 <BasicButtons1 classNam="" text="Change Password" onClick={ChangePassword} />
-                            </div>
+                            </div> */}
                             <div className="mt-5">
                            <h2> Two Factor Authentification </h2>
                             </div>
@@ -147,7 +147,7 @@ const UserCard: React.FC<{
                     <div className="lg:w-1/6"></div>
                 </div>
             </div>
-        </div>
+        </Flex>
     </>
 };
 

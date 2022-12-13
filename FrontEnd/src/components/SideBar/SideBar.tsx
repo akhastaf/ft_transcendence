@@ -193,7 +193,7 @@ export default SideBar;
 
 
 
-const ChannelSetting : React.FC <{
+export const ChannelSetting : React.FC <{
 
   setShowModal : React.Dispatch<React.SetStateAction<boolean>>
 }> =  ({ setShowModal}) => {

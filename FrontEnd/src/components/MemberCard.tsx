@@ -1,8 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useToast } from '@chakra-ui/react'
+import React, { useEffect, useRef, useState } from 'react';
+import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack } from '@chakra-ui/react'
 // import { toast, ToastContainer } from 'react-toastify';
 import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from './Services/user';
 import { ChatType, Role, Status, userModel, Userstatus, UserType } from './Types/types';
+import {
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverHeader,
+	PopoverBody,
+	PopoverFooter,
+	PopoverArrow,
+	PopoverCloseButton,
+	PopoverAnchor,
+  } from '@chakra-ui/react';
+//   import { Radio, RadioGroup } from '@chakra-ui/react'
+import { ChevronDownIcon } from '@heroicons/react/outline';
+import { ChannelSetting } from './SideBar/SideBar';
 
 
 
@@ -167,8 +181,8 @@ const App1: React.FC<{
 		{
 			console.log("res ====== ", res);
 			toast({
-				title: 'Account created.',
-				description: "We've created your account for you.",
+				title: 'New Friend Unlocked',
+				description: "You are Now Friends",
 				status: 'success',
 				duration: 9000,
 				isClosable: true,
@@ -216,35 +230,49 @@ const App1: React.FC<{
 
 
 		<>
-			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}
-				onContextMenu={showContextMenu}
-				onClick={hideContextMenu}>
-				<div id="target" className="flex items-center p-2 gap-3"
-					onClick={() => {
-						onClick(user.name);
-					}}>
-					<div className="position-relative">
-						{user.notifications && user.notifications > 0 ? (
-							<div className="notification-bubble">
-								{user.notifications}
-							</div>
-						) : null}
-						<img
-							width={32}
-							height={32}
-							className="rounded-circle"
-							src={user.avatar}
-							alt=""
-						/>
+			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
+				<Menu>
+				<MenuButton as={Button} bgColor={"transparent"} >
+					<Flex flexDir={"row"} justifyContent={"space-between"}>
+					<div id="target" className="flex items-center p-2 gap-3"
+						onClick={() => {
+							onClick(user.name);
+						}}>
+						<h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
 					</div>
-					<h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
-				</div>
 
-				<div className="ml-auto">
-					<h6 className={`${Memberstat} +  text-xs `}>
-						{user.status === "online" ? "Online" : user.status === "offline" ? "Offline" : "in-game"}
-					</h6>
-				</div>
+					<div className="ml-auto">
+						<h6 className={`${Memberstat} +  text-xs `}>
+							{user.status === "online" ? "Online" : user.status === "offline" ? "Offline" : "in-game"}
+						</h6>
+					</div>
+					</Flex>
+				</MenuButton>
+				<MenuList>
+					<MenuGroup title='Member'>
+					{ !isFriend && <MenuItem><MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/></MenuItem>}
+					<MenuItem><MemberWork nameService={"Check Profil"} id={user.id} function1={AddFriend}/> </MenuItem>
+					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={AddFriend}/> </MenuItem>
+					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
+					</MenuGroup>
+					{(role === Role.ADMIN || role === Role.OWNER) && <>
+					<MenuDivider />
+					<MenuGroup title='Admin'>
+					<MenuItem closeOnSelect={false}><MemberWork nameService={"Mute"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
+					<MenuItem closeOnSelect={false}><MemberWork nameService={"Ban"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
+					<MenuItem closeOnSelect={false}><MemberWork nameService={"Kick"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
+					</MenuGroup></>
+					}
+					{(role === Role.ADMIN || role === Role.OWNER) && <>
+					<MenuDivider />
+					<MenuGroup title='Owner'>
+					<MenuItem><MemberWork nameService={"Set As Owner"} id={user.id} function1={AddFriend}/></MenuItem>
+					<MenuItem><MemberWork nameService={"unSet As Owner"} id={user.id} function1={AddFriend}/></MenuItem>
+					</MenuGroup> </>
+					}
+				</MenuList>
+				</Menu>
+								
 
 
 			</div>
@@ -267,9 +295,9 @@ const App1: React.FC<{
 						{!isblocked && <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/>}
 						{(role === Role.ADMIN || role === Role.OWNER) &&
 						<><li><hr className="h-0 my-2 border border-solid border-t-0 border-gray-300 opacity-25" />AdminPannel</li>
-						<MemberWork nameService={"Mute"} id={user.id}  AdminAction={setAdminAction}/>
-						<MemberWork nameService={"Ban"} id={user.id} AdminAction={setAdminAction}/>
-						<MemberWork nameService={"Kick"} id={user.id} function1={unsetAdminAction}/>
+						<MemberWork nameService={"Mute"} id={user.id} flag={1} AdminAction={setAdminAction}/>
+						<MemberWork nameService={"Ban"} id={user.id} flag={1} AdminAction={setAdminAction}/>
+						<MemberWork nameService={"Kick"} id={user.id} flag={1} function1={unsetAdminAction}/>
 						 {
 							<MemberWork nameService={"Set As ADMIN"} id={user.id} function1={setAdmin}/>
 						 }
@@ -295,9 +323,10 @@ const MemberWork : React.FC <{
 	id : number
 	function1? : (id : number) => void,
 	function2? : (id : number) => boolean,
+	flag? : number,
 	AdminAction? : (id: number, status: string, time: string) => void
 
-}> = ({nameService, function1, id, function2, AdminAction}) =>
+}> = ({nameService, function1, id, function2, AdminAction, flag}) =>
 {
 	// var currentDate = new Date();
 	// var time_in_minut = 20;
@@ -308,17 +337,87 @@ const MemberWork : React.FC <{
 			function1(id)
 		if (function2)
 			function2(id)
-		if (AdminAction)
-			AdminAction(id,nameService,"aaa")
+		
 	}
 
+
+  const [showModal, setShowModal] = useState(false);
+    const [showSettingModal, setSettingModal] = useState(false);
+    
+
+
 	return (<>
-		<li>
-			<button onClick={f} className="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-300 hover:bg-[#5c5e62] hover:text-white focus:text-white focus:bg-gray-700"
-			>{nameService}
-			</button>
-		</li>
+		{
+			flag !== 1 ? <><li onClick={f}>
+				{nameService}
+				</li>  </>: <>
+						<WalkthroughPopover id={id} AdminAction={AdminAction} nameService={nameService} />
+				</> 
+		}
+
 	</>)
 }
+
+
+
+const WalkthroughPopover: React.FC <{
+	
+	nameService : any
+	id : number,
+	AdminAction? : (id: number, status: string, time: string) => void
+
+}>  = ({nameService, AdminAction , id}) => {
+	const initialFocusRef = useRef()
+	const [value, setValue] = React.useState('5')
+
+	const f = () => {
+		if (AdminAction)
+		AdminAction(id, nameService, value);
+	}
+	return (
+	  <Popover
+
+		placement='bottom'
+		closeOnBlur={false}
+	  >
+		<PopoverTrigger>
+		<button className="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-300 hover:bg-[#5c5e62] hover:text-white focus:text-white focus:bg-gray-700"
+			>{nameService}
+			</button>
+		</PopoverTrigger>
+		<PopoverContent color='white' bg='blue.800' borderColor='blue.800'>
+		  <PopoverHeader pt={4} fontWeight='bold' border='0'>
+			{nameService} temporaly : 
+ 		  </PopoverHeader>
+		  <PopoverArrow />
+		  <PopoverCloseButton />
+		  <PopoverBody>
+		  <RadioGroup onChange={setValue} value={value}>
+				<Stack direction='row'>
+					<Radio value='5'>5min</Radio>
+					<Radio value='15'>15min</Radio>
+					<Radio value='60'>1h</Radio>
+					<Radio value='1440'>1day</Radio>
+				</Stack>
+    </RadioGroup>
+		  </PopoverBody>
+		  <PopoverFooter
+			border='0'
+			display='flex'
+			alignItems='center'
+			justifyContent='space-between'
+			pb={4}
+		  >
+		
+			<ButtonGroup size='sm'>
+			  <Button colorScheme='blue'>
+				{nameService}
+			  </Button>
+			</ButtonGroup>
+		  </PopoverFooter>
+		</PopoverContent>
+	  </Popover>
+	)
+  }
 
 export default MemberCard

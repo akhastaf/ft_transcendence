@@ -5,6 +5,7 @@ import { UserType } from "../Types/types";
 // import SideBar from "../SideBar/SideBar";
 import {IoIosLogOut} from "react-icons/io";
 import Settings1 from "./Settings";
+import { Flex } from "@chakra-ui/react";
 // import Button from '@mui/material/Button';
 
 
@@ -37,10 +38,10 @@ const SideBarE: React.FC<{
                     {/*
                             side bar hidden
                     */}
-                    <div className=" invisible md:visible h-full shadow-lg  w-[20rem] flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    <div className=" invisible md:visible h-full shadow-lg  flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         <div className="flex flex-col ml-10 mt-8 gap-20">
                             <h1> USER SETTINGS </h1>
-                            <div className="flex flex-col mt-20 sm:gap-5 md:gap-10 lg:gap-20 overflow-auto ">
+                            <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={20}>
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Account"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Profile"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="Friend List"/>
@@ -49,24 +50,20 @@ const SideBarE: React.FC<{
                                  <div className="bg-rose-600 border-2 border-rose-600 hover:bg-rose-800">
                                  <SettingCard setSelected={setSelected} selected={selected} logout={logoutHandler} text="Disconnect"/>
                                 </div>
-                            </div>
+                            </Flex>
                         </div>
 
                     </div>
-                    <div className="h-full shadow-lg w-screen overflow-y-auto flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    <Flex className="h-full shadow-lg w-full overflow-y-auto flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         
-                        <div className="flex justify-center h-28"></div>
-                        <div className="flex h-4/5 flex-row">
-                        <div className="flex w-full">
+                       
                            
-                            <div className="flex w-full flex-col">
+                            
                                 <Settings1 closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/>
 
-                            </div>
-                        </div>
-    
-                        </div>
-                    </div>
+
+                       
+                    </Flex>
                 </div>
             </div>
         </div>
@@ -91,7 +88,7 @@ const SettingCard : React.FC <{
 
         <div onClick={ () => { if ( text !== "Disconnect") setSelected(text) ; else if (logout) logout()} } className={`flex items-center p-2 mb-2 ${modif}`}  >
             <div className="flex justify-center items-center p-2 gap-[7rem]">
-            <h1 className="arcade text-white">{text}</h1>
+            <h1 className="arcade text-white whitespace-nowrap">{text}</h1>
 
             <div className="inset-y-0 right-0">
             {
