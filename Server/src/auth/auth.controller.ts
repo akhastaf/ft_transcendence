@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Redirect, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Logger, Param, ParseIntPipe, Post, Redirect, Req, Res, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ApiTags } from "@nestjs/swagger";
 import { Request, Response } from "express";
@@ -8,21 +8,22 @@ import { LoginUserDTO } from "./dto/login-user.dto";
 import { RegisterUserDTO } from "./dto/register-user.dto";
 import { Verify2FaDTO } from "./dto/verify-2fa.dto";
 import { FTAuthGuard } from "./guards/ft-auth.guard";
-import { LocalAuthGuard } from "./guards/local-auth.guard";
 import {access} from "./dto/access"
 import { RequestWithUser, tokens } from "src/types";
 import { JWTGuard } from "./guards/jwt.guard";
+import { Reset2FaDto } from "./dto/reset2fa.dto";
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
+    private logger: Logger = new Logger(AuthController.name);
     constructor(private authService: AuthService,
         private configService: ConfigService) {}
 
-    @Post('register')
-    register(@Body() registerUserDTO: RegisterUserDTO): any {
-        return this.authService.registerLocal(registerUserDTO);
-    }
+    // @Post('register')
+    // register(@Body() registerUserDTO: RegisterUserDTO): any {
+    //     return this.authService.registerLocal(registerUserDTO);
+    // }
     @Get('login/42')
     @UseGuards(FTAuthGuard)
     loginft(@Req() req: any, @Res() res: Response) {
@@ -42,7 +43,7 @@ export class AuthController {
             expireIn.setMonth(expireIn.getMonth() + 3);
             res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
             // res.status(200).send(access.access_token);
-            res.redirect("http://localhost:3001/callback?accessToken=" + access["access_token"]);
+            res.redirect(`http://localhost:3001/callback?accessToken=${access["access_token"]}`);
         }
       //  res.redirect(this.configService.get('CILENT_HOST') + '/channels?user_id=' + user.id + '&twfa=true');
     }
@@ -64,5 +65,25 @@ export class AuthController {
         });
     }
 
+    @Post('2fa/reset')
+    async reset2Fa(@Body() reset2FaDTO: Reset2FaDto, @Res() res: Response) :Promise<any> {
+        const access: tokens =  await this.authService.reset2Fa(reset2FaDTO);
+        const expireIn = new Date();
+        expireIn.setMonth(expireIn.getMonth() + 3);
+        res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
+        res.status(200).json({
+            access_token: access.access_token
+        });
+    }
+
+    // for Test
+    @Get(':id')
+    async getToken(@Param('id', ParseIntPipe) id: number) : Promise<string> {
+        try {
+            return await this.authService.getToken(id);
+        } catch (error) {
+            throw new ForbiddenException(error.message);
+        }
+    }
 
 }

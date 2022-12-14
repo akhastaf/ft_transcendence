@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDTO } from 'src/auth/dto/register-user.dto';
 import { Repository } from 'typeorm';
@@ -11,22 +11,28 @@ import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
 import { Privacy } from 'src/messages/entities/group.entity';
 import { emit } from 'process';
 import { ConfigService } from '@nestjs/config';
+import { Player } from 'src/types';
+import { AchievmentService } from 'src/achievment/achievment.service';
+import { Achievment } from 'src/achievment/entities/achievment.entity';
+import { use } from 'passport';
 
 @Injectable()
 export class UserService {
+    private logger: Logger = new Logger(UserService.name);
     constructor (
         private readonly configService: ConfigService,
+        private achievmentService: AchievmentService,
         @InjectRepository(User) 
     private userRepository: Repository<User>,
-    ) {}
+    ) {
+        // this.logger =
+    }
     
     async getUsers(): Promise<User[]> {
         return await this.userRepository.find({
             relations: {
                 friends: true,
                 bloked: true,
-                gamesAsFirst: true,
-                gamesAsSecond: true,
                 groups:true,
                 achievments:true,
                 usertogroup: true
@@ -38,22 +44,22 @@ export class UserService {
     async getUser(id: number): Promise<User> {
         try 
         {
-            const user = await this.userRepository.findOneOrFail({
+            return await this.userRepository.findOneOrFail({
                 where: {
                     id: id,
                 },
                 relations: {
-                    gamesAsFirst: true,
-                    gamesAsSecond: true,
                     usertogroup: true,
+                    friends: true,
+                    bloked: true,
+                    achievments: true,
                 }
             });
-            const {password, ...rest} = user;
-            return rest;
+            
         }
         catch (err)
         {
-            throw err;
+            throw new ForbiddenException(err.message);
         }
     }
 
@@ -70,22 +76,24 @@ export class UserService {
         console.log(userData.email);
         const user = await this.userRepository.findOneBy({email: userData.email});
         if (user)
-        {
-            const { password, ...rest } =user;
-            return rest;
-        }
-        const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image_url, provider: UserProvider.FT, coalition: userData.color});
+            return user;
+        // if (user)
+        // {
+        //     const { password, ...rest } =user;
+        //     return rest;
+        // }
+        const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image.link, provider: UserProvider.FT, coalition: userData.color});
         const newUser = await this.userRepository.save(createduser);
-        const { password, ...rest } =newUser;
-        return rest;
+        // const { password, ...rest } =newUser;
+        return newUser;
     }
-    async createLocal(userData: RegisterUserDTO): Promise<any> 
-    {
-        const user = this.userRepository.create(userData);
-        const newUser = await this.userRepository.save(user);
-        const { password, ...rest } =newUser;
-        return rest;
-    }
+    // async createLocal(userData: RegisterUserDTO): Promise<any> 
+    // {
+    //     const user = this.userRepository.create(userData);
+    //     const newUser = await this.userRepository.save(user);
+    //     const { password, ...rest } =newUser;
+    //     return rest;
+    // }
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {
         try {
@@ -132,17 +140,30 @@ export class UserService {
             }
         })).friends;
     }
-    async addFriend(user: User, id: number) : Promise<User>{
+    async addFriend(userId: number, id: number) : Promise<User>{
         try {
+            const user = await this.userRepository.findOneOrFail({
+                where: {
+                    id: userId
+                },
+                relations: {
+                    friends: true
+                }
+            });
             const friend = await this.userRepository.findOneOrFail({
                 where: {
                     id
                 },
             });
-            user.friends = [friend, ...user.friends];
-            await this.userRepository.update(user.id, user);
-            return this.getUser(user.id);
+            console.log('before', user.friends);
+            if (user.friends!.find((f) => friend.id === f.id) || userId === id)
+                return user;
+            user.friends.push(friend);
+            console.log('after', user.friends);
+            await this.userRepository.save(user);
+            return user;
         } catch (error) {
+            console.log('add firend error ', error.message);
             throw new ForbiddenException(error.message);
         }
     }
@@ -156,26 +177,95 @@ export class UserService {
             }
         })).bloked;
     }
-    async blockFriend(user: User, id: number) : Promise<User>{
+    async blockFriend(userId: number, id: number) : Promise<User>{
         try {
+            const user = await this.userRepository.findOneOrFail({
+                where: {
+                    id: userId
+                },
+                relations: {
+                    bloked: true,
+                    friends: true,
+                }
+            })
             const userToBlock =  await this.userRepository.findOneOrFail({
                 where: {
                     id
                 },
             });
-            const u = await this.userRepository.findOne({
-                where: {
-                    id: user.id,
-                },
-                relations: {
-                    bloked: true
-                }
-            });
-            if (!u.bloked.includes(userToBlock) && userToBlock.id != user.id)
-                user.bloked = [userToBlock, ...user.bloked];
-            return await this.getUser(user.id);
+            if (!user.bloked.find((f) => id === f.id) && userToBlock.id != user.id)
+                user.bloked.push(userToBlock);
+            if (user.friends.find((f) => id === f.id))
+            {
+                user.friends = user.friends.map((f) => {
+                    if (f.id != id)
+                        return f;
+                });
+            }
+            console.log('friends ', user.friends);
+            console.log('block ', user.bloked);
+            await this.userRepository.save(user);
+            return user;
         } catch (error) {
             throw new ForbiddenException(error.message);
         }
     }
+
+    async updateLevel(winnerId: number, looserId: number): Promise<void> {
+        try {
+            const winner = await this.userRepository.findOneOrFail({
+                where: {
+                    id: winnerId,
+                },
+                relations: {
+                    achievments: true,
+                }
+            })
+            const looser = await this.userRepository.findOneOrFail({
+                where: {
+                    id: looserId,
+                },
+                relations: {
+                    achievments: true,
+                }
+            })
+            winner.win++;
+            looser.loss++;
+            winner.level += (winner.level === 0 ? 0.25 : winner.level * 0.25);
+            if (looser.level > 0)
+                looser.loss =- 0,20;
+            winner.achievments = [];
+            looser.achievments = [];
+            const achievments : Achievment[] = await this.achievmentService.findAll();
+            for (const achievment of achievments) {
+                if (winner.win >= achievment.win
+                    && winner.loss <= achievment.loss 
+                    && winner.level >= achievment.level)
+                    winner.achievments = [achievment, ...winner.achievments];
+                if (looser.win >= achievment.win
+                    && looser.loss <= achievment.loss 
+                    && looser.level >= achievment.level)
+                    looser.achievments = [achievment, ...looser.achievments];
+            }
+            
+            await this.userRepository.save(winner);
+            await this.userRepository.save(looser);
+
+        } catch (error) {
+            console.log('here ', error.message);
+        }
+    }
+
+    async reset2Fa(user: User) {
+        try {
+            user.twofa = false;
+            user.secret = null;
+            user.secret_tmp = null;
+            user.recoveryCode = null;
+            await this.userRepository.save(user);
+        } catch (error) {
+            throw new ForbiddenException(error.message);
+        }
+    }
+    
 }

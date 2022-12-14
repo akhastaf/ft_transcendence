@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Achievment } from "src/achievment/entities/achievment.entity";
 import { Game } from "src/game/entites/game.entity";
 import { Group } from "src/messages/entities/group.entity";
@@ -24,24 +25,29 @@ export class User {
     username: string;
     @Column({ unique: true })
     email: string;
-    @Column({nullable: true})
-    password?: string;
     @Column({
         type: "enum",
         enum: UserProvider,
         default: UserProvider.NONE,
     })
+    @Exclude()
     provider: string;
     @Column({default: false})
+    // @Exclude()
     twofa: boolean;
     @Column({nullable: true})
+    @Exclude()
     secret_tmp: string;
     @Column({nullable: true})
+    @Exclude()
     secret: string;
     @Column({nullable: true})
+    @Exclude()
     recoveryCode: string;
     @Column({ default: "/avatar.png"})
     avatar: string;
+    @Column({ default: "/avatar.png"})
+    ft_avatar: string;
     @Column( {
         type: "enum",
         enum: Userstatus,
@@ -52,7 +58,7 @@ export class User {
     win: number;
     @Column({default: 0})
     loss: number;
-    @Column({default: 0})
+    @Column({default: 0, type: 'float'})
     level: number;
 
     @Column({nullable: true})
@@ -62,15 +68,9 @@ export class User {
     @JoinTable()
     achievments: Achievment[];
     
-    @ManyToMany(() => User, (user) => user.bloked)
+    @ManyToMany(() => User, { cascade: true })
     @JoinTable()
     bloked: User[];
-    
-    //@OneToMany(() => Game, (game) =>game.player1)
-    @OneToMany(() => Game, (game) =>game.player1)
-    gamesAsFirst: Game[];
-    @OneToMany(() => Game, (game) =>game.player2)
-    gamesAsSecond: Game[];
 
 
     @OneToMany(() => Message, message => message.sender)
@@ -80,14 +80,16 @@ export class User {
 	@OneToMany(() => UserToGroup, usertogroup => usertogroup.user)
 	usertogroup: UserToGroup[];
 
-	@ManyToMany(() => User, (user) => user.friends)
+	@ManyToMany(() => User, { cascade: true })
     @JoinTable()
     friends: User[];
-    @ManyToMany(() => User, (user) => user.userfriends)
-    userfriends: User[];
-
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
     updatedAt: Date;
+
+
+    constructor(partial: Partial<User>) {
+        Object.assign(this, partial);
+    }
 }
