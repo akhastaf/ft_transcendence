@@ -60,7 +60,9 @@ export const unsetStatus = (id_user : number , id_group : number) : Promise<any>
 	return localService.post("channels/unset-status/", {id_user, id_group} ).then((res) => res.data).catch(err => console.log(err));
 }
 
-
+export const updateInfo = (data : FormData) : Promise<any> => {
+	return localService.patch("user/", data);
+}
 
 
 

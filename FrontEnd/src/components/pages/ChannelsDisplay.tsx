@@ -1,10 +1,11 @@
 import { Grid } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
+import { Navigate, useNavigate } from "react-router-dom";
 import { BasicButtons, BasicButtons1 } from "../EditProfil/SideBarE";
 import { AllRooms, joinRoom } from "../Services/room";
-import { socket } from "../Services/sockets";
+import { socket, SocketContext } from "../Services/sockets";
 import { Privacy, roomModal } from "../Types/types";
 
 const logo = require("../../images/searchImage.jpeg");
@@ -55,11 +56,16 @@ const ChannelCard: React.FC<{
 }> = ({ room, joinRoomHandler }) => {
 
     const [state, setState] = useState(false);
+    const navigate = useNavigate();
     const joinRoom = () => {
+
         if (room.privacy === Privacy.PROTECTED)
-        setState(true);
+            setState(true);
         else
+        {
             joinRoomHandler(room);
+            navigate(`/channels/ROOM/${room.id}`);
+        }
     }
 
     return <>
@@ -77,7 +83,7 @@ const ChannelCard: React.FC<{
                     Join Channel
                     <svg aria-hidden="true" className="ml-2 -mr-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                     {
-                        state && <PasswordInput setState={setState} joinRoomHandler={joinRoomHandler} room={room} />
+                        state && <PasswordInput setState={setState} room={room} />
                     }
                 </button>
             </div>
@@ -132,11 +138,20 @@ const SearchBox: React.FC<{
 
 const PasswordInput : React.FC <{
     setState : React.Dispatch<React.SetStateAction<boolean>>;
-    joinRoomHandler: (room : roomModal, password? : string) => void;
     room : roomModal;
-}> = ({setState, joinRoomHandler, room}) =>
+}> = ({setState, room}) =>
 {
+    const socket = useContext(SocketContext);
+    const navigate = useNavigate();
 
+    const joinRoomHandler = (room: roomModal, password?: string) => {
+		socket.emit("joinGroup_client", {
+			id_group: room.id,
+			password: password,
+		}, (data : any) => {
+            console.log(data);
+        });
+	};
     const passwordRef = useRef<HTMLInputElement>(null);
     const { register, handleSubmit, setError, formState: { errors } } = useForm<{password: string}>();
     const closeModal = () => {
@@ -147,11 +162,8 @@ const PasswordInput : React.FC <{
 
     const submitForm : SubmitHandler<{password : string}> = (data) => {
          joinRoomHandler(room, data.password);
+        
 
-        //  socket.on("joinGroup_sever", (data) =>
-        //  {
-        //     if (data.name)
-        //  })
     }
 
     return <>

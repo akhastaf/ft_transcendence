@@ -113,6 +113,10 @@ export interface IFormInput {
 	privacy: Privacy;
   }
 
+
+export interface profileUpdate {
+	name? : string
+}
 export interface userModel
 {
 	id: number;

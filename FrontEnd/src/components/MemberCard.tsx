@@ -40,20 +40,23 @@ const MemberCard: React.FC<{
 	useEffect(() => {
 
 	}, [])
-
+	const toast = useToast();
 	const setadminAction = (id: number, status : string , time : string) => {
 		let formData = new FormData();
 		var currentDate = new Date();
-		var time_in_minut = 20;
-		currentDate.setTime(currentDate.getTime() + time_in_minut *60*1000);
-		formData.append("id_user", id.toString()); 
-		formData.append("id_group", choosenChat._id);
-		formData.append("status", Status.MUTED)
-		formData.append("until", time)
+		var time_in_minut = time;
+		currentDate.setTime(currentDate.getTime() + parseInt(time_in_minut) *60*1000);
 		console.log("i am in the muted fucntion dasdasdasfasdkhhasb")
 		console.log(" i am here time = ddd", currentDate);
-		
-		setStatus(id, parseInt(choosenChat._id), Status.BANNED, currentDate).then((res) => {
+		const e : Status = (status === 'Ban') ? Status.BANNED : (status === 'Mute') ? Status.MUTED : Status.ACTIVE;
+		setStatus(id, parseInt(choosenChat._id), e, currentDate).then((res) => {
+			toast({
+				title: `user ${e}`,
+				description: `You blocked user for ${time} min`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
 			console.log("he is banned/muted")
 		})
 
@@ -251,6 +254,7 @@ const App1: React.FC<{
 				<MenuList>
 					<MenuGroup title='Member'>
 					{ !isFriend && <MenuItem><MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/></MenuItem>}
+					{ state === "ROOM" && <MenuItem><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
 					<MenuItem><MemberWork nameService={"Check Profil"} id={user.id} function1={AddFriend}/> </MenuItem>
 					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={AddFriend}/> </MenuItem>
 					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
@@ -320,19 +324,23 @@ const App1: React.FC<{
 
 const MemberWork : React.FC <{
 	nameService : string,
-	id : number
+	id : number,
+	message? : (user: string) => void;
 	function1? : (id : number) => void,
 	function2? : (id : number) => boolean,
 	flag? : number,
+	user? : userModel,
 	AdminAction? : (id: number, status: string, time: string) => void
 
-}> = ({nameService, function1, id, function2, AdminAction, flag}) =>
+}> = ({nameService, function1, id, function2, AdminAction, flag , user, message}) =>
 {
 	// var currentDate = new Date();
 	// var time_in_minut = 20;
 	// currentDate.setTime(currentDate.getTime() + time_in_minut *60*1000);
 	const f = () => {
 		console.log(id)
+		if (message && user)
+			message(user.name);
 		if (function1)
 			function1(id)
 		if (function2)
@@ -371,8 +379,10 @@ const WalkthroughPopover: React.FC <{
 	const [value, setValue] = React.useState('5')
 
 	const f = () => {
+
+
 		if (AdminAction)
-		AdminAction(id, nameService, value);
+			AdminAction(id, nameService, value);
 	}
 	return (
 	  <Popover
@@ -410,7 +420,7 @@ const WalkthroughPopover: React.FC <{
 		  >
 		
 			<ButtonGroup size='sm'>
-			  <Button colorScheme='blue'>
+			  <Button onClick={f} colorScheme='blue'>
 				{nameService}
 			  </Button>
 			</ButtonGroup>

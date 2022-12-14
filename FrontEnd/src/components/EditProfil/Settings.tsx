@@ -1,8 +1,11 @@
-import { Flex } from "@chakra-ui/react";
-import { useState } from "react";
+import { Button, ButtonGroup, Flex, Progress, useToast } from "@chakra-ui/react";
+import { avatar } from "@material-tailwind/react";
+import { useRef, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
+import { getCurrentUser, updateInfo } from "../Services/user";
 // import { SiWappalyzer } from "react-icons/si";
-import { UserType } from "../Types/types";
+import { profileUpdate, UserType } from "../Types/types";
 import BlockList from "./BlockList";
 import FriendList from "./FriendList";
 import FriendListRequest from "./FriendRequest";
@@ -55,11 +58,16 @@ const UserCard: React.FC<{
 }> = ({ closeModal, currentUser }) => {
 
 
+    const [tfa, setTfa] = useState(false);
+    const [tfaModal, setTfaModal] = useState(false);
+    const [state, setState] = useState("Enable");
+
     const changeImage = () => {
 
     }
-    const ChangePassword = () => {
-
+    const Enable2fa = () => {
+        console.log("22222222")
+            setTfaModal(true);
     }
 
     return <>
@@ -90,14 +98,15 @@ const UserCard: React.FC<{
                              </div>
 
 
-                                <div className="flex flex-row pt-5 pb-5"> 
+                                {/* <div className="flex flex-row pt-5 pb-5"> 
                                     <BasicButtons  onClick={changeImage} text="Modify Your Profil" />
-                                </div>
+                                </div> */}
                             </div>
                             <div id="mail setting" className="border-5 rounded-lg h-[15rem] m-auto w-2/3 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
                                 <SettingInfo type="mail" CurrentUser={currentUser} />
                                 <SettingInfo1 type="mail" CurrentUser={currentUser} />
-                                <SettingInfo2 type="mail" CurrentUser={currentUser} />
+                                {/* <Progress colorScheme='green' height='32px' value={20} > Level 1</Progress> */}
+                                {/* <SettingInfo2 type="mail" CurrentUser={currentUser} /> */}
                             
 
                             </div>
@@ -121,7 +130,8 @@ const UserCard: React.FC<{
                                 </h3>
                             </div>
                             <div className="ml-0 mt-5 w-[20rem]">
-                                <BasicButtons1 classNam="" text="Enable Two Factor Authentification" onClick={ChangePassword} />
+                                <BasicButtons1 classNam="" text={`${state} Two Factor Authentification`} onClick={Enable2fa} />
+                                {tfaModal ? <TfaModal setState={setTfaModal} /> : null}
                             </div>
                         </div>
                         <div className="my-10 inset-0 flex items-center">
@@ -138,7 +148,7 @@ const UserCard: React.FC<{
                                 </h3>
                             </div>
                             <div className="ml-0 mt-5 w-[20rem]">
-                                <BasicButtons1 classNam="bg-red" text="Delete Accout" onClick={ChangePassword} />
+                                <BasicButtons1 classNam="bg-red" text="Delete Accout" onClick={Enable2fa} />
                                 {/* <BasicButtons1 classNam="" text="Enable Two Factor Authentification" onClick={ChangePassword} /> */}
                             </div>
                         </div>
@@ -176,7 +186,7 @@ const SettingInfo: React.FC<{
             </div>
             <div className="m-auto">
                 <BasicButtons onClick={changeUserName} text="Modify" />
-                {state ? <SettingModal Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
+                {state ? <SettingModal avatar={CurrentUser.avatar} Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
             </div>
         </div>
 
@@ -210,71 +220,64 @@ const SettingInfo1: React.FC<{
                     <div className="ml-5">
                         <BasicButtons1 classNam="" onClick={swap} text={"Show"} />
                     </div>
-                    {/* <h2 className="arcade text-gray-400"> {"#" +CurrentUser._id} </h2> */}
                 </div>
             </div>
-            <div className="m-auto">
-                <BasicButtons onClick={changeEmail} text="Modify" />
-                {state ? <SettingModal Subject="Email" username={CurrentUser.email} setState={setState} /> : null}
-            </div>
+
         </div>
 
     </>)
 }
-
-const SettingInfo2: React.FC<{
-    type: string
-    CurrentUser: UserType
-}> = ({ type, CurrentUser }) => {
-
-    const [state, setState] = useState(false);
-
-
-    const changePhone = () => {
-        setState(true);
-    }
-
-    const a: any = (CurrentUser.phoneNumber != null) ? <h2 className='arcade text-white'> {CurrentUser.phoneNumber} </h2>
-        : <h2 className='arcade  text-white'> You didn't add a Number Yet </h2>;;
-    const b: string | null = (CurrentUser.phoneNumber != null) ? " Modify" : "Add";
-    return (<>
-        <div className="w-full flex flex-row ml-3">
-            <div className="w-2/3 flex flex-col ">
-
-                <h1> Phone Number</h1>
-                <div className="flex flex-row ml-5 gap-1">
-
-                    {
-                        a
-                    }
-                </div>
-            </div>
-            <div className="m-auto">
-                <BasicButtons onClick={changePhone} text={b} />
-                {state ? <SettingModal Subject="Phone" username={CurrentUser.phoneNumber} setState={setState} /> : null}
-
-            </div>
-        </div>
-
-    </>)
-}
-
 
 
 
 const SettingModal: React.FC<{
     setState: React.Dispatch<React.SetStateAction<boolean>>;
-    username: string | null
+    username: string 
+    avatar : string
     Subject: string
 }> = ({ setState, username, Subject }) => {
 
+    const toast = useToast();
+    const { register, handleSubmit, setError, formState: { errors } } = useForm<profileUpdate>();
     const closeModal = () => {
 
         setState(false);
 
     };
-    const submitForm = () => {
+    const [image, setImage] = useState(false);
+    const avatarRef = useRef<HTMLInputElement>(null);
+    const [imagePreview, setImagePreview] = useState<any>();
+    const [imageFile, setImageFile] = useState<any>(avatar);
 
+
+   
+    const upload = (event : any) =>
+   {
+        setImage(true);
+    let image_as_base64 = URL.createObjectURL(event.target.files[0])
+      let image_as_files = event.target.files[0];
+
+        setImagePreview(image_as_base64)
+        setImageFile(image_as_files)
+  }
+    const submitForm : SubmitHandler<profileUpdate> = (data) => {
+
+        let formData = new FormData();
+        const name = data.name ? data.name : username;
+    	formData.append('username', name);
+    	formData.append('avatar', imageFile);
+        console.log("formdata" , data.name, "avatar ", imageFile);
+        updateInfo(formData).then((data) => {
+            console.log(data);
+            toast({
+				title: `Info update`,
+				description: `Your Profile Info have been updated`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
+            })
+            closeModal();
     }
     const m: string = (username) ? username : "";
 
@@ -284,94 +287,119 @@ const SettingModal: React.FC<{
             onClick={() => { closeModal(); }}
         >
             <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
-                <div className="w-[30rem] my-6 mx-auto h-[25rem]   " >
-                    <div className="border-0 rounded-lg lg:rounded-r-lg justify-between h-[30rem] shadow-lg  flex flex-col w-full bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
-                        <div className="sm:mx-auto w-full h-2/6 ">
+                {/* <div className="w-[30rem] my-6 mx-auto h-[25rem]   " > */}
+                    <Flex gap={12} onClick={e => { e.stopPropagation(); }} bg={"#36393f"} flexDir={"column"} justifyContent={"space-between"} w={"30rem"} alignItems={"center"} h={"25rem"}>
+                    <form className="w-full h-full" onSubmit={handleSubmit(submitForm)}>
+                        <Flex  h={"100%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={8}>
+                        <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
                             <button
                                 className="p-1 ml-auto bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
                                 onClick={closeModal}
                             >
                                 <IoCloseCircleSharp className="text-emerald-400" />
                             </button>
-                            <h2 className="mt-6 text-center text-xl font-bold text-white">Modify Your {Subject} </h2>
-                            <h4 className="mt-6 text-center text-white">Enter Your New {Subject} and Password </h4>
-                        </div>
-                        <div className="h-auto w-full overflow-y-scroll scrollbar-hide">
-                            <form className="space-y-2 gap-y-3" onSubmit={submitForm}>
-                                <div className="flex flex-col gap-3 ml-3 w-5/6">
+                            <h2 className="text-center text-xl font-bold text-white">Modify Your {Subject} </h2>
+                            <h4 className="text-center text-white">Enter Your New {Subject} and Password </h4>
+                        </Flex>
+                                <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
                                     <label htmlFor="newUserName">{Subject}</label>
-                                    {
-                                        Subject === "Username" && <input className="ml-3" id="username" name="username" type="text" required placeholder={m} />
-                                    }
-                                    {
-                                        Subject === "Phone" && <input className="ml-3" id="Phone" name="Phone" type="text" required placeholder="Enter your Phone" />
-                                    }
-                                    {
-                                        Subject === "Email" && <>
-                                            <input className="ml-3" id="Cemail" name="email" type="email" required placeholder={"Enter Your new Email"} />
-                                            <input className="ml-3" id="Cemail" name="Cemail" type="email" required placeholder={"Re-Enter Your new Email"} />
-                                        </>
-                                    }
-                                    <label htmlFor="Password">Current Password</label>
-                                    <input className="mb-3 ml-3" id="password" name="password" type="text" required />
-                                </div>
-                            </form>
-                        </div>
-                        <div className="h-1/6 w-full bg-discord_secondSideBar">
-                            <div className="flex flex-row justify-end items-center mt-3">
-                                <BasicButtons onClick={closeModal} text={"Cancel"} />
-                                <BasicButtons onClick={submitForm} text={"Submit"} />
-                            </div>
-                        </div>
+                                         <input {...register("name")}  type="text" placeholder={m} />
+                                    <label htmlFor="Password">Change Avatar</label>
+                                    <input onChange={upload} ref={avatarRef} type="file" id="img" name="img" accept="image/*" />
+               
 
-                    </div>
-                </div>
+                                
+                                </Flex>
+                        <Flex w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-end"} alignItems={"center"} bg={"#2f3136"}>
+                        <ButtonGroup pr={"3%"}>
+                                    <Button colorScheme={'whatsapp'}   onClick={closeModal} > Cancel </Button>
+                                    <Button  colorScheme={'whatsapp'} type="submit" > Sumbit </Button>
+                                </ButtonGroup>
+                        </Flex>
+                        </Flex>
+                        </form>
+                    </Flex>
+
+                {/* </div> */}
             </div>
         </div>
         <div className="opacity-80 fixed inset-0 z-40 bg-black"></div>
     </>
     // </>
 }
+const TfaModal: React.FC<{
+    setState: React.Dispatch<React.SetStateAction<boolean>>
 
+}> = ({ setState }) => {
 
-// const CardSection1 : React.FC <{
-//     currentUser : UserType
+    const toast = useToast();
+    const { register, handleSubmit, setError, formState: { errors } } = useForm<profileUpdate>();
+    const closeModal = () => {
 
+        setState(false);
 
+    };
 
-// }> = ({currentUser}) => {
+    const submitForm : SubmitHandler<profileUpdate> = (data) => {
 
+        let formData = new FormData();
+        const name = data.name ? data.name : "";
+    	// formData.append('username', name);
+    	// formData.append('avatar', imageFile);
+        // updateInfo(formData).then((data) => {
+        //     console.log(data);
+        //     toast({
+		// 		title: `Info update`,
+		// 		description: `Your Profile Info have been updated`,
+		// 		status: 'success',
+		// 		duration: 9000,
+		// 		isClosable: true,
+		// 	  })
+        //     })
+        //     closeModal();
+    }
 
-//     return <>
-    
-// <a href="#" className="flex flex-col items-center w-[80rem] bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-//     <img className="object-cover w-full h-96 rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-l-lg" src={currentUser.username} alt=""/>
-//     <div className="flex flex-col justify-between p-4 leading-normal">
-//     {/* <div className="flex flex-col rounded-lg h-[25rem] bg-gradient-to-r gap-5 from-sky-500 to-indigo-500 " style={{ backgroundImage: `url(${logo}) ` }}> */}
+    // const m: string = (username) ? username : "";
 
-// <div className="flex gap-x-1 w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
-//     <div className="flex flex-row jusifty-start gap-x-1 w-auto ">
-//         <h1 className="arcade  text-white pt-12 "> {currentUser.username}</h1>
-//         <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser._id}</h1>
-//  </div>
+    return <>
+        <div
+            className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"
+            onClick={() => { closeModal(); }}
+        >
+            <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
+                {/* <div className="w-[30rem] my-6 mx-auto h-[25rem]   " > */}
+                    <Flex gap={12} onClick={e => { e.stopPropagation(); }} bg={"#36393f"} flexDir={"column"} justifyContent={"space-between"} w={"30rem"} alignItems={"center"} h={"25rem"}>
+                    <form className="w-full h-full" onSubmit={handleSubmit(submitForm)}>
+                        <Flex  h={"100%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={8}>
+                        <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
+                            <button
+                                className="p-1 ml-auto bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
+                                onClick={closeModal}
+                            >
+                                <IoCloseCircleSharp className="text-emerald-400" />
+                            </button>
+                            <h2 className="text-center text-xl font-bold text-white">Enable Tfa </h2>
+                            {/* <h4 className="text-center text-white">Enter Your New {Subject} and Password </h4> */}
+                        </Flex>
+                                <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
+        
 
+                                
+                                </Flex>
+                        <Flex w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-end"} alignItems={"center"} bg={"#2f3136"}>
+                        <ButtonGroup pr={"3%"}>
+                                    <Button colorScheme={'whatsapp'}   onClick={closeModal} > Cancel </Button>
+                                    <Button  colorScheme={'whatsapp'} type="submit" > Sumbit </Button>
+                                </ButtonGroup>
+                        </Flex>
+                        </Flex>
+                        </form>
+                    </Flex>
 
-//     {/* <div className="flex flex-row pt-5 pb-5"> 
-//         <BasicButtons  onClick={changeImage} text="Modify Your Profil" />
-//     </div> */}
-// </div>
-// <div id="mail setting" className="border-5 rounded-lg  m-auto p-4 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
-//     <SettingInfo type="mail" CurrentUser={currentUser} />
-//     <SettingInfo1 type="mail" CurrentUser={currentUser} />
-//     <SettingInfo2 type="mail" CurrentUser={currentUser} />
-//     {/* <div id="username"></div>
-// <div id="email"></div>
-// <div id="phoneNumber"></div> */}
-
-// </div>
-// </div>
-
-// </a> 
-
-//     </>
-// }
+                {/* </div> */}
+            </div>
+        </div>
+        <div className="opacity-80 fixed inset-0 z-40 bg-black"></div>
+    </>
+    // </>
+}
