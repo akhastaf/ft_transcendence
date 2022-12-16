@@ -63,7 +63,8 @@ export type UserType = {
 	phoneNumber: string | null
 	friends: UserType[];
 	bloked: UserType[],
-	status: string
+	status: string,
+	twofa : boolean
 	// achievements: AchivementType[]
 }
 

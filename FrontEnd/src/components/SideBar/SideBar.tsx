@@ -97,11 +97,7 @@ const SideBar: React.FC<{
   }
 
     , [])
-  // const redirect  = (e:any) => 
-  // {
-  // 		// Navigate('/EditInfo');
-  // 
-  // }
+  
   const leaveGroup = () => {
     socket.emit("leaveGroup_client", parseInt(choosenChat._id), (data: any) => {
       console.log("aaaaa = ", data);

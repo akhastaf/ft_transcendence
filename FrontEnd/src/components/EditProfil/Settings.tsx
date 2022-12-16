@@ -14,6 +14,17 @@ import { BasicButtons, BasicButtons1 } from "./SideBarE";
 
 // import logo1 from "../../images/cardBack.webp"
 
+const styles = {
+    heading3: `text-xl font-semibold text-gray-900 p-4 border-b`,
+    heading4: `text-base text-ct-blue-600 font-medium border-b mb-2`,
+    modalOverlay: `overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full`,
+    orderedList: `space-y-1 text-sm list-decimal`,
+    buttonGroup: `flex items-center py-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600`,
+    buttonBlue: `text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`,
+    buttonGrey: `text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600`,
+    inputField: `bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/5 p-2.5`,
+  };
+
 const maskEmailsPhones = require('mask-email-phone');
 const logo = require('../../images/cardBack.webp');
 
@@ -58,16 +69,30 @@ const UserCard: React.FC<{
 }> = ({ closeModal, currentUser }) => {
 
 
-    const [tfa, setTfa] = useState(false);
+    // const [tfa, setTfa] = useState(false);
     const [tfaModal, setTfaModal] = useState(false);
-    const [state, setState] = useState("Enable");
+    let twofa = currentUser.twofa;
+    const state = twofa === true ? "Diseable" : "Enable";
+    const [qrCode, setQrCode] = useState("");
+    const [secret, setSecret] = useState("");
+
+
 
     const changeImage = () => {
 
     }
+
     const Enable2fa = () => {
-        console.log("22222222")
-            setTfaModal(true);
+        let formData = new FormData();
+        const tfa : string = (twofa === true) ?  "false" : "true";
+        formData.append("twofa",tfa );
+        updateInfo(formData).then((data) => {
+            console.log("data = ", data);
+            setQrCode(data.secret.otpauthURL);
+            setSecret(data.secret.base32);
+        })
+        setTfaModal(true);
+
     }
 
     return <>
@@ -131,7 +156,7 @@ const UserCard: React.FC<{
                             </div>
                             <div className="ml-0 mt-5 w-[20rem]">
                                 <BasicButtons1 classNam="" text={`${state} Two Factor Authentification`} onClick={Enable2fa} />
-                                {tfaModal ? <TfaModal setState={setTfaModal} /> : null}
+                                {tfaModal ? <TfaModal qrcodeUrl={qrCode} base32={secret} setState={setTfaModal} /> : null}
                             </div>
                         </div>
                         <div className="my-10 inset-0 flex items-center">
@@ -329,77 +354,100 @@ const SettingModal: React.FC<{
 }
 const TfaModal: React.FC<{
     setState: React.Dispatch<React.SetStateAction<boolean>>
+    qrcodeUrl : string,
+    base32 : string
 
-}> = ({ setState }) => {
+}> = ({ setState , qrcodeUrl, base32}) => {
 
     const toast = useToast();
-    const { register, handleSubmit, setError, formState: { errors } } = useForm<profileUpdate>();
+    const { register, handleSubmit, setError, formState: { errors } } = useForm<{token : string}>();
     const closeModal = () => {
 
         setState(false);
 
     };
 
-    const submitForm : SubmitHandler<profileUpdate> = (data) => {
+    const submitForm : SubmitHandler<{token : string}> = (data) => {
 
         let formData = new FormData();
-        const name = data.name ? data.name : "";
-    	// formData.append('username', name);
-    	// formData.append('avatar', imageFile);
-        // updateInfo(formData).then((data) => {
-        //     console.log(data);
-        //     toast({
-		// 		title: `Info update`,
-		// 		description: `Your Profile Info have been updated`,
-		// 		status: 'success',
-		// 		duration: 9000,
-		// 		isClosable: true,
-		// 	  })
-        //     })
-        //     closeModal();
+        const name = data.token ? data.token : "";
+    	
     }
 
     // const m: string = (username) ? username : "";
 
     return <>
-        <div
-            className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"
-            onClick={() => { closeModal(); }}
-        >
-            <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
-                {/* <div className="w-[30rem] my-6 mx-auto h-[25rem]   " > */}
-                    <Flex gap={12} onClick={e => { e.stopPropagation(); }} bg={"#36393f"} flexDir={"column"} justifyContent={"space-between"} w={"30rem"} alignItems={"center"} h={"25rem"}>
-                    <form className="w-full h-full" onSubmit={handleSubmit(submitForm)}>
-                        <Flex  h={"100%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={8}>
-                        <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
-                            <button
-                                className="p-1 ml-auto bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
-                                onClick={closeModal}
-                            >
-                                <IoCloseCircleSharp className="text-emerald-400" />
-                            </button>
-                            <h2 className="text-center text-xl font-bold text-white">Enable Tfa </h2>
-                            {/* <h4 className="text-center text-white">Enter Your New {Subject} and Password </h4> */}
-                        </Flex>
-                                <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
-        
-
-                                
-                                </Flex>
-                        <Flex w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-end"} alignItems={"center"} bg={"#2f3136"}>
-                        <ButtonGroup pr={"3%"}>
-                                    <Button colorScheme={'whatsapp'}   onClick={closeModal} > Cancel </Button>
-                                    <Button  colorScheme={'whatsapp'} type="submit" > Sumbit </Button>
-                                </ButtonGroup>
-                        </Flex>
-                        </Flex>
-                        </form>
-                    </Flex>
-
-                {/* </div> */}
+       <div
+      aria-hidden={true}
+      className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full bg-[#222] bg-opacity-50"
+      // onClick={closeModal}
+    >
+      <div className="relative p-4 w-full max-w-xl h-full md:h-auto left-1/2 -translate-x-1/2">
+        <div className="relative bg-white rounded-lg shadow">
+          <h3 className={styles.heading3}>Two-Factor Authentication (2FA)</h3>
+          {/* Modal body */}
+          <div className="p-6 space-y-4">
+            <h4 className={styles.heading4}>
+              Configuring Google Authenticator or Authy
+            </h4>
+            <div className={styles.orderedList}>
+              <li>
+                Install Google Authenticator (IOS - Android) or Authy (IOS -
+                Android).
+              </li>
+              <li>In the authenticator app, select "+" icon.</li>
+              <li>
+                Select "Scan a barcode (or QR code)" and use the phone's camera
+                to scan this barcode.
+              </li>
             </div>
+            <div>
+              <h4 className={styles.heading4}>Scan QR Code</h4>
+              <div className="flex justify-center">
+                <img
+                  className="block w-64 h-64 object-contain"
+                  src={qrcodeUrl}
+                  alt="qrcode url"
+                />
+              </div>
+            </div>
+            <div>
+              <h4 className={styles.heading4}>Or Enter Code Into Your App</h4>
+              <p className="text-sm">SecretKey: {base32} (Base32 encoded)</p>
+            </div>
+            <div>
+              <h4 className={styles.heading4}>Verify Code</h4>
+              <p className="text-sm">
+                For changing the setting, please verify the authentication code:
+              </p>
+            </div>
+            <form onSubmit={handleSubmit(submitForm)}>
+              <input
+                {...register("token")}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/4 p-2.5"
+                placeholder="Authentication Code"
+              />
+              <p className="mt-2 text-xs text-red-600">
+                {errors.token ? errors.token.message : null}
+              </p>
+
+              <div className={styles.buttonGroup}>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className={styles.buttonGrey}
+                >
+                  Close
+                </button>
+                <button type="submit" className={styles.buttonBlue}>
+                  Verify & Activate
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div className="opacity-80 fixed inset-0 z-40 bg-black"></div>
+      </div>
+    </div>
     </>
     // </>
 }

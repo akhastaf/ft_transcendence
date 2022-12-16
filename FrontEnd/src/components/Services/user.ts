@@ -61,9 +61,8 @@ export const unsetStatus = (id_user : number , id_group : number) : Promise<any>
 }
 
 export const updateInfo = (data : FormData) : Promise<any> => {
-	return localService.patch("user/", data);
+	return localService.patch("user/", data).then((res) => res.data);
 }
 
-
-
+// export const enableTwoFa = ()
 

@@ -152,6 +152,7 @@ const Home: React.FC<{
 		friends: [],
 		bloked: [],
 		status: Userstatus.OFFLINE,
+		twofa : false,
 	});
 
 
