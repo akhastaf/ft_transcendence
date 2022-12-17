@@ -6,7 +6,7 @@ import { ChatType, IFormInput, Privacy, Role, userModel, UserType } from "../Typ
 import { ChevronDownIcon, CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
 // import ChannelIcon from '../ChannelIcon';
 // import {IoCompassOutline } from 'react-icons/io5';
-import MemberCard from '../MemberCard';
+import MemberCard from './MemberCard';
 // import AddChannel from '../AddChannel';
 
 // export {} 
@@ -61,11 +61,13 @@ const SideBar: React.FC<{
   onlineUsers: string[];
   logoutHandler: () => void;
   role: Role;
-  isShown: boolean
+  isShown: boolean;
+  usersState: boolean;
   setIsShown: React.Dispatch<React.SetStateAction<boolean>>,
   state: string,
+  setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
 
-}> = ({ isShown, state, setIsShown, users, currentUser, choosenChat, selectedUserDM, onlineUsers, logoutHandler, role }) => {
+}> = ({ isShown, state, setIsShown, users, currentUser, usersState, setUsersState, choosenChat, selectedUserDM, onlineUsers, logoutHandler, role }) => {
 
   const Navigate = useNavigate();
 
@@ -138,6 +140,8 @@ const SideBar: React.FC<{
                   setIsShown={setIsShown}
                   isShown={isShown}
                   choosenChat={choosenChat}
+                  setUsersState={setUsersState}
+                  usersState={usersState}
                 // onlineUsers={onlineUsers}
                 />
               );
@@ -282,7 +286,7 @@ export const AddUsers: React.FC<{
         })
       }))
     })
-  });
+  },[]);
   const toast = useToast();
   
   const socket = useContext(SocketContext);
@@ -319,7 +323,7 @@ export const AddUsers: React.FC<{
             </div>
             <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
               {
-               notJoined && notJoined.map((user : userModel) => {
+               notJoined  && notJoined.map((user : userModel) => {
                   <>
                     <Flex>
                       <Avatar src='https://bit.ly/sage-adebayo' />
@@ -336,8 +340,12 @@ export const AddUsers: React.FC<{
                     </Flex>
                   </>
 
-                })
+                }) 
               }
+              {
+                  
+                  notJoined.lenght && <><Text>All Your Friend Are with You </Text></>
+                }
             </Flex>
           </div>
         </div>

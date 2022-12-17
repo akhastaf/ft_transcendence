@@ -5,7 +5,7 @@ import { UserType } from "../Types/types";
 // import SideBar from "../SideBar/SideBar";
 import {IoIosLogOut} from "react-icons/io";
 import Settings1 from "./Settings";
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 // import Button from '@mui/material/Button';
 
 
@@ -33,12 +33,12 @@ const SideBarE: React.FC<{
                 <div className="grow invisible lg:visible">
 
                 </div>
-                <div className="w-full flex flex-row my-6 mx-auto   h-full " >
+                <div className="w-full flex flex-row my-6 mx-auto h-full " >
                     <div className="bg-discord_secondSideBar  lg:w-[13rem] h-full border-0"></div>
                     {/*
                             side bar hidden
                     */}
-                    <div className=" invisible md:visible h-full shadow-lg  flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                    <Box className=" invisible md:visible h-full shadow-lg  flex flex-col bg-discord_secondSideBar  focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                         <div className="flex flex-col ml-10 mt-8 gap-20">
                             <h1> USER SETTINGS </h1>
                             <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={20}>
@@ -53,16 +53,9 @@ const SideBarE: React.FC<{
                             </Flex>
                         </div>
 
-                    </div>
-                    <Flex className="h-full shadow-lg w-full overflow-y-auto flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
-                        
-                       
-                           
-                            
-                                <Settings1 closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/>
-
-
-                       
+                    </Box>
+                    <Flex className="h-full shadow-lg w-3/5 overflow-y-auto flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+                        <Settings1 closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/> 
                     </Flex>
                 </div>
             </div>

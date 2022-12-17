@@ -1,15 +1,19 @@
 
 import { useEffect, useRef } from "react";
-import { MessageModal, MessageType } from "../Types/types";
+import { ChatType, MessageModal, MessageType } from "../Types/types";
 import moment from 'moment';
+import MessageInput from "./MessageInput";
 
 
 
 
 const MessagesSection : React.FC <{
     messages: MessageModal[];
+	choosenChat: ChatType;
+    isMemberOfRoom:  boolean
+    sendMessage: (a: string) => void;
 
-}> = ({messages}) => {
+}> = ({messages,  choosenChat, isMemberOfRoom, sendMessage}) => {
 
 
 	const messageListRef = useRef<HTMLDivElement>(null);
@@ -22,8 +26,8 @@ const MessagesSection : React.FC <{
 
 
     return (<>
-    
-    <div className="flex-grow m-4 flex flex-col my-10 gap-12 overflow-y-scroll scrollbar-hide ">
+    <div className="h-screen flex flex-col gap-10">
+    <div  className="h-5/6 relative flex flex-col mt-[60px]  mb-[20px] gap-10 overflow-y-auto scrollbar-hide ">
 			{messages.map((message: MessageModal, idx) => (
 				
 				message && <MessageCard
@@ -38,7 +42,12 @@ const MessagesSection : React.FC <{
 			))}
 			<div ref={messageListRef} />
 		</div>
-    
+		<MessageInput
+								choosenChat={choosenChat}
+								isMemberOfRoom={isMemberOfRoom}
+								sendMessage={sendMessage}
+			/>
+    </div>
     </>)
 }
 

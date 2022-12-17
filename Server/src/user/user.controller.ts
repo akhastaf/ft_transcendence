@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Logger, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -15,14 +15,16 @@ import { UserService } from './user.service';
 @ApiTags('User')
 @ApiBearerAuth()
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(JWTGuard)
 export class UserController {
+    private logger: Logger = new Logger(UserController.name);
     constructor(private readonly userService: UserService, private readonly configService: ConfigService) {}
 
 
     @Get('me')
     async getMe(@Req() req: RequestWithUser): Promise<User> {
-        return req.user;
+        return await this.userService.getUser(req.user.id);
     }
     
     @Get('friends')
@@ -33,15 +35,13 @@ export class UserController {
     async getBlocked(@Req() req: RequestWithUser) {
         return this.userService.getBlocked(req.user);
     }
-    @Get('add/:id') 
-    async addFriend(@Param('id', ParseIntPipe) id:number, @Req() req: RequestWithUser) {
-        console.log("done");
-        return this.userService.addFriend(req.user, id);
-         
+    @Get('add/:id')
+    async addFriend(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+        return this.userService.addFriend(req.user.id, id);
     }
     @Get('block/:id')
-    async blockFriend(@Param('id', ParseIntPipe) id:number, @Req() req: RequestWithUser) {
-        return this.userService.blockFriend(req.user, id);
+    async blockFriend(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+        return this.userService.blockFriend(req.user.id, id);
     }
 
     @Post('2fa/verify')
@@ -92,6 +92,7 @@ export class UserController {
         return await this.userService.updateUser(req.user, updateUserDTO);
     }
 
+    
 
 
 }

@@ -1,3 +1,17 @@
+
+
+export enum GameStatus {
+    WAITING = 'waiting',
+    PLAYING = 'playing',
+    END = 'end',
+    PAUSE = 'pause'
+}
+
+export enum GameMode {
+    CLASSIC = 'classic',
+    CUSTOM = 'custom'
+}
+
 export type RoomType = {
 	id: string;
 	name: string;
@@ -33,7 +47,7 @@ export type Game = {
 	_id : string,
 	score1 : number
 	score2 : number
-	isRunning: boolean
+	status : GameStatus
 	roomGame: string
 	player1: UserType
 	player2: UserType
@@ -124,7 +138,9 @@ export interface userModel
 	name: string;
 	avatar: string;
 	status : string;
-	notifications: number
+	notifications: number;
+	action : string;
+	role : string;
 }
 
 export interface roomModal {

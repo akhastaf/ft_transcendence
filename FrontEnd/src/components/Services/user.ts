@@ -23,16 +23,17 @@ export const BlockFriend = (id: number) : Promise<any> => {
 	return localService.get("user/add/" +id).then((res) => res.data).catch(err => console.log(err));
 }
 export const GetFriends = () : Promise<any> => {
-	return localService.get("channels/friend-users").then((res) => {console.log("friends", res); return res.data}).catch(err => console.log(err));
+	return localService.get("channels/friend-users").then((res) => { return res.data}).catch(err => console.log(err));
 }
 export const GetBlockedFriends = () : Promise<any> => {
 	return localService.get("user/blocked/" ).then((res) => res.data).catch(err => console.log(err));
 }
-export const setADmin = (data : FormData) : Promise<any> => {
-	return localService.post("channels/set-admin/" , data).then((res) => res.data).catch(err => console.log(err));
+export const setADmin = (id_user : number, id_group : number) : Promise<any> => {
+	return localService.post("channels/set-admin/" ,{id_user, id_group}).then((res) => res.data).catch(err => console.log(err));
 }
-export const unsetADmin = (data : FormData) : Promise<any> => {
-	return localService.post("channels/unset-admin/", data ).then((res) => res.data).catch(err => console.log(err));
+export const unsetADmin = (id_user : number, id_group : number) : Promise<any> => {
+	// console.log("aaaa");
+	return localService.post("channels/unset-admin/", {id_user, id_group} ).then((res) => res.data).catch(err => console.log(err));
 }
 export const ChangePrivacy = (id : number , id_group : number) : Promise<any> => {
 	return localService.get("user/blocked/" ).then((res) => res.data).catch(err => console.log(err));
@@ -57,6 +58,7 @@ export const setStatus = (id :number , id_group : number , status : Status, unti
 
 
 export const unsetStatus = (id_user : number , id_group : number) : Promise<any> => {
+	console.log("aaaaaaaa");
 	return localService.post("channels/unset-status/", {id_user, id_group} ).then((res) => res.data).catch(err => console.log(err));
 }
 
@@ -64,5 +66,8 @@ export const updateInfo = (data : FormData) : Promise<any> => {
 	return localService.patch("user/", data).then((res) => res.data);
 }
 
+export const kick = () : Promise<any> => {
+	return localService.post("",)
+}
 // export const enableTwoFa = ()
 

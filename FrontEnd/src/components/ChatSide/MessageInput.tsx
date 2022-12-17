@@ -27,7 +27,7 @@ const MessageInput: React.FC <{
     },[]);
     return <>
 
-	<div className="absolute inset-x-0 bottom-0 h-16 ml-96 mr-20">
+	<div className="fixed inset-x-0 bottom-0  h-16 ml-96 mr-20">
 			{!isMemberOfRoom && (
 				<div className="mb-3 flex align-items-center justify-content-between">
 					<p className="m-0 font-weight-bold gray-color text-uppercase">

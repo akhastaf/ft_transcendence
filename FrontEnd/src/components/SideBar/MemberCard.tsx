@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack } from '@chakra-ui/react'
 // import { toast, ToastContainer } from 'react-toastify';
-import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from './Services/user';
-import { ChatType, Role, Status, userModel, Userstatus, UserType } from './Types/types';
+import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from '../Services/user';
+import { ChatType, Role, Status, userModel, Userstatus, UserType } from '../Types/types';
 import {
 	Popover,
 	PopoverTrigger,
@@ -16,10 +16,14 @@ import {
   } from '@chakra-ui/react';
 //   import { Radio, RadioGroup } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline';
-import { ChannelSetting } from './SideBar/SideBar';
+import { ChannelSetting } from './SideBar';
+import Profile from './profile';
+import { SocketContext } from '../Services/sockets';
 
 
+// export const [refreshVar, setRefreshVar] = useState(false);
 
+export let refreshVar : boolean = false;
 
 const MemberCard: React.FC<{
 
@@ -31,9 +35,11 @@ const MemberCard: React.FC<{
 	state : string,
 	isShown : boolean
 	setIsShown : React.Dispatch<React.SetStateAction<boolean>>
-	choosenChat : ChatType
+	setUsersState: React.Dispatch<React.SetStateAction<boolean>>
+	choosenChat : ChatType;
+	usersState : boolean;
 
-}> = ({isShown, user, onClick, coll, role, state, setIsShown, choosenChat }) => {
+}> = ({isShown, usersState, user, onClick, coll, role, state, setIsShown, choosenChat, setUsersState }) => {
 
 
 
@@ -50,6 +56,7 @@ const MemberCard: React.FC<{
 		console.log(" i am here time = ddd", currentDate);
 		const e : Status = (status === 'Ban') ? Status.BANNED : (status === 'Mute') ? Status.MUTED : Status.ACTIVE;
 		setStatus(id, parseInt(choosenChat._id), e, currentDate).then((res) => {
+			setUsersState(!usersState);
 			toast({
 				title: `user ${e}`,
 				description: `You blocked user for ${time} min`,
@@ -57,31 +64,64 @@ const MemberCard: React.FC<{
 				duration: 9000,
 				isClosable: true,
 			  })
-			console.log("he is banned/muted")
+			// console.log("he is banned/muted")
 		})
 
 	}
+
+
 	const unsetadminAction = (id: number) => {
-		let formData = new FormData();
-		// formData.append("id_user", id.toString());
-		// formData.append("id_group", choosenChat._id);
+
 		unsetStatus(id, parseInt(choosenChat._id)).then((res) => {
-			console.log("he is unbanned/unmuted")
+			setUsersState(!usersState);
+			toast({
+				title: `user active`,
+				description: `User ${user.name} back to action`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
 		})
 	}
-
+	
 	const setAdmin = (id: number) => {
-		let formData = new FormData();
-		formData.append("id_user", id.toString());
-		formData.append("id_group", choosenChat._id);
-
-		setADmin(formData).then(() => console.log("new admin is set"))
+		setUsersState(!usersState);
+	
+		
+		setADmin(id, parseInt(choosenChat._id)).then(() => console.log("new admin is set"))
+		toast({
+			title: `user update`,
+			description: `User ${user.name} is an admin`,
+			status: 'success',
+			duration: 9000,
+			isClosable: true,
+		  })
 	}
 	const unsetAdmin = (id: number) => {
-		let formData = new FormData();
-		formData.append("id_user", id.toString());
-		formData.append("id_group", choosenChat._id);
-		unsetADmin(formData).then(() => console.log("admin is unset"))
+		setUsersState(!usersState);
+		unsetADmin(id, parseInt(choosenChat._id)).then(() => console.log("admin is unset"))
+		toast({
+			title: `user update`,
+			description: `User ${user.name} is no longer an admin`,
+			status: 'success',
+			duration: 9000,
+			isClosable: true,
+		  })
+	}
+
+
+	const socket = useContext(SocketContext);
+	const kickMember = (id : number) => {
+		socket.emit("removeUser_client", {id_user : id, id_group : parseInt(choosenChat._id)},
+		(data : any) => {
+			toast({
+				title: `Member update`,
+				description: `${data.name} ${data.message}`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
+		})
 	}
 	
 
@@ -89,7 +129,7 @@ const MemberCard: React.FC<{
 
 	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
-	return (<App1 setAdmin ={setAdmin} unsetAdmin={unsetAdmin} setAdminAction={setadminAction} unsetAdminAction={unsetadminAction} isShown={isShown} role={role} user={user} coll={coll} onClick={onClick} setIsShown={setIsShown} state={state} />);
+	return (<App1 kickMember={kickMember} setAdmin ={setAdmin} unsetAdmin={unsetAdmin} setAdminAction={setadminAction} unsetAdminAction={unsetadminAction} isShown={isShown} role={role} user={user} coll={coll} onClick={onClick} setIsShown={setIsShown} state={state} />);
 };
 
 
@@ -109,8 +149,9 @@ const App1: React.FC<{
 	unsetAdminAction : (id: number) => void
 	setAdmin : (id : number) => void
 	unsetAdmin : (id : number) => void
+	kickMember : (id : number) => void
 
-}> = ({ setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction}) => {
+}> = ({ setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction, kickMember}) => {
 	// Show or hide the custom context menu
 	const [isShow, setIsShow] = useState(false);
 	const toast = useToast();
@@ -161,23 +202,17 @@ const App1: React.FC<{
 		const check = (blocked && blocked.filter(blocked => parseInt(blocked._id) === id) ? true : false)
 		return check;
 	}
+
 	// Do what you want when an option in the context menu is selected
 	const [selectedValue, setSelectedValue] = useState<String>();
 	const [isblocked, setIsBlocked] = useState<boolean>();
 	const [isFriend, setIsFriend] = useState<boolean>();
 	const [FBUpdate, setFBUpdate] = useState<boolean>(false);
+	const [che, setChe] = useState<boolean>(false);
+	
 	const doSomething = (selectedValue: String) => {
 		setSelectedValue(selectedValue);
 	};
-
-	// const contextClass = {
-	// 	success: "bg-blue-600",
-	// 	error: "bg-red-600",
-	// 	info: "bg-gray-600",
-	// 	warning: "bg-orange-400",
-	// 	default: "bg-indigo-600",
-	// 	dark: "bg-white-600 font-gray-300",
-	//   };
 
 	const AddFriendf = (id : number) => {
 		AddFriend(id).then((res) =>
@@ -218,13 +253,11 @@ const App1: React.FC<{
 
 	
 
-
+	const [pro, setPro] = useState(false);
 
 	useEffect (() => {
 		setIsFriend(checkIfFriend(user.id));
 		setIsBlocked(checkIfBlocked(user.id));
-	// checkIfBlocked();
-	// checkIfFriend();
 	}, [FBUpdate])
 
 	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
@@ -255,27 +288,38 @@ const App1: React.FC<{
 					<MenuGroup title='Member'>
 					{ !isFriend && <MenuItem><MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/></MenuItem>}
 					{ state === "ROOM" && <MenuItem><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
-					<MenuItem><MemberWork nameService={"Check Profil"} id={user.id} function1={AddFriend}/> </MenuItem>
+					<MenuItem ><MemberWork nameService={"Check Profil"} id={user.id} onClick={setPro} /> </MenuItem>
 					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={AddFriend}/> </MenuItem>
 					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
 					</MenuGroup>
-					{(role === Role.ADMIN || role === Role.OWNER) && <>
+					{
+						(role === Role.ADMIN) &&  <MenuItem> <MemberWork nameService={"i am fucking admin"} id={user.id} function1={kickMember}/></MenuItem>
+					}
+					{(role === Role.ADMIN && user.role === "member") || (role === Role.OWNER && user.role !== "owner") && <>
 					<MenuDivider />
 					<MenuGroup title='Admin'>
-					<MenuItem closeOnSelect={false}><MemberWork nameService={"Mute"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
-					<MenuItem closeOnSelect={false}><MemberWork nameService={"Ban"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
-					<MenuItem closeOnSelect={false}><MemberWork nameService={"Kick"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
+					{
+						(user.action === "active") ?  <MenuItem closeOnSelect={false}><MemberWork nameService={"Mute"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
+						: (user.action === "muted")  ? <MenuItem><MemberWork nameService={"unMute"} id={user.id}  function1={unsetAdminAction}/></MenuItem> : null
+					}
+					{
+						(user.action === "active") ?  <MenuItem closeOnSelect={false}><MemberWork nameService={"Ban"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem> 
+						: (user.action === "banned") ?  <MenuItem><MemberWork nameService={"unBan"} id={user.id}  function1={unsetAdminAction}/></MenuItem> : null
+					}
+					<MenuItem ><MemberWork nameService={"Kick"} id={user.id} function1={kickMember}/></MenuItem>
 					</MenuGroup></>
 					}
-					{(role === Role.ADMIN || role === Role.OWNER) && <>
+					{(role === Role.OWNER && user.role !== "owner") && <>
 					<MenuDivider />
 					<MenuGroup title='Owner'>
+					{user.role === "member" && <MenuItem><MemberWork nameService={"Set As Admin"} id={user.id} function1={setAdmin}/></MenuItem>}
+					{user.role === "admin" && <MenuItem><MemberWork nameService={"unSet As Admin"} id={user.id} function1={unsetAdmin}/></MenuItem>}
 					<MenuItem><MemberWork nameService={"Set As Owner"} id={user.id} function1={AddFriend}/></MenuItem>
-					<MenuItem><MemberWork nameService={"unSet As Owner"} id={user.id} function1={AddFriend}/></MenuItem>
 					</MenuGroup> </>
 					}
 				</MenuList>
 				</Menu>
+					{pro && <Profile user={user} closeModal={setPro} />} 
 								
 
 
@@ -328,11 +372,12 @@ const MemberWork : React.FC <{
 	message? : (user: string) => void;
 	function1? : (id : number) => void,
 	function2? : (id : number) => boolean,
+	onClick? : React.Dispatch<React.SetStateAction<boolean>>
 	flag? : number,
 	user? : userModel,
 	AdminAction? : (id: number, status: string, time: string) => void
 
-}> = ({nameService, function1, id, function2, AdminAction, flag , user, message}) =>
+}> = ({nameService, function1, id, function2, AdminAction, flag , user, message, onClick}) =>
 {
 	// var currentDate = new Date();
 	// var time_in_minut = 20;
@@ -345,7 +390,14 @@ const MemberWork : React.FC <{
 			function1(id)
 		if (function2)
 			function2(id)
+		if (onClick)
+		{
+			onClick(true)
+			console.log("true")
+		}
 		
+		// setRefreshVar(!refreshVar);
+		refreshVar = !refreshVar;
 	}
 
 
@@ -383,13 +435,14 @@ const WalkthroughPopover: React.FC <{
 
 		if (AdminAction)
 			AdminAction(id, nameService, value);
+		refreshVar = !refreshVar;
 	}
 	return (
-	  <Popover
-
+		<Popover
+		
 		placement='bottom'
 		closeOnBlur={false}
-	  >
+		>
 		<PopoverTrigger>
 		<button className="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-300 hover:bg-[#5c5e62] hover:text-white focus:text-white focus:bg-gray-700"
 			>{nameService}
@@ -417,7 +470,7 @@ const WalkthroughPopover: React.FC <{
 			alignItems='center'
 			justifyContent='space-between'
 			pb={4}
-		  >
+			>
 		
 			<ButtonGroup size='sm'>
 			  <Button onClick={f} colorScheme='blue'>
@@ -428,6 +481,6 @@ const WalkthroughPopover: React.FC <{
 		</PopoverContent>
 	  </Popover>
 	)
-  }
+}
 
 export default MemberCard

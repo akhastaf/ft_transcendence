@@ -82,16 +82,16 @@ export const ScoreCard: React.FC<{
 }> = ({ currentUser }) => {
     return (
         <>
-            <li className="py-3 sm:py-4">
+            <li className="list-none py-3 sm:py-4 min-w-fit">
                 <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
                         <img className="w-12 h-12 rounded-full" src={currentUser.avatar} alt="Neil image" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-lg font-medium arcade text-white truncate dark:text-white">
+                    <div className="flex-1  min-w-fit">
+                        <p className="text-lg font-medium arcade text-white  dark:text-white">
                             {currentUser.username}
                         </p>
-                        <p className="text-sm  text-beige_color truncate dark:text-gray-400">
+                        <p className="text-sm  text-beige_color dark:text-gray-400">
                             {currentUser.email}
                         </p>
                         <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">
@@ -103,7 +103,7 @@ export const ScoreCard: React.FC<{
                     </div>
                     <div className="inline-flex items-center arcade  text-green-300 dark:text-white">
 
-                        <div className="flex-1 pr-10 min-w-0">
+                        <div className="flex-1 pr-10 min-w-5">
                             <p className="text-lg font-medium arcade text-white truncate dark:text-white">
                                 {currentUser.username}
                             </p>
@@ -117,12 +117,6 @@ export const ScoreCard: React.FC<{
                         <div className="flex-shrink-0">
                             <img className="w-12 h-12 rounded-full" src={currentUser.avatar} alt="Neil image" />
                         </div>
-                        {/* <div className="inline-flex items-center arcade text-base font-bold text-red-500 dark:text-white">
-                        lost : 2
-                    </div>
-                    <div className="inline-flex items-center whitespace-pre arcade text-base font-bold text-yellow-500 dark:text-white">
-                        Best Achievement : 6 wins straight
-                    </div> */}
                     </div>
 
                 </div>
@@ -130,6 +124,8 @@ export const ScoreCard: React.FC<{
             </li>
         </>)
 }
+
+
 
 
 

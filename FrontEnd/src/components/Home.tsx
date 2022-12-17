@@ -16,6 +16,8 @@ import ChannelsDisplay from './pages/ChannelsDisplay';
 import { getDmMessages, getRoomMessages } from './Services/messages';
 import { toast } from 'react-toastify';
 
+import { refreshVar } from './SideBar/MemberCard';
+import { Flex } from '@chakra-ui/react';
 
 // const channel2 = require('../images/yoko.png');
 
@@ -117,6 +119,7 @@ const Home: React.FC<{
 		DUMMY_MESSAGES
 	);
 		const [myRole, setMyRole] = useState<Role>(Role.MEMBER);
+		const [usersState, setUsersState] = useState<boolean>(false);
 		// eslint-disable-next-line
 						const [searchParams] = useSearchParams();
 
@@ -163,7 +166,7 @@ const Home: React.FC<{
 			getCurrentUser()
 				.then((user) => {
 					setUserInfo(user);
-					console.log(user);
+					console.log("user == " ,user);
 				})
 				.catch((err) => console.log(err));
 				socket.off()
@@ -181,7 +184,7 @@ const Home: React.FC<{
 					console.log("her spam");
 					setRooms(res);
 				})
-				.catch(err => console.log(err));
+				.catch(err => console.log(""));
 
 		})
 
@@ -214,15 +217,15 @@ const Home: React.FC<{
 			setMessageRef(data);
 			socket.off();
 		})
-		if (state === "HomeGAME")
+		if (state === "HomeGAME" || state === "allChannels")
 		{
 			GetFriends().then((res) => {
-				console.log("users =       ", res);
+				// console.log("users =       ", res);
 
 				setUsers(res)
 				
 			}).catch(err => console.log(err))
-			console.log("aaaaaaaaaaaaaa");
+			// console.log("aaaaaaaaaaaaaa");
 			setChoosenChat(() => ({username: "", _id: ""}))
 			setSelectedUserDM(() => ({_id: "",
 			username: "" }))
@@ -254,8 +257,6 @@ const Home: React.FC<{
 			// eslint-disable-next-line
 			getAllRooms().then((data) =>
 			{
-				console.log("her spam 1");
-				// eslint-disable-next-line
 				data.map((room : roomModal) => {
 					if (room.id === parseInt(id2))
 					{
@@ -271,8 +272,6 @@ const Home: React.FC<{
 				.then((res) => {
 
 					setUsers(res);
-					console.log("userrrrr = ", res
-					)
 				}
 				).catch(err => console.log(err))
 				;
@@ -286,7 +285,7 @@ const Home: React.FC<{
 		}
 
 
-	},[ id2, state ,messageRef, users.friends])
+	},[ id2, state ,messageRef, users.friends, usersState])
 
 
 
@@ -402,7 +401,7 @@ const Home: React.FC<{
 					createRoomHandler={createRoomHandler}
 				// joinRoomHandler={joinRoomHandler}
 
-	/> 
+				/> 
 				 <SideBar
 					choosenChat={choosenChat}
 					users={users}
@@ -414,21 +413,29 @@ const Home: React.FC<{
 					state={state}
 					isShown = {isShown}
 					setIsShown={setIsShown}
+					usersState={usersState}
+					setUsersState={setUsersState}
 				/>
+	
 
-
-				   <div className="bg-[#36393f] flex-grow col-span-2 p-0">
-					<div className="flex flex-col min-h-screen">
-						<ChatHeader
+	<div className="bg-[#36393f] flex-grow col-span-2 p-0 h-screen">
+					{/* <div className="flex flex-col h-screen min-h-fit full flex-grow"> */}
+						<Flex w={"100%"} flexDir={"column"} justifyContent={"space-between"}>
+							
+						
+						{state !== "allChannels" && 	
+							<ChatHeader
 							selectedUserDM={selectedUserDM}
 							choosenChat={choosenChat}
 							/>
+						}
 
-	
-							{
-								state === "HomeGAME"  && (
+							{state === "HomeGAME"  && <Flex mt={"60px"} h={"100vh"}>
+							
+								 
 									<GameHome currentUser={userInfo} />
-								)
+							
+							</Flex>
 							}
 	
 	
@@ -437,6 +444,9 @@ const Home: React.FC<{
 								messages1 && (
 									<MessagesSection
 										messages={messages1}
+										choosenChat={choosenChat}
+								isMemberOfRoom={isMemberOfRoom}
+								sendMessage={sendMessageHandler}
 									/>
 								)
 							}
@@ -446,6 +456,9 @@ const Home: React.FC<{
 								messages1 && (
 									<MessagesSection
 										messages={messages1}
+										choosenChat={choosenChat}
+								isMemberOfRoom={isMemberOfRoom}
+								sendMessage={sendMessageHandler}
 									/>
 								)}
 
@@ -460,7 +473,9 @@ const Home: React.FC<{
 								sendMessage={sendMessageHandler}
 							/>
 						}
-					</div> 
+					</Flex>
+					{/* </Flex> */}
+					{/* </div>  */}
 	
 					</div> 
 			</div>

@@ -72,6 +72,73 @@
       outline: none !important;
       box-shadow: none !important;
     }
+
+    .main{
+      padding: 0 5%;
+    }
+    
+    @media only screen and (min-width: 768px) {
+      .main{
+        padding: 0 50px;
+      }
+    }
+    
+    .mainGrid{
+      grid-template-areas: 'articles' 'cards'
+    }
+    
+    @media only screen and (min-width: 1024px) {
+      .mainGrid{
+        grid-template-areas: 'articles cards';
+        padding: 50px 0px;
+      }
+    }
+    @media only screen and (min-height: 765px) {
+      .channelScroll{
+       
+        height: 400px;
+      }
+    }
+    @media only screen and (min-height: 1000px) {
+      .channelScroll{
+       
+        height: 450px;
+      }
+    }
+    @media only screen and (max-height: 600px) {
+      .channelScroll{
+       
+        height: 430px;
+      }
+    }
+    
+    .article{
+      grid-area: article;
+    }
+    
+    .related{
+      grid-area: related;
+    }
+    
+    .cards{
+      grid-area: cards;
+    }
+    
+    .mainArticle{
+      grid-template-areas: 'article' 'related' 'cards';
+    }
+    
+    @media only screen and (min-width: 1440px) {
+      .mainArticle{
+        grid-template-areas: "article article cards" "related related related";
+      }
+    }
+    
+    @media only screen and (min-width: 2205px) {
+      .articleContent{
+        font-size: 30px;
+      }
+    }
     
   
   }

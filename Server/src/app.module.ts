@@ -2,18 +2,18 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
-import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AchievmentModule } from './achievment/achievment.module';
-import { GameModule } from './game/game.module';
-import { CaslModule } from './casl/casl.module';
 import { MessagesModule } from './messages/messages.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
@@ -23,12 +23,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     UserModule,
     AchievmentModule,
     GameModule,
-    CaslModule,
     MessagesModule
    ],
   controllers: [],
   providers: [],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  constructor() {}
 }

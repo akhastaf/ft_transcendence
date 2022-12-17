@@ -9,7 +9,7 @@ const ChatHeader: React.FC <{
 {
     return (<>
     
-        <div className="dark-2-bg py-3 px-3 font-weight-bold  text-lg border-b p-4 border-gray-800 ">
+        <div className="fixed top-0 w-full dark-2-bg py-3 px-3 font-weight-bold  text-lg border-b p-4 border-gray-800 ">
         <span className="text-gray-400">@</span>
 			<span className="ml-2 text-white capitalize">
                 {selectedUserDM.username === "" && choosenChat.username === "" && "Welcome To Transcendance Enjoy the Game !" }

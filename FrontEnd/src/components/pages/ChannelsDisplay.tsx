@@ -1,4 +1,4 @@
-import { Grid } from "@chakra-ui/react";
+import { Box, Flex, Grid, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
@@ -19,32 +19,31 @@ const ChannelsDisplay: React.FC<{
         AllRooms().then((res) => Setrooms(res)).catch(err => console.log(err));
     }, [])
 
+
     return <>
-        <div className="h-full w-full">
-            <div className="flex flex-col mx-20 pt-10 gap-7">
+
+        {/* <Flex w={"100%"} h={"100%"} flexDirection={"column"}>
+            
+        </Flex> */}
+        <div className=" flex-grow  ">
+            <div className="flex h-full flex-col mx-20 pt-10 gap-7">
                 <div className="relative sm:h-[30rem] scale-100 w-full rounded-lg" >
-                    {/* <div className=""> */}
+                  
                     <img className="max-h-[30rem] w-full rounded-lg" src={logo} />
                     <div className="absolute w-1/2 m-auto bottom-1/2 inset-x-0 text-white text-lg text-center leading-16">
                         <p className="text-bold arcade text-white">Find Your Play Space</p>
                         <SearchBox />
                     </div>
-                    {/* </div> */}
                 </div>
-                {/* <div className="sm:h-auto sm:w-full grid gap-8 mb-6 lg:mb-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {
-                        rooms.map((room: roomModal) => (
-                            <ChannelCard joinRoomHandler={joinRoomHandler} key={room.id} room={room} />
-                        ))
-                    }
-                </div> */}
-                 <Grid w={"100%"}  p={"2%"} templateColumns={{ base: 'repeat(autofill, 1fr)', lg :'repeat(3, 1fr)'}} gap={12}>
+                <Box w={"100%"} h={"400px"} className={"channelScroll"}>
+                 <Grid className={"overflow-y-auto scrollbar-hide"} overflowX={"hidden"} w={"100%"} h={"100%"}  p={"2%"} templateColumns={{ base: 'repeat(autofill, 1fr)', lg :'repeat(3, 1fr)'}} gap={12}>
                  {
                         rooms.map((room: roomModal) => (
                             <ChannelCard joinRoomHandler={joinRoomHandler} key={room.id} room={room} />
                         ))
                     }
                 </Grid>
+                </Box>
             </div>
         </div>
     </>
@@ -143,13 +142,23 @@ const PasswordInput : React.FC <{
 {
     const socket = useContext(SocketContext);
     const navigate = useNavigate();
+    const toast = useToast();
 
     const joinRoomHandler = (room: roomModal, password?: string) => {
 		socket.emit("joinGroup_client", {
 			id_group: room.id,
 			password: password,
 		}, (data : any) => {
-            console.log(data);
+            if (data === false)
+            toast({
+				title: `Room join`,
+				description: `Wrong Room Password`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			  })
+              closeModal();
+            // console.log(data);
         });
 	};
     const passwordRef = useRef<HTMLInputElement>(null);
