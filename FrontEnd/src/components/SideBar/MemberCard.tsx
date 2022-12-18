@@ -48,12 +48,12 @@ const MemberCard: React.FC<{
 	}, [])
 	const toast = useToast();
 	const setadminAction = (id: number, status : string , time : string) => {
-		let formData = new FormData();
+
 		var currentDate = new Date();
 		var time_in_minut = time;
 		currentDate.setTime(currentDate.getTime() + parseInt(time_in_minut) *60*1000);
-		console.log("i am in the muted fucntion dasdasdasfasdkhhasb")
-		console.log(" i am here time = ddd", currentDate);
+		// console.log("i am in the muted fucntion dasdasdasfasdkhhasb")
+		// console.log(" i am here time = ddd", currentDate);
 		const e : Status = (status === 'Ban') ? Status.BANNED : (status === 'Mute') ? Status.MUTED : Status.ACTIVE;
 		setStatus(id, parseInt(choosenChat._id), e, currentDate).then((res) => {
 			setUsersState(!usersState);
