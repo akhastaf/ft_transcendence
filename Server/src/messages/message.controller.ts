@@ -60,7 +60,7 @@ export class MessagesController {
 		}
 		return null;
 	}
-
+//TODO : check if the user is blocked by the receiver
 	@Get('rooms/:id') //* get messages of a room
 	async getRoomMessages(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
 		// console.log("##########  getRoomMessages  ##########", id);
@@ -74,8 +74,13 @@ export class MessagesController {
 		const messages = await this.messagesService.getRoomMessages(id);//id here is the id of the group
 		if (messages)
 		{
+			//* list of users who blocked the current user
+			const blocked_by = await this.groupsService.getblockerlist(req.user.id, id);
 			let arr = new Array();
 			messages.forEach(element => {
+				//* if the sender is in the list of users who blocked the current user => skip
+				if (blocked_by.includes(element.sender.id))
+					return;
 				let message = new messageModel();
 				message.message = element.content;
 				message.userId = element.sender.id;

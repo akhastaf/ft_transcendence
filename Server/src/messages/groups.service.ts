@@ -11,7 +11,8 @@ import { addUserDto } from './dto/add-user.dto';
 import { HttpException } from '@nestjs/common';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
 import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
-
+import { UpdateGroupDto } from './dto/update-group.dto';
+import * as fs from 'fs';
 
 export class GroupsService {
 	constructor(
@@ -608,6 +609,8 @@ export class GroupsService {
 		try
 		{
 			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (id_user == data.id_user)
+				return false;
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
 				console.log("You are not allowed to set admin");
@@ -659,9 +662,14 @@ export class GroupsService {
 				console.log("This user is not a member of this group");
 				return false;
 			}
-			if (join.role == Role.OWNER || join.role == Role.ADMIN)
+			if (join.role == Role.OWNER)
 			{
-				console.log("You can't mute an admin or an owner");
+				console.log("You can't mute an owner");
+				return false;
+			}
+			if (join.role == Role.ADMIN && is_member.role == Role.ADMIN)
+			{
+				console.log("An admin can't mute another admin");
 				return false;
 			}
 			join.status = data.status;
@@ -675,7 +683,7 @@ export class GroupsService {
 	}
 
 	// * ############################################# unset Status ##############################
-	
+	//TODO here an admin can unmute/ban an other admin
 	async unsetStatus(id_user: number, data: unsetStatusDto)
 	{
 		try{
@@ -805,6 +813,87 @@ export class GroupsService {
 		catch(e)
 		{
 			console.log("Error deleteGroup : ", e);
+		}
+	}
+
+	// * ############################################# update group ##############################
+	async updateGroup(id_user: number, data: UpdateGroupDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
+			{
+				console.log("You are not allowed to update this group");
+				return false;
+			}
+			const group = is_member.group;
+			if (data.name)
+				group.name = data.name;
+			if (data.description)
+				group.description = data.description;
+			//! hna wash possible nsupprimi the old image
+			if (data.avatar)
+			{
+				console.log("avatar : ", group.avatar);
+				await fs.unlink(group.avatar, (err) => {
+					if (err) {
+					 console.error(err);
+					 return err;
+					}
+				   });
+				group.avatar = data.avatar;
+			}
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("Error updateGroup : ", e);
+		}
+	}
+
+	// ************************************************* isBlocked **********************************************
+
+	async isBlocked(id_user: number, id_blocked: number)
+	{
+		try
+		{
+			const isBlocked = await this.getBockedUser(id_user);
+			if (!isBlocked)
+				return false;
+			isBlocked.forEach(user => {
+				if(user.id === id_blocked)
+					return true;
+			});
+			return false;
+		}
+		catch(error)
+		{
+			console.log("Error isBlocked : ", error.message);
+		}
+	}
+	// ************************************************* list of blocker **********************************************
+	
+	async getblockerlist(id_user: number, id_group: number)
+	{
+		try
+		{
+			const members = await this.getMemberByChannel(id_user, id_group);
+			let list = new Array<number>;
+			if (!members)
+				return list;
+			for (const member of members)
+			{
+				member.user.bloked.forEach(element => {
+					if (element.id === id_user)
+						list.push(member.user.id);
+				});
+			}
+			return list;
+		}
+		catch(error)
+		{
+			console.log("Error getblocker : ", error.message);
 		}
 	}
 }
