@@ -7,6 +7,7 @@ import { channelModel, memberModel, RequestWithUser } from 'src/types';
 import { SharpPipe } from 'src/user/pipes/sharp.pipe';
 import { addUserDto } from './dto/add-user.dto';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { UpdateGroupDto } from './dto/update-group.dto';
 import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
 import { Group } from './entities/group.entity';
@@ -185,9 +186,15 @@ export class GroupController {
 		return await this.groupsService.deletePwd(req.user.id, data);
 	}
 
-	// @Delete(':id')
-	// async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-	// 	console.log("deleteChannel", id);
-	// 	return await this.groupsService.deleteGroup(req.user.id, id);
-	// }
+	@Delete(':id')
+	async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+		console.log("deleteChannel", id);
+		return await this.groupsService.deleteGroup(req.user.id, id);
+	}
+	@Patch()
+	async updateChannel(@Req() req: RequestWithUser, @Body() data: UpdateGroupDto) {
+		console.log("updateChannel : ", data);
+		return await this.groupsService.updateGroup(req.user.id, data);
+	}
+
   }

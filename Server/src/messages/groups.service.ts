@@ -11,7 +11,8 @@ import { addUserDto } from './dto/add-user.dto';
 import { HttpException } from '@nestjs/common';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
 import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
-
+import { UpdateGroupDto } from './dto/update-group.dto';
+import * as fs from 'fs';
 
 export class GroupsService {
 	constructor(
@@ -33,7 +34,7 @@ export class GroupsService {
 				});
 			return group;
 		} catch (error) {
-			console.log("dmExists: Error");
+			console.log("dmExists : ", error.message);
 		}
 	}
 
@@ -72,24 +73,31 @@ export class GroupsService {
 			return channel;
 		}
 		catch(error){
-			console.log("createDm: Error");
+			console.log("createDm : ", error.message);
 		}
 	}
 
 //*  Working & tested by postman
  	async createGroup(user: User, createGroupDto: CreateGroupDto){
-		// const group = new Group(); newUser.name = name;
-		//* Creates new entities and copies all entity properties from given objects into their new entities.
-		const createGroupWithUser = {owner: user, ...createGroupDto};
-		let group = this.groupRepository.create(createGroupWithUser);
-		group = await this.groupRepository.save(group);
-		//* join the owner to the group
-		const joinGroup = new UserToGroup();
-		joinGroup.user = user;
-		joinGroup.role = Role.OWNER;
-		joinGroup.group = group;
-		await this.userToGroupRepository.save(joinGroup);
-		return group;
+		try
+		{
+			// const group = new Group(); newUser.name = name;
+			//* Creates new entities and copies all entity properties from given objects into their new entities.
+			const createGroupWithUser = {owner: user, ...createGroupDto};
+			let group = this.groupRepository.create(createGroupWithUser);
+			group = await this.groupRepository.save(group);
+			//* join the owner to the group
+			const joinGroup = new UserToGroup();
+			joinGroup.user = user;
+			joinGroup.role = Role.OWNER;
+			joinGroup.group = group;
+			await this.userToGroupRepository.save(joinGroup);
+			return group;
+		}
+		catch(error)
+		{
+			console.log("createGroup : ", error.message);
+		}
 	}
 
 //*  Working shit : Controller 
@@ -110,7 +118,7 @@ export class GroupsService {
 			return dms;
 		}
 		catch(error){
-			console.log("getDmByUser: Error");
+			console.log("getDmByUser : ", error.message);
 		}
 	}
 
@@ -130,7 +138,7 @@ export class GroupsService {
 			.getMany();
 			return channels;
 		} catch (error) {
-			console.log("getChannelByUser: Error");
+			console.log("getChannelByUser: ", error.message);
 			// throw error;
 		}
 	}
@@ -166,7 +174,7 @@ export class GroupsService {
 		}
 		catch(error)
 		{
-			console.log("getMemberByChannel: Error");
+			console.log("getMemberByChannel : ", error.message);
 		}
 	}
 
@@ -216,7 +224,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error joinGroup");
+			console.log("joinGroup :", e.message);
 		}
 	}
 
@@ -248,7 +256,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error getGroups");
+			console.log("getGroups : ", e.message);
 		}
 	}
 
@@ -268,7 +276,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error isGroupMember");
+			console.log("isGroupMember : ", e.message);
 		}
 	}
 
@@ -289,7 +297,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error addUser");
+			console.log("addUser : ", e.message);
 		}
 	}
 
@@ -309,7 +317,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error getUserRole");
+			console.log("getUserRole : ", e.message);
 		}
 	}
 
@@ -341,7 +349,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error getBockedUser");
+			console.log("getBockedUser : ", e.message);
 		}
 	}
 	//* ############################################# getFriendsUser ##############################
@@ -371,7 +379,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error getFriendsUser");
+			console.log("getFriendsUser : ", e.message);
 		}
 	}
 
@@ -396,7 +404,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error removeUser : ", e.message);
+			console.log("removeUser : ", e.message);
 		}
 	}
 				
@@ -422,6 +430,7 @@ export class GroupsService {
 				// 	console.log("group");
 				// }
 			const role = await this.getUserRole(id_user, groupdto.id_group);
+			console.log(`role ${role} ${id_user}, ${groupdto.id_group}!`)
 			// console.log(`!role ${role} id user ${id_user} id group ${groupdto.id_group} id `);
 			if (!role)
 				throw new Error("You are not a member of this group");
@@ -469,7 +478,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error leaveGroup : ", e.message);
+			console.log("leaveGroup : ", e.message);
 		}
 	}
 
@@ -525,7 +534,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error isAllowed");
+			console.log("isAllowed : ", e.message);
 		}
 	}
 
@@ -560,7 +569,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error isAllowedR");
+			console.log("isAllowedR : ", e.message);
 		}
 	}
 
@@ -597,7 +606,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error setAdmin");
+			console.log("setAdmin : ", e.message);
 		}
 	}
 
@@ -608,6 +617,8 @@ export class GroupsService {
 		try
 		{
 			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (id_user == data.id_user)
+				return false;
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
 				console.log("You are not allowed to set admin");
@@ -631,7 +642,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Unset setAdmin");
+			console.log("Unset setAdmin : ", e.message);
 		}
 	}
 
@@ -659,9 +670,14 @@ export class GroupsService {
 				console.log("This user is not a member of this group");
 				return false;
 			}
-			if (join.role == Role.OWNER || join.role == Role.ADMIN)
+			if (join.role == Role.OWNER)
 			{
-				console.log("You can't mute an admin or an owner");
+				console.log("You can't mute an owner");
+				return false;
+			}
+			if (join.role == Role.ADMIN && is_member.role == Role.ADMIN)
+			{
+				console.log("An admin can't mute another admin");
 				return false;
 			}
 			join.status = data.status;
@@ -670,12 +686,12 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error setMuted");
+			console.log("setMuted : ", e.message);
 		}
 	}
 
 	// * ############################################# unset Status ##############################
-	
+	//TODO here an admin can unmute/ban an other admin
 	async unsetStatus(id_user: number, data: unsetStatusDto)
 	{
 		try{
@@ -703,7 +719,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error unsetMuted");
+			console.log("unsetMuted : ", e.message);
 		}
 	}
 
@@ -728,7 +744,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error setPwd");
+			console.log("setPwd : ", e.message);
 		}
 	}
 
@@ -753,7 +769,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error updatePwd");
+			console.log("updatePwd : ", e.message);
 		}
 	}
 	// * ############################################# Delete pwd  ##############################
@@ -779,7 +795,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error updatePwd");
+			console.log("updatePwd : ", e.message);
 		}
 	}
 
@@ -804,7 +820,88 @@ export class GroupsService {
 		}
 		catch(e)
 		{
-			console.log("Error deleteGroup : ", e);
+			console.log("deleteGroup : ", e.message);
+		}
+	}
+
+	// * ############################################# update group ##############################
+	async updateGroup(id_user: number, data: UpdateGroupDto)
+	{
+		try
+		{
+			const is_member = await this.isGroupMember(id_user, data.id_group);
+			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
+			{
+				console.log("You are not allowed to update this group");
+				return false;
+			}
+			const group = is_member.group;
+			if (data.name)
+				group.name = data.name;
+			if (data.description)
+				group.description = data.description;
+			//! hna wash possible nsupprimi the old image
+			if (data.avatar)
+			{
+				console.log("avatar : ", group.avatar);
+				await fs.unlink(group.avatar, (err) => {
+					if (err) {
+					 console.error(err);
+					 return err;
+					}
+				   });
+				group.avatar = data.avatar;
+			}
+			return await this.groupRepository.save(group);
+		}
+		catch(e)
+		{
+			console.log("updateGroup : ", e.message);
+		}
+	}
+
+	// ************************************************* isBlocked **********************************************
+
+	async isBlocked(id_user: number, id_blocked: number)
+	{
+		try
+		{
+			const isBlocked = await this.getBockedUser(id_user);
+			if (!isBlocked)
+				return false;
+			isBlocked.forEach(user => {
+				if(user.id === id_blocked)
+					return true;
+			});
+			return false;
+		}
+		catch(error)
+		{
+			console.log("isBlocked : ", error.message);
+		}
+	}
+	// ************************************************* list of blocker **********************************************
+	
+	async getblockerlist(id_user: number, id_group: number)
+	{
+		try
+		{
+			const members = await this.getMemberByChannel(id_user, id_group);
+			let list = new Array<number>;
+			if (!members)
+				return list;
+			for (const member of members)
+			{
+				member.user.bloked?.forEach(element => {
+					if (element.id === id_user)
+						list.push(member.user.id);
+				});
+			}
+			return list;
+		}
+		catch(error)
+		{
+			console.log("getblocker : ", error.message);
 		}
 	}
 }
