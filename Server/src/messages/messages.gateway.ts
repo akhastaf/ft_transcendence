@@ -47,6 +47,11 @@ export class MessagesGateway {
 		for (const member of members) {
 			// Le message ne doit pas etre envoyé au client qui l'a envoyé: should be done by front ;[]
 			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
+			//* get all bocked users:
+			const isBlocked = await this.groupsService.isBlocked(member.user.id, client.data.id);
+			if (isBlocked)
+				continue;
+			//TODO check if the user is blocked:
 			if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED ) {
 				this.server.to(member.user.id.toString()).emit('sendMessage_server', message);
 			}
@@ -194,3 +199,9 @@ export class MessagesGateway {
 		console.log('connectedlist ', this.connectedList);
 	}
 }
+//TODO : Halima you should check if the owner want to leave a group => Done
+//TODO : a blocked user message shouldn t be seen by the user.
+// TODO : Elona you should check if an admin can kick/mute/ban another admin
+// TODO : Elona you should add play to status, may be you will need to use a map instead of the set
+//  so you can record the status of a user in addition to his id. how smart
+// TODO : Elona group members cnt be seen by someone not in the grp

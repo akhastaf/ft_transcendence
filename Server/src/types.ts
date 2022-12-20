@@ -5,6 +5,11 @@ import { Status } from "./messages/entities/usertogroup.entity";
 import { GameMode, GameStatus } from "./game/entites/game.entity";
 import { User } from "./user/entities/user.entity";
 
+export type Payload = {
+    sub: number,
+    email: string
+}
+
 export interface RequestWithUser extends Request {
     user: User,
 }

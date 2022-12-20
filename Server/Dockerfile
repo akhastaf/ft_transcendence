@@ -1,5 +1,4 @@
 FROM node:latest as development
-
 WORKDIR /usr/src/app
 COPY ./package.json ./
 RUN chown root.root .

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Logger, Param, ParseIntPipe, Post, Redirect, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Logger, Param, ParseIntPipe, Post, Redirect, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ApiTags } from "@nestjs/swagger";
 import { Request, Response } from "express";
@@ -74,6 +74,18 @@ export class AuthController {
         res.status(200).json({
             access_token: access.access_token
         });
+    }
+    @Get('refresh_token')
+    async getAccess_token(@Req() req: Request, @Res() res: Response) {
+        if ('refresh_token' in req.cookies)
+        {
+            const expireIn = new Date();
+            expireIn.setMonth(expireIn.getMonth() + 3);
+            const tokens :tokens = await this.authService.getAccess_token(req.cookies['refresh_token']);
+            res.cookie('refresh_token', tokens.refresh_token, { httpOnly: true, expires: expireIn })
+            res.status(200).send({ access_token: tokens.access_token });
+        }
+        throw new UnauthorizedException('refresh_token not exist')
     }
 
     // for Test
