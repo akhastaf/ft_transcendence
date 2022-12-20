@@ -880,28 +880,4 @@ export class GroupsService {
 			console.log("isBlocked : ", error.message);
 		}
 	}
-	// ************************************************* list of blocker **********************************************
-	
-	async getblockerlist(id_user: number, id_group: number)
-	{
-		try
-		{
-			const members = await this.getMemberByChannel(id_user, id_group);
-			let list = new Array<number>;
-			if (!members)
-				return list;
-			for (const member of members)
-			{
-				member.user.bloked?.forEach(element => {
-					if (element.id === id_user)
-						list.push(member.user.id);
-				});
-			}
-			return list;
-		}
-		catch(error)
-		{
-			console.log("getblocker : ", error.message);
-		}
-	}
 }

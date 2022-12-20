@@ -72,14 +72,26 @@ export class MessagesController {
 		if (!is_allowed)
 			return null;
 		const messages = await this.messagesService.getRoomMessages(id);//id here is the id of the group
+		const blocked_list = await this.groupsService.getBockedUser(req.user.id);
 		if (messages)
 		{
 			//* list of users who blocked the current user
-			const blocked_by = await this.groupsService.getblockerlist(req.user.id, id);
+			// const blocked_by = await this.groupsService.getblockerlist(req.user.id, id);
 			let arr = new Array();
-			messages.forEach(element => {
+			messages.forEach(async element => {
 				//* if the sender is in the list of users who blocked the current user => skip
-				if (blocked_by && blocked_by.includes(element.sender.id))
+				// if (blocked_by && blocked_by.includes(element.sender.id))
+				// 	return;
+				let is_blocked: boolean = false;
+				for (const blocked of blocked_list)
+				{
+					if (blocked.id == element.sender.id)
+					{
+						is_blocked = true;
+						break;
+					}
+				}
+				if (is_blocked)
 					return;
 				let message = new messageModel();
 				message.message = element.content;
