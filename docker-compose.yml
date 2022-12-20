@@ -19,7 +19,7 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./Server:/usr/src/app
-      - ./Server:/public/uploads
+      - ./Server:/usr/src/app/public/uploads
   front:
     build: ./FrontEnd
     ports:
