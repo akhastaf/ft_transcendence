@@ -138,7 +138,7 @@ const Home: React.FC<{
 	createdBy: null,
 	members: null,
 	createdAt: new Date,
-	avatar: "aaaa",
+	// avatar: "aaaa",
 	updatedAt: Date,
 	messages: ["aaaaa"],
 	notifications: 1,
@@ -146,7 +146,7 @@ const Home: React.FC<{
 	]);
 	const [userInfo, setUserInfo] = useState<UserType>({
 		_id: "",
-		username: "",
+		username: "wqqewqeq",
 		createdAt: new Date(),
 		updatedAt: new Date(),
 		avatar: "",
@@ -161,17 +161,14 @@ const Home: React.FC<{
 
 
 	useEffect(() => {
-		 socket.on("connection", () => {
 				
 			getCurrentUser()
 				.then((user) => {
 					setUserInfo(user);
-					console.log("user == " ,user);
+
 				})
 				.catch((err) => console.log(err));
-				socket.off()
 
-		 })
 
 
 		
@@ -363,7 +360,7 @@ const Home: React.FC<{
 			id_group: room.id,
 			password: password,
 		});
-	};
+	}; 
 
 	//! ********* Message       Hnadling        */
 
