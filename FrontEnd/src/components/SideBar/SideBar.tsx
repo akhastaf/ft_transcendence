@@ -101,7 +101,7 @@ const SideBar: React.FC<{
     , [])
   
   const leaveGroup = () => {
-    socket.emit("leaveGroup_client", parseInt(choosenChat._id), (data: any) => {
+    socket.emit("leaveGroup_client", { id_group : parseInt(choosenChat._id)} , (data: any) => {
       console.log("aaaaa = ", data);
     })
   }

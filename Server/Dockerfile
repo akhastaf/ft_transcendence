@@ -1,5 +1,6 @@
 FROM node:latest as development
-WORKDIR "/app"
+
+WORKDIR /usr/src/app
 COPY ./package.json ./
 RUN chown root.root .
 RUN npm config set fetch-retry-mintimeout 20000

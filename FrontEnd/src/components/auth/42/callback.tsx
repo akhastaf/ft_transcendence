@@ -20,11 +20,7 @@ export default function Callback() {
   // eslint-disable-next-line
   const [userInfo, setUserInfo] = useLocalStorage("currentUser");
   
-  // const a = () => {
-  //         useLocalStoraga("currentUser", userInfo);
-  //   }
-  console.log("{}{}{}{}{}}");
-
+ 
 useEffect(() => {
       // const access_token = queryParams.get('accessToken');
       const access_token  = searchParams.get("accessToken");
