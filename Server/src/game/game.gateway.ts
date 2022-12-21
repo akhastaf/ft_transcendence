@@ -63,4 +63,16 @@ export class GameGateway {
   async getInput(client: SocketWithUser, input: Input): Promise<void> {
     await this.gameService.getInput(client, input);
   }
+  @SubscribeMessage('inviteToGame_client')
+  async inviteToGame(client : SocketWithUser, userId: number) {
+    await this.gameService.inviteToGame(client, userId);
+  }
+  @SubscribeMessage('acceptGame_client')
+  async acceptGame(client : SocketWithUser, userId: number) {
+    await this.gameService.accept_game(client, userId);
+  }
+  @SubscribeMessage('rejectGame_client')
+  async reject_game(client : SocketWithUser, userId: number) {
+    await this.gameService.reject_game(client, userId);
+  }
 }

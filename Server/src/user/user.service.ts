@@ -127,7 +127,7 @@ export class UserService {
             await this.userRepository.update(user.id, { twofa: true ,secret: user.secret_tmp, recoveryCode: twofaVerificationDTO.token});
             return { recoveryCode : twofaVerificationDTO.token};
         }
-        throw new BadRequestException();
+        throw new ForbiddenException('token is invalide');
     }
 
     async getFriends(user: User) : Promise<User[]>{

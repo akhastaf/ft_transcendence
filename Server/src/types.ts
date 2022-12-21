@@ -128,4 +128,5 @@ export type GameLocal = {
     maxScore: number,
     mode: GameMode,
     countdown: number,
+    computerLevel: number,
 }
