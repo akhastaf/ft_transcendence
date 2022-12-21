@@ -12,9 +12,9 @@ import { Server } from "socket.io";
 @Injectable()
 export class GameService {
     private logger: Logger = new Logger(GameService.name);
-    socketsClassic: Array<SocketWithUser> = [];
-    socketsCustom: Array<SocketWithUser> = [];
+    sockets: Array<SocketWithUser> = [];
     games: Map<string, GameLocal> = new Map();
+    inviteGames: Map<string, GameLocal> = new Map();
     server : Server| null = null;
     constructor(private userService: UserService, @InjectRepository(Game) private gameRepository: Repository<Game>,) {}
     
@@ -43,25 +43,34 @@ export class GameService {
             this.server = server;
         if (!socket.user)
             return;
-        const sockets = this.getSocketsArray(mode);
-        for (const s of sockets)
+        for (const s of this.sockets)
         {
-            // console.log('user ',s.user);
             if (s.user.id === socket.user.id)
                 return;
         }
         if (this.getPlayer(socket.user))
             return;
-        sockets.push(socket);
-        if (sockets.length < 2)
+        if (mode === GameMode.CLASSIC)
+            this.sockets.push(socket);
+        if (this.sockets.length < 2 && mode === GameMode.CLASSIC)
             return;
         if (mode != GameMode.CUSTOM)
             mode = GameMode.CLASSIC;
         const gamelocal : GameLocal = this.createGame(mode as GameMode);
         const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
-        while (sockets.length && gamelocal.players.length < 2)
+        if (mode === GameMode.CUSTOM) {
+            const p: Player = this.createPlayer(socket, gamelocal);
+            const comp : Player = this.createPlayerComp(gamelocal);
+            gamelocal.players.push(p);
+            gamelocal.players.push(comp);
+            game.player1 = p.user;
+            gamelocal.status = GameStatus.PLAYING;
+            game.status = GameStatus.PLAYING;
+            p.socket.join(gamelocal.room);
+        }
+        while (this.sockets.length && gamelocal.players.length < 2)
         {
-            const s: SocketWithUser = sockets.shift();
+            const s: SocketWithUser = this.sockets.shift();
             const player: Player = this.createPlayer(s, gamelocal);
             gamelocal.players.push(player);
             player.socket.join(gamelocal.room);
@@ -80,11 +89,18 @@ export class GameService {
         this.games.set(gamelocal.room, gamelocal)
         
     }
-    getSocketsArray(mode: string) {
-        if (mode === GameMode.CUSTOM)
-            return this.socketsCustom;
-        return this.socketsClassic;
-        
+    createPlayerComp(game: GameLocal): Player {
+        const player: Player = {
+            user: null,
+            socket: null,
+            x: game.width - 15,
+            y: game.height / 2 - 150 / 2,
+            width: 15,
+            height : 150,
+            score: 0,
+        };
+        console.log('player', player.x);
+        return player;
     }
     createPlayer(socket: SocketWithUser, game: GameLocal): Player {
         const player: Player = {
@@ -129,6 +145,7 @@ export class GameService {
                 gameUpdated.status = GameStatus.END;
                 game.status = GameStatus.END;
                 await this.gameRepository.update(gameUpdated.id, gameUpdated);
+                this.server.socketsLeave(game.room);
                 this.emit(game, 'stopgame', winner.user);
                 this.games.delete(game.room);
             }
@@ -149,8 +166,9 @@ export class GameService {
             width: 800,
             height: 500,
             maxScore: 50,
-            mode: GameMode.CLASSIC,
-            countdown: 0
+            mode: mode,
+            countdown: 0,
+            computerLevel: 0.1,
         }
         return game;
     }
@@ -172,12 +190,12 @@ export class GameService {
         for (const game of this.games.values()) {
             if (game.status === GameStatus.PLAYING)
                 this.update(game);
-            else if (game.status === GameStatus.PAUSE) {
-                if (game.countdown > 0)
-                    game.countdown--;
-                else if (game.countdown === 0)
-                    this.stopGame(game, game.players[0].user.status == Userstatus.OFFLINE ? game.players[0] : game.players[1]);
-            }
+            // else if (game.status === GameStatus.PAUSE) {
+            //     if (game.countdown > 0)
+            //         game.countdown--;
+            //     else if (game.countdown === 0)
+            //         this.stopGame(game, game.players[0].user.status == Userstatus.OFFLINE ? game.players[0] : game.players[1]);
+            // }
         }
     }
 
@@ -201,8 +219,8 @@ export class GameService {
         game.ball.y += game.ball.velocityY;
 
         // control computer paddle
-        // let computerLevel: number = 0.1;
-        // leftPlayer.y += (game.ball.y - (leftPlayer.y + leftPlayer.height/2)) * computerLevel;
+        if (game.mode === GameMode.CUSTOM)
+            rightPlayer.y += (game.ball.y - (rightPlayer.y + rightPlayer.height/2)) * game.computerLevel;
 
         if (game.ball.y + game.ball.radius > game.height || game.ball.y - game.ball.radius < 0) {
             game.ball.velocityY *= -1;
@@ -303,28 +321,77 @@ export class GameService {
         
         for (const game of this.games.values())
         {
-            for(const player of game.players)
+            if (game.mode === GameMode.CUSTOM)
             {
-                if (player.user.id === socket.user.id)
+                if (game.players[0].user.id === socket.user.id)
                 {
                     const sizeY = input.height / game.height;
-                    player.y = (input.eventY * sizeY) - (input.top * sizeY) - player.height / 2;
+                    game.players[0].y = (input.eventY * sizeY) - (input.top * sizeY) - game.players[0].height / 2;
                     return this.emit(game, 'gamestate', this.getGameState(game));
+                }
+            }
+            else {
+                for(const player of game.players)
+                {
+                    if (player.user.id === socket.user.id)
+                    {
+                        const sizeY = input.height / game.height;
+                        player.y = (input.eventY * sizeY) - (input.top * sizeY) - player.height / 2;
+                        return this.emit(game, 'gamestate', this.getGameState(game));
+                    }
                 }
             }
         }
     }
 
     async removePlayer(client: SocketWithUser) {
-        // if (this.socketsClassic.find((s) => s.user.id === client.user.id))
-        //     this.socketsClassic.dele
+        const i: number = this.sockets.indexOf(client);
+        this.sockets.splice(i, 1);
         for (const game of this.games.values()) {
+            if (game.mode === GameMode.CUSTOM)
+            {
+                game.players[0].user.status = Userstatus.OFFLINE;
+                game.status = GameStatus.END;
+            }
             for (const player of game.players) {
                 if (player.user.id === client.user.id) {
                     player.user.status = Userstatus.OFFLINE;
-                    game.status = GameStatus.PAUSE;
-                    game.countdown = 1800;
+                    game.status = GameStatus.END;
+                    player.score = 0;
+                    const winner = game.players.find((p) => p.user.id != player.user.id);
+                    this.stopGame(game, winner);
                 }
+            }
+        }
+    }
+
+    async inviteToGame(client: SocketWithUser, userId: number) {
+        this.server.to(userId.toString()).emit('invitetogame_server', {id: client.user.id, username: client.user.username});
+        const game = this.createGame(GameMode.CLASSIC);
+        const player = this.createPlayer(client, game);
+        game.players.push(player);
+        this.inviteGames.set(game.room, game);
+    }
+
+    async accept_game(client: SocketWithUser, userId: number) {
+        for (const gameLocal of this.inviteGames.values()) {
+            if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
+                const player = this.createPlayer(client, gameLocal);
+                gameLocal.players.push(player);
+                const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.PLAYING, room: gameLocal.room, mode: gameLocal.mode});
+                game.player1 = gameLocal.players[0].user;
+                game.player2 = gameLocal.players[1].user;
+                this.gameRepository.save(game);
+                gameLocal.status = GameStatus.PLAYING;
+                this.games.set(gameLocal.room, gameLocal);
+                this.server.to(client.user.id.toString()).emit('ready');
+            }
+        }
+    }
+    async reject_game(client: SocketWithUser, userId: number) {
+        for (const gameLocal of this.inviteGames.values()) {
+            if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
+                this.inviteGames.delete(gameLocal.room);
             }
         }
     }
