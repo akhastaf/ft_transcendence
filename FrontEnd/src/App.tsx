@@ -1,6 +1,6 @@
 
 import './App.css';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Welcome from './components/Welcome/Welcome';
 import {
   BrowserRouter as Router,
@@ -21,16 +21,29 @@ import { UserType } from './components/Types/types';
 import {socket, SocketContext} from './components/Services/sockets'
 import { useAuth } from './components/Services/auth';
 import { current } from '@reduxjs/toolkit';
+import { useToast } from '@chakra-ui/react';
 
-class App extends React.Component {
+const App : React.FC <{}> = ({}) => {
 
+  const toast = useToast();
+    
+    const socket = useContext(SocketContext);
+    const [messageRef, setMessageRef] = useState<{name : string, message : string}>({ name: "", message: ""});
+    useEffect(() => {
 
-  componentDidMount() {
-
-  }
-
-
-  render() {
+        socket.on("sendMessage_server", (data : any) => {
+          setMessageRef(data);
+            console.log("sift lik message")
+            toast({
+              title: `user jah message`,
+              description: `jak message`,
+              status: 'success',
+              duration: 900,
+              isClosable: true,
+              })
+              socket.off();
+        })
+    },[messageRef])
     // console.log('Render lifecycle')
     return (
       <>
@@ -79,7 +92,6 @@ class App extends React.Component {
       </>
     );
   }
-}
 
 
 
