@@ -150,8 +150,8 @@ export class GroupsService {
 			const group = await this.groupRepository.findOneOrFail(
 				{ where: {id: group_id}	}
 			);
-			if (group.privacy != 'public')
-			{
+			// if (group.privacy != 'public')
+			// {
 				const is_allowed = await this.userToGroupRepository
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
@@ -161,7 +161,7 @@ export class GroupsService {
 				.getOne();
 				if (!is_allowed)
 					throw new Error("You are not allowed to check this group's member");
-			}
+			// }
 			const members = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
