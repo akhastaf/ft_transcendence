@@ -123,13 +123,25 @@ const MemberCard: React.FC<{
 			  })
 		})
 	}
+
+	const inviteToGame = (id : number) => {
+			socket.emit("inviteToGame_client", {id_user : id}, (date : any) => {
+				toast({
+					title: `invitation sent`,
+					description: `user invited to game`,
+					status: 'success',
+					duration: 9000,
+					isClosable: true,
+				  })
+			})
+	}
 	
 
 
 
 	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
-	return (<App1 kickMember={kickMember} setAdmin ={setAdmin} unsetAdmin={unsetAdmin} setAdminAction={setadminAction} unsetAdminAction={unsetadminAction} isShown={isShown} role={role} user={user} coll={coll} onClick={onClick} setIsShown={setIsShown} state={state} />);
+	return (<App1 inviteToGame={inviteToGame} kickMember={kickMember} setAdmin ={setAdmin} unsetAdmin={unsetAdmin} setAdminAction={setadminAction} unsetAdminAction={unsetadminAction} isShown={isShown} role={role} user={user} coll={coll} onClick={onClick} setIsShown={setIsShown} state={state} />);
 };
 
 
@@ -149,9 +161,10 @@ const App1: React.FC<{
 	unsetAdminAction : (id: number) => void
 	setAdmin : (id : number) => void
 	unsetAdmin : (id : number) => void
-	kickMember : (id : number) => void
+	kickMember : (id : number) => void,
+	inviteToGame : (id : number) => void,
 
-}> = ({ setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction, kickMember}) => {
+}> = ({ inviteToGame, setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction, kickMember}) => {
 	// Show or hide the custom context menu
 	const [isShow, setIsShow] = useState(false);
 	const toast = useToast();
@@ -289,7 +302,7 @@ const App1: React.FC<{
 					{ !isFriend && <MenuItem><MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/></MenuItem>}
 					{ state === "ROOM" && <MenuItem><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
 					<MenuItem ><MemberWork nameService={"Check Profil"} id={user.id} onClick={setPro} /> </MenuItem>
-					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={AddFriend}/> </MenuItem>
+					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={inviteToGame}/> </MenuItem>
 					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
 					</MenuGroup>
 					{
@@ -314,7 +327,7 @@ const App1: React.FC<{
 					<MenuGroup title='Owner'>
 					{user.role === "member" && <MenuItem><MemberWork nameService={"Set As Admin"} id={user.id} function1={setAdmin}/></MenuItem>}
 					{user.role === "admin" && <MenuItem><MemberWork nameService={"unSet As Admin"} id={user.id} function1={unsetAdmin}/></MenuItem>}
-					<MenuItem><MemberWork nameService={"Set As Owner"} id={user.id} function1={AddFriend}/></MenuItem>
+					{/* <MenuItem><MemberWork nameService={"Set As Owner"} id={user.id} function1={AddFriend}/></MenuItem> */}
 					</MenuGroup> </>
 					}
 				</MenuList>

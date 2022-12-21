@@ -61,8 +61,9 @@ localService.interceptors.response.use((response: AxiosResponse) => {
 });
 
 async function narefreshAccesTokenme() {
-    localService.get('').then((data) => {
+    localService.get('/auth/refresh_token').then((data) => {
         localStorage.setItem('accessToken', data.data.access_token)
+        console.log("yup i am here")
     }).catch((err) => {
         console.log(err);
     })
