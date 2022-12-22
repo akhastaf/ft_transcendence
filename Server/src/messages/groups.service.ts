@@ -111,10 +111,28 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id', 'group.id', 'group.privacy', 'group.name', 'group.avatar'])
+			.select(['userToGroup.id', 'group.id', 'group.privacy'])
 			.where("group.privacy = :privacy", {privacy: 'dm'})
 			.andWhere("user.id = :user_id", {user_id: user_id})
 			.getMany();
+			if (!dms)
+			return null;
+			for(const dm of dms)
+			{
+				console.log("dm : ", dm);
+				console.log(" id : ", dm.group.id);
+				let second_user = await this.userToGroupRepository
+				.createQueryBuilder("userToGroup")
+				.leftJoinAndSelect("userToGroup.user", "user")
+				.leftJoinAndSelect("userToGroup.group", "group")
+				.select(['userToGroup.id','group.id','user.id', 'user.username', 'user.avatar', 'group.privacy'])
+				.where("group.id = :group_id", {group_id: dm.group.id})
+				.andWhere("user.id != :user_id", {user_id: user_id})
+				.getOne();
+				console.log("second_user : ", second_user);
+				dm.group.name = second_user.user.username;
+				dm.group.avatar = second_user.user.avatar;
+			}
 			return dms;
 		}
 		catch(error){
@@ -150,8 +168,8 @@ export class GroupsService {
 			const group = await this.groupRepository.findOneOrFail(
 				{ where: {id: group_id}	}
 			);
-			if (group.privacy != 'public')
-			{
+			// if (group.privacy != 'public')
+			// {
 				const is_allowed = await this.userToGroupRepository
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
@@ -161,7 +179,7 @@ export class GroupsService {
 				.getOne();
 				if (!is_allowed)
 					throw new Error("You are not allowed to check this group's member");
-			}
+			// }
 			const members = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
@@ -878,30 +896,6 @@ export class GroupsService {
 		catch(error)
 		{
 			console.log("isBlocked : ", error.message);
-		}
-	}
-	// ************************************************* list of blocker **********************************************
-	
-	async getblockerlist(id_user: number, id_group: number)
-	{
-		try
-		{
-			const members = await this.getMemberByChannel(id_user, id_group);
-			let list = new Array<number>;
-			if (!members)
-				return list;
-			for (const member of members)
-			{
-				member.user.bloked?.forEach(element => {
-					if (element.id === id_user)
-						list.push(member.user.id);
-				});
-			}
-			return list;
-		}
-		catch(error)
-		{
-			console.log("getblocker : ", error.message);
 		}
 	}
 }

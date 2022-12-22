@@ -199,8 +199,8 @@ export class MessagesGateway {
 		console.log('connectedlist ', this.connectedList);
 	}
 }
-//TODO : Halima you should check if the owner want to leave a group => Done
-//TODO : a blocked user message shouldn t be seen by the user.
+//*: Halima you should check if the owner want to leave a group => Done
+//* : a blocked user message shouldn t be seen by the user.
 // TODO : Elona you should check if an admin can kick/mute/ban another admin
 // TODO : Elona you should add play to status, may be you will need to use a map instead of the set
 //  so you can record the status of a user in addition to his id. how smart
