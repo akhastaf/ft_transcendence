@@ -22,12 +22,21 @@ import {socket, SocketContext} from './components/Services/sockets'
 import { useAuth } from './components/Services/auth';
 import { current } from '@reduxjs/toolkit';
 import { useToast } from '@chakra-ui/react';
+import NotFound from './NotFound';
+
+
+export interface gameInvite {
+    id : number;
+    name : string;
+}
 
 const App : React.FC <{}> = ({}) => {
 
   const toast = useToast();
     
     const socket = useContext(SocketContext);
+    const [show, setShow] = useState(false);
+    const [user1, setUser1] = useState<gameInvite>({id : -1, name : ""});
     const [messageRef, setMessageRef] = useState<{name : string, message : string}>({ name: "", message: ""});
     useEffect(() => {
 
@@ -38,10 +47,22 @@ const App : React.FC <{}> = ({}) => {
               title: `user jah message`,
               description: `jak message`,
               status: 'success',
-              duration: 900,
+              duration: 5000,
               isClosable: true,
               })
               socket.off();
+        })
+        socket.on("inviteToGame_server", (data : gameInvite ) => {
+            setShow(true);
+            setUser1(data);
+            // console.log("sift lik message")
+            toast({
+              title: `Game Invite`,
+              description: `U received a game from ${data.name}`,
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+              })
         })
     },[messageRef])
     // console.log('Render lifecycle')
@@ -82,7 +103,10 @@ const App : React.FC <{}> = ({}) => {
                 </Route>
                 <Route path='channels/ROOM/:id' element={<> <Home state="ROOM" /> </>} >
                 </Route>
+                <Route path='channels/Game/:id' element={<> <Home state="GAME" /> </>} >
+                </Route>
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+                <Route path="*" element={<NotFound />} />
             </Route>
             <Route path='/callback' element={<> <Callback /> </>} >
                 </Route>
@@ -99,7 +123,7 @@ export const RequireAuth = ({ children } : { children: JSX.Element } ) => {
 
   const user : any = localStorage.getItem("currentUser");
 
-  console.log("req", user);
+  // console.log("req", user);
   const location = useLocation();
 
   if (isUserLoggedIn(user) === false)
@@ -158,7 +182,7 @@ export const RequireNoAuth = ({ children } : { children: JSX.Element }) => {
 // }
 
 const isUserLoggedIn = (userData: any): boolean => {
-  console.log(userData)
+  // console.log(userData)
 	if (
 		userData &&
 		userData !== null

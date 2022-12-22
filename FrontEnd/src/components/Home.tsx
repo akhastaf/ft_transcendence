@@ -1,5 +1,5 @@
 import {  useContext, useEffect, useState } from 'react';
-import { getAllRooms, getRoomUsers } from './Services/room'
+import { Dms, getAllRooms, getRoomUsers } from './Services/room'
 
 import {  useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 
 import { refreshVar } from './SideBar/MemberCard';
 import { Flex } from '@chakra-ui/react';
+import Game from './Game/Game';
 
 // const channel2 = require('../images/yoko.png');
 
@@ -214,9 +215,9 @@ const Home: React.FC<{
 			setMessageRef(data);
 			socket.off();
 		})
-		if (state === "HomeGAME" || state === "allChannels")
+		if (state === "HomeGAME" || state === "allChannels" || state === "GAME")
 		{
-			GetFriends().then((res) => {
+			Dms().then((res) => {
 				// console.log("users =       ", res);
 
 				setUsers(res)
@@ -229,7 +230,7 @@ const Home: React.FC<{
 			setMyRole(Role.MEMBER);
 		}
 		if (state === "DM") {
-			console.log(`user id = ${id2}`)
+			// console.log(`user id = ${id2}`)
 			socket.emit("createDm_client", parseInt(id2), (data : any) => {
 				console.log("aaaa");
 				setDmId(data.id);
@@ -415,7 +416,7 @@ const Home: React.FC<{
 				/>
 	
 
-	<div className="bg-[#36393f] flex-grow col-span-2 p-0 h-screen">
+	<div className="bg-[#36393f] flex-grow col-span-2 p-0 min-h-screen">
 					{/* <div className="flex flex-col h-screen min-h-fit full flex-grow"> */}
 						<Flex w={"100%"} flexDir={"column"} justifyContent={"space-between"}>
 							
@@ -431,6 +432,13 @@ const Home: React.FC<{
 							
 								 
 									<GameHome currentUser={userInfo} />
+							
+							</Flex>
+							}
+							{state === "GAME"  && <Flex mt={"60px"} h={"100vh"}>
+							
+								 
+									<Game id={id2}/>
 							
 							</Flex>
 							}

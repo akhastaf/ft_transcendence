@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "moment": "^2.29.4",
-    "react-moment": "^1.1.2"
+    "react-moment": "^1.1.2",
+    "react-qr-code": "^2.0.11"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",

@@ -195,3 +195,49 @@ export enum Status {
 //     @IsOptional()
 //     @IsString()
 //     privacy?: Privacy;
+
+
+// ------- Game Side
+export type Player = {
+    x: number,
+    y: number,
+    width: number,
+    height : number,
+    score: number,
+    // color: string,
+    // top?: number,
+    // bottom?: number,
+    // right?: number,
+    // left?: number,
+}
+
+export type Ball = {
+    x: number,
+    y: number,
+    radius: number,
+    // speed: number,
+    // velocityX: number,  
+    // velocityY: number, 
+    // color: string
+    // top?: number,
+    // bottom?: number,
+    // right?: number,
+    // left?: number,
+}
+
+export type Net = {
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string
+}
+
+
+export type Gamestate = {
+    leftPlayer : Player,
+    rightPlayer : Player,
+	ball: Ball,
+    width: number,
+    height: number
+}

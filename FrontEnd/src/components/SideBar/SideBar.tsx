@@ -84,6 +84,7 @@ const SideBar: React.FC<{
   };
   const openModal1 = () => {
     // console.log("hello world!");
+    if (state === "ROOM")
     setSettingModal(true);
     // Navigate("/EditInfo");
 
@@ -114,7 +115,7 @@ const SideBar: React.FC<{
       <h2 onClick={openModal1} className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.username} {choosenChat.username === "" && "FRIENDS"} <CogIcon className="h-4 ml-2" />
 
         {
-          showSettingModal && <ChannelSetting setShowModal={setSettingModal} />
+          (showSettingModal && state === "ROOM") && <ChannelSetting  setShowModal={setSettingModal} />
         }
       </h2>
       <div className="text-[#8e9297] flex-grow overflow-y-scroll scrollbar-hide  ">
@@ -323,24 +324,25 @@ export const AddUsers: React.FC<{
             </div>
             <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
               {
-               notJoined  && notJoined.map((user : userModel) => {
-                  <>
-                    <Flex>
-                      <Avatar src='https://bit.ly/sage-adebayo' />
-                      <Box ml='3'>
-                        <Text fontWeight='bold'>
-                          {user.name}
-                          <Badge ml='1' colorScheme='green'>
-                            New
-                          </Badge>
-                        </Text>
-                        <Text fontSize='sm'>{user.status} </Text>
-                      </Box>
-                      <Box> <Button onClick={() => addUser(user.id)}> Invite</Button></Box>
-                    </Flex>
-                  </>
+              //  notJoined  && notJoined.map((user : userModel) => {
+              //     <>
+              //       <Flex>
+              //         <Avatar src='https://bit.ly/sage-adebayo' />
+              //         <Box ml='3'>
+              //           <Text fontWeight='bold'>
+              //             {user.name}
+              //             <Badge ml='1' colorScheme='green'>
+              //               New
+              //             </Badge>
+              //           </Text>
+              //           <Text fontSize='sm'>{user.status} </Text>
+              //         </Box>
+              //         <Box> <Button onClick={() => addUser(user.id)}> Invite</Button></Box>
+              //       </Flex>
+              //     </>
 
-                }) 
+              //   }
+                // ) 
               }
               {
                   

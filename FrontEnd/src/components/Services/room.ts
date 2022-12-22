@@ -25,3 +25,7 @@ export const AllRooms = (): Promise<any> =>{
 // export const getRoomId = (id : number): Promise<any> =>{
 // 	return localService.get("channels/"+id).then((res) => res.data).catch(err => console.log(err) );
 // }
+
+export const Dms = (): Promise<any> => {
+	return localService.get("/messages/").then(res => res.data);
+}

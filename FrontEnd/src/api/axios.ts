@@ -49,22 +49,27 @@ localService.interceptors.request.use((config: AxiosRequestConfig) => {
 localService.interceptors.response.use((response: AxiosResponse) => {
    
     return response;
-}, function (error) {
+}, async function (error) {
    const originalRequest = error.config;
    const errMessage = error.response.data.message as string;
    if (errMessage.includes('Unauthorized') && !originalRequest._retry) {
     originalRequest._retry =true;
-    // await refreshAccesToken();
+    
+    await refreshAccesToken();
+
     return localService(originalRequest);
    }
     return Promise.reject(error);
 });
 
-async function narefreshAccesTokenme() {
+async function refreshAccesToken() {
     localService.get('/auth/refresh_token').then((data) => {
         localStorage.setItem('accessToken', data.data.access_token)
-        console.log("yup i am here")
+        console.log("yup i am njjj", data);
+            // return true;
     }).catch((err) => {
+
         console.log(err);
+        // return false
     })
 }

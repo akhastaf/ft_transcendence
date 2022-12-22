@@ -11,6 +11,10 @@ import FriendList from "./FriendList";
 import FriendListRequest from "./FriendRequest";
 import Profil from "./Profile";
 import { BasicButtons, BasicButtons1 } from "./SideBarE";
+// import QRCode from "react-qr-code";
+// import QRCode from "qrcode.react";
+import {QRCodeSVG} from 'qrcode.react'
+import { localService } from "../../api/axios";
 
 // import logo1 from "../../images/cardBack.webp"
 
@@ -91,7 +95,8 @@ const UserCard: React.FC<{
             setQrCode(data.secret.otpauthURL);
             setSecret(data.secret.base32);
         })
-        setTfaModal(true);
+        if (twofa === false)
+            setTfaModal(true);
 
     }
 
@@ -370,7 +375,14 @@ const TfaModal: React.FC<{
     const submitForm : SubmitHandler<{token : string}> = (data) => {
 
         let formData = new FormData();
-        const name = data.token ? data.token : "";
+        const name = data.token ? data.token : "9999";
+        console.log("aaa", name);
+        localService.post("user/2fa/verify", {token : name}).then(() => 
+        
+            {
+                console.log("enabled");
+            })
+            // setState(false);
     	
     }
 
@@ -404,11 +416,13 @@ const TfaModal: React.FC<{
             <div>
               <h4 className={styles.heading4}>Scan QR Code</h4>
               <div className="flex justify-center">
-                <img
+                {/* <img
                   className="block w-64 h-64 object-contain"
                   src={qrcodeUrl}
                   alt="qrcode url"
                 />
+                 */}
+                 <QRCodeSVG value={qrcodeUrl} />
               </div>
             </div>
             <div>

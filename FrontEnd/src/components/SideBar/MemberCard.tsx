@@ -230,7 +230,7 @@ const App1: React.FC<{
 	const AddFriendf = (id : number) => {
 		AddFriend(id).then((res) =>
 		{
-			console.log("res ====== ", res);
+			// console.log("res ====== ", res);
 			toast({
 				title: 'New Friend Unlocked',
 				description: "You are Now Friends",
