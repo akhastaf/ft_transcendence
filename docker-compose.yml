@@ -27,7 +27,7 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./FrontEnd:/usr/src/app
-    # restart: always
+    restart: always
     environment:
        - CHOKIDAR_USEPOLLING=true
     command: "npm start"  

@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import * as speakeasy from "speakeasy";
 import { Verify2FaDTO } from "./dto/verify-2fa.dto";
 import { Reset2FaDto } from "./dto/reset2fa.dto";
+import { Payload, tokens } from "src/types";
 
 
 @Injectable()
@@ -34,25 +35,15 @@ export class AuthService {
         return {
             access_token: this.jwtService.sign(payload),
             refresh_token: this.jwtService.sign(payload, {
-                secret: this.configService.get('JWT_SECRET'),
+                secret: this.configService.get('JWT_REFRESH_SECRET'),
                 expiresIn: '90d'
             })
         }
     }
 
     async register(user: any): Promise<any> {
-        // const { password, ...rest} = registerUserDTO;
-        // const hash = await bcrypt.hash(password, 10);
-        // const user = { password: hash, ...rest};
         return await this.userService.create(user);
     }
-    // async registerLocal(registerUserDTO: RegisterUserDTO): Promise<any> {
-    //     const { password, ...rest} = registerUserDTO;
-    //     const hash = await bcrypt.hash(password, 10);
-    //     const user = { password: hash, ...rest};
-    //     console.log(registerUserDTO);
-    //     return await this.userService.createLocal(user);
-    // }
 
     async verify(verifydto: Verify2FaDTO) : Promise<any> {
         const user = await this.userService.getUser(verifydto.id);
@@ -91,6 +82,19 @@ export class AuthService {
             return this.jwtService.sign(payload);
         } catch (error) {
             console.log(error.message);
+            throw new ForbiddenException(error.message);
+        }
+    }
+
+    async getAccess_token(refrsh_token: string) : Promise<tokens>{
+        try {
+            const payload: Payload = await this.jwtService.verifyAsync(refrsh_token, {
+                secret: this.configService.get('JWT_REFRESH_SECRET'),
+                ignoreExpiration: false
+            });
+            const user = await this.userService.getUser(payload.sub);
+            return this.login(user);
+        } catch (error) {
             throw new ForbiddenException(error.message);
         }
     }
