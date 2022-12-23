@@ -192,7 +192,7 @@ const Home: React.FC<{
 		const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 		// eslint-disable-next-line
 		const [friends, setFriends] = useState<string[]>([]);
-	
+		const [wrongId, setWrongId] = useState<any>("");
 	
 		const [choosenChat, setChoosenChat] = useState<ChatType>({
 			username: "",
@@ -231,6 +231,9 @@ const Home: React.FC<{
 		}
 		if (state === "DM") {
 			// console.log(`user id = ${id2}`)
+
+
+
 			socket.emit("createDm_client", parseInt(id2), (data : any) => {
 				console.log("aaaa");
 				setDmId(data.id);
@@ -246,6 +249,13 @@ const Home: React.FC<{
 						setMessages1(sorted);
 					})
 					.catch((err) => console.log(err));
+					getRoomUsers(data.id)
+						.then((res) => {
+		
+							setUsers(res);
+						}
+						).catch(err => console.log(err))
+						;
 			});
 			setMyRole(Role.MEMBER)
 		}
@@ -261,12 +271,19 @@ const Home: React.FC<{
 						setChoosenChat(() => ({username : room.name, _id: id2}));
 						getMyRole(parseInt(id2)).then((res) => {
 						setMyRole(res)
-						})
-						.catch(err => console.log(err))
-					}
-				})
+						setWrongId("in");
+						console.log("i am in");
+						return ;
+					})
+					// .catch(err => console.log(err))
+					console.log("ha qq", wrongId);
+				}
 			})
-			getRoomUsers(id2)
+			console.log("ha ", wrongId);
+			// if (wrongId !== "in")
+			// 	navigate("/");
+		})
+		getRoomUsers(id2)
 				.then((res) => {
 
 					setUsers(res);
@@ -289,7 +306,20 @@ const Home: React.FC<{
 
 
 	// eslint-disable-next-line
-
+	useEffect(() => {
+	socket.on("joinGroup_server", (data) => {
+			// console.log("server joined");
+			setUsersState(!usersState);
+	})
+	socket.on("leaveGroup_server", (data) => {
+			// console.log("server joined");
+			setUsersState(!usersState);
+	})
+	socket.on("removeUser_server", (data) => {
+			// console.log("server joined");
+			setUsersState(!usersState);
+	})
+	})
 
 
 

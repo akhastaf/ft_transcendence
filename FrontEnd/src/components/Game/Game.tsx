@@ -135,10 +135,10 @@ import { Gamestate, Net } from "../Types/types";
                         render(gamestate);
                      });
                      socket.on('stopgame', winer => {
-                       console.log(winer);
+                       console.log("dadahbduabdabjdbajb");
                      })
 
-                },[])
+                })
     return <>
         <Flex flexDir={"column"} justifyContent={"center"} alignItems={"center"} w={"100%"} gap={"100px"}>
          <Flex flexDir={"column"} justifyContent={"center"} alignItems={"center"} w={"100%"} id="game">

@@ -149,17 +149,31 @@ const PasswordInput : React.FC <{
 			id_group: room.id,
 			password: password,
 		}, (data : any) => {
+            console.log("data - ", data)
             if (data === false)
-            toast({
-				title: `Room join`,
-				description: `Wrong Room Password`,
-				status: 'error',
-				duration: 9000,
-				isClosable: true,
-			  })
-              closeModal();
+            {
+                toast({
+                    title: `Room join`,
+                    description: `Wrong Room Password`,
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                })
+                closeModal();
+            }
             // console.log(data);
         });
+        socket.on("joinGroup_server", (data) => {
+            closeModal();
+            navigate(`/channels/ROOM/${room.id}`);
+            toast({
+                title: `Room join`,
+                description: `New Room joined`,
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+              })
+        })
 	};
     const passwordRef = useRef<HTMLInputElement>(null);
     const { register, handleSubmit, setError, formState: { errors } } = useForm<{password: string}>();

@@ -300,7 +300,7 @@ const App1: React.FC<{
 				<MenuList>
 					<MenuGroup title='Member'>
 					{ !isFriend && <MenuItem><MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/></MenuItem>}
-					{ state === "ROOM" && <MenuItem><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
+					{ <MenuItem><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
 					<MenuItem ><MemberWork nameService={"Check Profil"} id={user.id} onClick={setPro} /> </MenuItem>
 					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={inviteToGame}/> </MenuItem>
 					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
