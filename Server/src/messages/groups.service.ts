@@ -8,7 +8,7 @@ import { channelModel, memberModel } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import * as bcrypt from 'bcryptjs';
 import { addUserDto } from './dto/add-user.dto';
-import { HttpException, ForbiddenException} from '@nestjs/common';
+import { HttpException, NotFoundException, ForbiddenException} from '@nestjs/common';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
 import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
@@ -690,12 +690,12 @@ export class GroupsService {
 			}
 			if (join.role == Role.OWNER)
 			{
-				console.log("You can't mute an owner");
+				console.log("You can't set a status of an owner");
 				return false;
 			}
 			if (join.role == Role.ADMIN && is_member.role == Role.ADMIN)
 			{
-				console.log("An admin can't mute another admin");
+				console.log("An admin can't set status of another admin");
 				return false;
 			}
 			join.status = data.status;
@@ -731,9 +731,20 @@ export class GroupsService {
 				console.log("This user is not a member of this group");
 				return false;
 			}
+			if (join.role == Role.OWNER)
+			{
+				console.log("Action can t be processed");
+				return false;
+			}
+			if (join.role == Role.ADMIN && is_member.role == Role.ADMIN)
+			{
+				console.log("An admin can't unset status of another admin");
+				return false;
+			}
 			join.status = Status.ACTIVE;
 			join.until = null;
-			return await this.userToGroupRepository.save(join);
+			await this.userToGroupRepository.save(join);
+			return true;
 		}
 		catch(e)
 		{
