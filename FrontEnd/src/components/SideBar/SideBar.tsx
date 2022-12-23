@@ -246,6 +246,13 @@ export const ChannelSetting: React.FC<{
     closeModal();
 
   }
+
+  useEffect(() => {
+  getPrivacy(parseInt(id)).then((res) => {
+    setPrivacy(res);
+    console.log("res = ", res, " same", privacy)
+  }
+  )},[])
   const submitForm : SubmitHandler<{oldPassword : string, newPassword : string}> = (data) => {
     // let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
     if (privacy === Privacy.PUBLIC || privacy === Privacy.PRIVATE)
@@ -286,11 +293,6 @@ export const ChannelSetting: React.FC<{
   
   setShowModal(false);
   };
-    // getPrivacy(parseInt(id)).then((res) => {
-    //   setPrivacy(res);
-    //   console.log("res = ", res, " same", privacy)
-    // }
-    // )
   
   return <>
 
