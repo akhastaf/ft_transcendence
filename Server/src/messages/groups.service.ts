@@ -431,58 +431,61 @@ export class GroupsService {
 	async leaveGroup(id_user: number, groupdto:joinGroupDto){
 		try
 		{
-			const user = await this.userRepository.findOneOrFail(
-				{	where : { id: id_user }	}
-			);
-			// console.log(user);
-			const group = await this.groupRepository.findOneOrFail(
-				{ where : {id : groupdto.id_group}}
-			);
-			if (group.privacy == 'dm')
-				throw new Error("You can't leave");
-			// if (group.privacy == 'protected')
-			// {
-				// 	console.log("group");
-				// 	if (!await bcrypt.compare(groupdto.password, group.password))
-				// 	throw new Error("Wrong password");
-				// 	console.log("group");
-				// }
-			const role = await this.getUserRole(id_user, groupdto.id_group);
-			console.log(`role ${role} ${id_user}, ${groupdto.id_group}!`)
-			// console.log(`!role ${role} id user ${id_user} id group ${groupdto.id_group} id `);
-			if (!role)
-				throw new Error("You are not a member of this group");
-			if (role === Role.OWNER)
+			const member = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.where("userToGroup.user = :user_id", {user_id: id_user})
+			.andWhere("userToGroup.group = :group_id", {group_id: groupdto.id_group})
+			.getOne();
+
+			if(!member)
+				throw new ForbiddenException("You are not a member of this group");
+			if (member.role === Role.OWNER)
 			{
-				const members = await this.getMemberByChannel(groupdto.id_group, id_user);
-				//! hadi tar9i3a, here i should remove the grp
+				const members = await this.userToGroupRepository
+				.createQueryBuilder("userToGroup")
+				.leftJoinAndSelect("userToGroup.user", "user")
+				.leftJoinAndSelect("userToGroup.group", "group")
+				.andWhere("userToGroup.group = :group_id", {group_id: groupdto.id_group})
+				.getMany();
 				if (members.length == 1)
-					throw new Error("You can't leave the group");
+				{
+					throw new ForbiddenException("You can't leave the group");
+				}
 				else
 				{
-					const admin = await members.find(async element => {
+					let admin: boolean = false;
+					for (const element of members) {
 						if (element.role === Role.ADMIN)
 						{
-							group.owner = element.user;
-							await this.groupRepository.save(group);
+							admin = true;
+							element.group.owner = element.user;
+							await this.groupRepository.save(element.group);
 							element.role = Role.OWNER;
 							await this.userToGroupRepository.save(element);
+							break;
 						}
-					});
+					}
 					if (!admin)
 					{
-						await members.find(async element => {
-							if (element.role !== Role.ADMIN)
+						// console.log("members[0]: ", members[0]);
+						// members[0].group.owner = members[0].user;
+						// await this.groupRepository.save(members[0].group);
+						// members[0].role = Role.OWNER;
+						// await this.userToGroupRepository.save(members[0]);
+						for (const element of members) {
+							if (element.role != Role.OWNER)
 							{
-								group.owner = element.user;
-								await this.groupRepository.save(group);
+								element.group.owner = element.user;
+								await this.groupRepository.save(element.group);
 								element.role = Role.OWNER;
 								await this.userToGroupRepository.save(element);
+								break;
 							}
-						});
+						}
 					}
 				}
-
 			}
 			const joined = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
