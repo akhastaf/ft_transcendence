@@ -118,6 +118,9 @@ export class MessagesGateway {
 			return false;
 		const message = await this.messagesService.identify(client.userId, 'has left the channel');
 		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
+		console.log('members ', members);
+		if (!members)
+			return false;
 		//* send to all users in the room
 		for (const member of members) {
 			if (this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
@@ -159,6 +162,7 @@ export class MessagesGateway {
 					this.server.to(member.user.id.toString()).emit('removeUser_server', message);
 				}
 			}
+			this.server.to(data.id_user.toString()).emit('removeUser_server', message);
 		}
 	}
 
@@ -177,7 +181,8 @@ export class MessagesGateway {
 		client.join(client.data.id.toString());
 		console.log("rooom size", this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
 		//! I may should add that the user is connected:
-		this.server.to(client.userId.toString()).emit('connection', client.userId);
+		// this.server.to(client.userId.toString()).emit('connection', client.userId);
+		this.server.emit('connection', this.connectedList);
 		//* rooms and sids : https://socket.io/docs/v3/rooms/#:~:text=The%20%22room%22%20feature,subset%20of)%20clients
 		// const rooms = this.server.of("/").adapter.rooms;
 		// const sids = this.server.of("/").adapter.sids;
