@@ -126,6 +126,16 @@ export class GroupController {
 		return arr;
 	}
 
+	@Get('privacy/:id')
+	async getPrivacy(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+		// try{
+
+			return await this.groupsService.getGrouPrivacy(req.user.id, id);
+		// }
+		// catch (e) {}
+
+	}
+
 	//* get blocked users
 	@Get('blocked-users')
 	async getBlockedUsers(@Req() req: RequestWithUser) {
