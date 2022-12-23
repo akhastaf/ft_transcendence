@@ -147,7 +147,7 @@ import { Gamestate, Net } from "../Types/types";
                 <Box>
                     <Heading color={"#ffffff"}> User Your Mouse to Move </Heading>
                 </Box>
-            <button onClick={() => {socket.emit('add',{ mode : "custom"});}}>
+            <button onClick={() => {socket.emit('add',{ mode : "classic"});}}>
               Play Game
             </button>
       </Flex>

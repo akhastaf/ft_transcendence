@@ -359,9 +359,11 @@ export const ChannelSetting: React.FC<{
 const a = (id : number, users : userModel[]) => {
     for (const user of users )
     {
+      console.log("friend id == ", id, "user id == ", user.id );
       if (user.id === id)
         return false;
     }
+    console.log("i made it here");
     return true;
 }
 export const AddUsers: React.FC<{
@@ -375,18 +377,22 @@ export const AddUsers: React.FC<{
   const [notJoined, setNotJoined] = useState<any>();
   // const [s,setS] = useState(:)
   var boo : boolean = false;
-  var test : UserType[] = [];
+  var test : userModel[] = [];
 
   useEffect(() => {
     GetFriends().then((res) => {
-        res?.map((user : UserType) => {
-          if (a(parseInt(user._id), users) === true)
+        res?.map((user : userModel) => {
+          console.log("user map = ", user)
+          if (a(user.id, users) === true)
+          {
             test.push(user);
+            console.log("i made it here too", test);
+          }
         })
       } )
 
       console.log("res = ", test);
-  },[])
+  },[users])
   //   GetFriends().then((res) => {
   //     console.log("res = ", res);
   //     setNotJoined(res)
@@ -428,7 +434,7 @@ export const AddUsers: React.FC<{
             </div>
             <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
               {
-               notJoined  && notJoined?.map((user : userModel) => (
+               test  && test?.map((user : userModel) => (
                   <>
                     <Flex>
                       <Avatar src='https://bit.ly/sage-adebayo' />
@@ -450,7 +456,7 @@ export const AddUsers: React.FC<{
               }
               {
                   
-                  !notJoined && <><Text>All Your Friend Are with You </Text></>
+                  !test && <><Text>All Your Friend Are with You </Text></>
                 }
             </Flex>
           </div>

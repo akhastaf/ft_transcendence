@@ -319,7 +319,15 @@ const Home: React.FC<{
 			// console.log("server joined");
 			setUsersState(!usersState);
 	})
+	socket.on("disconnect_server", (data) => {
+		console.log("i am disco")
+		setUsersState(!usersState);
 	})
+	socket.on("connection", (data) => {
+		console.log("i am co")
+		setUsersState(!usersState);
+	})
+	},[])
 
 
 
