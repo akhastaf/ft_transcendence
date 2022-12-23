@@ -8,7 +8,7 @@ import { channelModel, memberModel } from 'src/types';
 import { joinGroupDto } from './dto/join-group.dto';
 import * as bcrypt from 'bcryptjs';
 import { addUserDto } from './dto/add-user.dto';
-import { HttpException } from '@nestjs/common';
+import { HttpException, ForbiddenException} from '@nestjs/common';
 import { setStatusDto, unsetStatusDto } from './dto/update-status.dto';
 import { passwordDto, updatePasswordDto } from './dto/update-pwd.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
@@ -639,7 +639,7 @@ export class GroupsService {
 				return false;
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
-				console.log("You are not allowed to set admin");
+				console.log("You are not allowed to unset admin");
 				return false;
 			}
 			const join = await this.userToGroupRepository
@@ -673,7 +673,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
 			{
-				console.log("You are not allowed to set muted");
+				console.log("You are not allowed to set status");
 				return false;
 			}
 			const join = await this.userToGroupRepository
@@ -716,7 +716,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
 			{
-				console.log("You are not allowed to set muted");
+				console.log("You are not allowed to unset status");
 				return false;
 			}
 			const join = await this.userToGroupRepository
@@ -896,6 +896,31 @@ export class GroupsService {
 		catch(error)
 		{
 			console.log("isBlocked : ", error.message);
+		}
+	}
+	// ************************************************* getGrouPrivacy(req.user.id, id) **********************************************
+	async getGrouPrivacy(id_user: number, id_group: number)
+	{
+		try
+		{
+			const is_member = await this.userToGroupRepository
+			.createQueryBuilder("userToGroup")
+			.leftJoinAndSelect("userToGroup.user", "user")
+			.leftJoinAndSelect("userToGroup.group", "group")
+			.select(["userToGroup.id", "group.privacy"])
+			.where("group.id = :group_id", {group_id : id_group})
+			.andWhere("user.id = :user_id", {user_id: id_user})
+			.getOne();
+			console.log("getGrouPrivacy : ", is_member);
+			if (!is_member)
+				throw new ForbiddenException("You are not allowed to get the group privacy");
+			// return null;
+			return is_member.group.privacy;
+		}
+		catch(error)
+		{
+			throw new ForbiddenException(error.message);
+			console.log("getGrouPrivacy : ", error.message);
 		}
 	}
 }
