@@ -112,15 +112,17 @@ const SideBar: React.FC<{
         isClosable: true,
       })
       console.log("aaaaa = ", data);
-    })
-    navigate("/channels");
+
+        navigate("/channels");
+      
+      })
   }
   return (<>
 
 
 
 
-    <div className="bg-discord_secondSideBar flex flex-col min-win-max">
+    <div className="bg-discord_secondSideBar h-screen flex flex-col min-win-max">
       <h2 onClick={openModal1} className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.username} {choosenChat.username === "" && "FRIENDS"} <CogIcon className="h-4 ml-2" />
 
         {

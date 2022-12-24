@@ -22,12 +22,8 @@ const ChannelsDisplay: React.FC<{
 
     return <>
 
-        {/* <Flex w={"100%"} h={"100%"} flexDirection={"column"}>
-            
-        </Flex> */}
-        <div className=" flex-grow  ">
-            <div className="flex h-full flex-col mx-20 pt-10 gap-7">
-                <div className="relative sm:h-[30rem] scale-100 w-full rounded-lg" >
+            <div className="flex h-full flex-col gap-7">
+                <div className=" sm:h-[30rem] scale-100 w-full rounded-lg" >
                   
                     <img className="max-h-[30rem] w-full rounded-lg" src={logo} />
                     <div className="absolute w-1/2 m-auto bottom-1/2 inset-x-0 text-white text-lg text-center leading-16">
@@ -45,7 +41,6 @@ const ChannelsDisplay: React.FC<{
                 </Grid>
                 </Box>
             </div>
-        </div>
     </>
 }
 

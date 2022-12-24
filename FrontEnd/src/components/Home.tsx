@@ -17,7 +17,7 @@ import { getDmMessages, getRoomMessages } from './Services/messages';
 import { toast } from 'react-toastify';
 
 import { refreshVar } from './SideBar/MemberCard';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Box } from '@chakra-ui/react';
 import Game from './Game/Game';
 
 // const channel2 = require('../images/yoko.png');
@@ -427,7 +427,8 @@ const Home: React.FC<{
 	return (
 		<>
 		<div className='h-full w-full min-h-screen'>
-			<div className="flex h-full" onClick={() => {setIsShown(false)}}>
+			<div className="flex flex-row items-center h-full" onClick={() => {setIsShown(false)}}>
+				<Box minH={"100vh"}>
 				 <ChannelList
 					setChoosenChat={setChoosenChat}
 					setSelectedUserDM={setSelectedUserDM}
@@ -437,7 +438,9 @@ const Home: React.FC<{
 					createRoomHandler={createRoomHandler}
 				// joinRoomHandler={joinRoomHandler}
 
-				/> 
+				/>
+				</Box>
+				<Box minH={"100vh"}>
 				 <SideBar
 					choosenChat={choosenChat}
 					users={users}
@@ -452,19 +455,18 @@ const Home: React.FC<{
 					usersState={usersState}
 					setUsersState={setUsersState}
 				/>
+				</Box>
 	
 
-	<div className="bg-[#36393f] flex-grow col-span-2 p-0 min-h-screen">
+			{/* <div className="bg-[#36393f] flex-grow col-span-2 p-0 max-h-screen"> */}
 					{/* <div className="flex flex-col h-screen min-h-fit full flex-grow"> */}
-						<Flex w={"100%"} flexDir={"column"} justifyContent={"space-between"}>
+						<Flex  className="overflow-hidden bg-[#36393f] flex-grow h-screen p-0 max-h-screen" w={"100%"} flexDir={"column"} justifyContent={"center"}>
 							
-						
-						{state !== "allChannels" && 	
+					
 							<ChatHeader
 							selectedUserDM={selectedUserDM}
 							choosenChat={choosenChat}
 							/>
-						}
 
 							{state === "HomeGAME"  && <Flex mt={"60px"} h={"100vh"}>
 							
@@ -520,7 +522,7 @@ const Home: React.FC<{
 					{/* </Flex> */}
 					{/* </div>  */}
 	
-					</div> 
+					{/* </div>  */}
 			</div>
 			</div>
 		</>

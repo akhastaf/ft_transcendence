@@ -38,8 +38,8 @@ const ChannelList: React.FC <{
 
 	return(<>
 	
-	<div className="flex flex-col space-y-3 bg-discord_serverSideBar p-3 min-w-max">
-        	<div className="server-default hover:bg-emerald-400">
+	<div className="h-screen flex flex-col space-y-3 bg-discord_serverSideBar p-3 min-w-max">
+        	<div className=" server-default hover:bg-emerald-400">
 				<img className="w-16" src={logo} alt="" 
 				
 				onClick={HomeSweetHome}

@@ -1,9 +1,10 @@
 import { Flex, VStack , Image, Stack, Heading, Button, Text, Box, Menu, MenuList, StackDivider} from '@chakra-ui/react';
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { ScoreCard } from '../Game/LeaderBoad';
-import { UserType } from '../Types/types';
+import { getGames } from '../Services/game';
+import { Game, UserType } from '../Types/types';
 
 
 
@@ -58,45 +59,41 @@ const Achievement: React.FC <{}>
 </Card></>
 }
 
-const LeaderBoad1: React.FC <{
-    currentUser: UserType
+export const LeaderBoad1: React.FC <{
+
+    games : Game[]
 }> 
-= ({currentUser}) => {
+= ({ games}) => {
 
         // const [games, setGame] = useState<>()
 
     return <>
-   <Card bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
+   <Card h={"100%"} w={"100%"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
   <CardHeader>
     <Heading size='md'>Recent Games</Heading>
   </CardHeader>
 
   <CardBody >
-    <Stack  spacing='4' maxH={"400px"} w={"100%"} h={"100%"} overflowY={"auto"} css={{
+    <Stack  spacing='4' maxH={"100%"} w={"100%"} h={"100%"} overflowY={"auto"} css={{
                     "&::-webkit-scrollbar": {
-                        width: "4px",
+                        width: "0px",
                     },
                     "&::-webkit-scrollbar-track": {
-                        width: "6px",
+                        width: "0px",
                     },
                     "&::-webkit-scrollbar-thumb": {
                         background: "#8ccef0",
                         borderRadius: "24px",
                     },
                 }}>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
-        <ScoreCard currentUser={currentUser}/>
+          {
+           games?.map((game : Game) => (
+              <ScoreCard key={game._id} game={game} />
+            )) 
+          }
+          {
+            !games && <Heading> No Games Played Yet</Heading>
+          }
     </Stack>
   </CardBody>
 </Card></>
@@ -172,6 +169,13 @@ export const Fcard : React.FC <{user : UserType}> = ({user}) => {
 }
 
 const Profil : React.FC <{currentUser : UserType, closeModal : () => void}> = ({currentUser, closeModal}) => {
+  const [games, setGames] = useState<any>();
+  useEffect(() => {
+  getGames().then((res) => {
+      setGames(res);
+  })
+
+  },[])
     return (<>
 
         <VStack w={"100%"} h={"100%"} pt={0} px={{base : "0px" , sm : "2%", md : "2%"}}>
@@ -189,7 +193,7 @@ const Profil : React.FC <{currentUser : UserType, closeModal : () => void}> = ({
             <Flex w={"100%"} flexDir={{ base : "column", xxl : "row"}} justifyContent={"space-between"} alignItems={"center"} gap={7} >
                 <Flex w={"100%"} p={"5%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={7}>
                     <Text> Recent Games</Text>
-                    <LeaderBoad1 currentUser={currentUser}/>
+                    <LeaderBoad1 games={games}/>
                 </Flex>
                     <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={7} >
                     <Text>  Achivements</Text>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack } from '@chakra-ui/react'
+import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar,useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack } from '@chakra-ui/react'
 // import { toast, ToastContainer } from 'react-toastify';
 import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from '../Services/user';
 import { ChatType, Role, Status, userModel, Userstatus, UserType } from '../Types/types';
@@ -279,10 +279,13 @@ const App1: React.FC<{
 
 
 		<>
-			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`}>
+			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`} onClick={() => {
+							onClick(user.name);
+						}}>
 				<Menu>
 				<MenuButton as={Button} bgColor={"transparent"} >
 					<Flex flexDir={"row"} justifyContent={"space-between"}>
+					<Avatar size={"sm"} src={user.avatar}  />
 					<div id="target" className="flex items-center p-2 gap-3"
 						onClick={() => {
 							onClick(user.name);

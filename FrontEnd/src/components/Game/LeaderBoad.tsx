@@ -1,13 +1,13 @@
-import { UserType } from "../Types/types";
-import { Box, VStack, Flex, Text, Button, Image, MenuList, Menu, MenuButton, LinkBox } from "@chakra-ui/react"
+import { Game, UserType } from "../Types/types";
+import { Box, VStack, Flex, Text, Button, Image, MenuList, Menu, MenuButton, LinkBox, Heading } from "@chakra-ui/react"
 
 
 
 const vs = require('../../images/vs.png');
 
 const Leaderboard1: React.FC<{
-    currentUser: UserType
-}> = ({ currentUser }) => {
+        games : Game[]
+}> = ({ games }) => {
     return <>
 
         <div className="flex h-auto  mt-11 ">
@@ -22,12 +22,11 @@ const Leaderboard1: React.FC<{
                         <div className="flow-root">
                             <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                                 {
-
+                                     games?.map((game : Game) => (
+                                        <ScoreCard game= {game} key={game._id} />
+                                    ))
                                 }
-                                <ScoreCard currentUser={currentUser} />
-                                <ScoreCard currentUser={currentUser} />
-                                <ScoreCard currentUser={currentUser} />
-                                <ScoreCard currentUser={currentUser} />
+                               
                             </ul>
                         </div>
                     </div>
@@ -38,10 +37,10 @@ const Leaderboard1: React.FC<{
 }
 
 const Leaderboard: React.FC<{
-    currentUser: UserType
-}> = ({ currentUser }) => {
+    games : Game[]
+}> = ({ games }) => {
     return <>
-        <Box position={"relative"} h={"40rem"} w={"80rem"} >
+        <Box  w={"100%"} h={"100%"} >
         <Menu isOpen={true}>
             <MenuList w={"80rem"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
                 <Box w={"100%"} h={"100%"} overflowY={"auto"} css={{
@@ -56,19 +55,11 @@ const Leaderboard: React.FC<{
                         borderRadius: "24px",
                     },
                 }}>
-                    {/* <Slider {...settings} > */}
-
-                    {/* <FeedArtical title={"best Article"} time={"10 min"} desc={"A new wave of traders has started in the trading market"} author={"Mohamed Ouch."} />
-                    <FeedArtical title={"best Article"} time={"10 min"} desc={"A new wave of traders has started in the trading market"} author={"Mohamed Ouch."} />
-                    <FeedArtical title={"best Article"} time={"10 min"} desc={"A new wave of traders has started in the trading market"} author={"Mohamed Ouch."} />
-                    <FeedArtical title={"best Article"} time={"10 min"} desc={"A new wave of traders has started in the trading market"} author={"Mohamed Ouch."} />
-                    <FeedArtical title={"best Article"} time={"10 min"} desc={"A new wave of traders has started in the trading market"} author={"Mohamed Ouch."} />
-                    <FeedArtical title={"best Article"} time={"10 min"} desc={"A new wave of traders has started in the trading market"} author={"Mohamed Ouch."} /> */}
-                    {/* </Slider> */}
-                    <ScoreCard currentUser={currentUser} />
-                    <ScoreCard currentUser={currentUser} />
-                    <ScoreCard currentUser={currentUser} />
-                    <ScoreCard currentUser={currentUser} />
+                     {
+                                     games?.map((game : Game) => (
+                                        <ScoreCard game= {game} key={game._id} />
+                                    ))
+                                }
 
                 </Box>
             </MenuList>
@@ -78,44 +69,47 @@ const Leaderboard: React.FC<{
 }
 
 export const ScoreCard: React.FC<{
-    currentUser: UserType
-}> = ({ currentUser }) => {
+    game : Game
+}> = ({ game }) => {
+    console.log("res score == ", game);
     return (
         <>
             <li className="list-none py-3 sm:py-4 min-w-fit">
                 <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
-                        <img className="w-12 h-12 rounded-full" src={currentUser.avatar} alt="Neil image" />
+                        <img className="w-12 h-12 rounded-full" src={game.player1.avatar} alt="Neil image" />
                     </div>
                     <div className="flex-1  min-w-fit">
                         <p className="text-lg font-medium arcade text-white  dark:text-white">
-                            {currentUser.username}
+                            {game.player1.username}
                         </p>
                         <p className="text-sm  text-beige_color dark:text-gray-400">
-                            {currentUser.email}
+                            {game.player1.email}
                         </p>
                         <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">
-                            {currentUser.status}
+                            {game.player1.status}
                         </div>
                     </div>
+                    <Heading>{game.score1}</Heading>
                     <div className="text-bold flex-1 m-auto">
                         <img className="w-20 h-20" src={vs} />
                     </div>
+                    <Heading>{game.score2}</Heading>
                     <div className="inline-flex items-center arcade  text-green-300 dark:text-white">
 
                         <div className="flex-1 pr-10 min-w-5">
                             <p className="text-lg font-medium arcade text-white truncate dark:text-white">
-                                {currentUser.username}
+                                {game.player2.username}
                             </p>
                             <p className="text-sm  text-beige_color truncate dark:text-gray-400">
-                                {currentUser.email}
+                                {game.player2.email}
                             </p>
                             <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">
-                                {currentUser.status}
+                                {game.player2.status}
                             </div>
                         </div>
                         <div className="flex-shrink-0">
-                            <img className="w-12 h-12 rounded-full" src={currentUser.avatar} alt="Neil image" />
+                            <img className="w-12 h-12 rounded-full" src={game.player2.avatar} alt="Neil image" />
                         </div>
                     </div>
 
