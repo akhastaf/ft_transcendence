@@ -111,22 +111,23 @@ export class MessagesGateway {
 	//*** 3- leaveGroup   */
 	@SubscribeMessage('leaveGroup_client')
 	async leaveGroup(@MessageBody() groupdto:joinGroupDto, @ConnectedSocket() client: SocketWithUserId) {
+		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
+		if (!members)
+			return false;
 		const group = await this.groupsService.leaveGroup(client.userId, groupdto);
 		// console.log('leave group ', group);
 		// console.log('leave group ', groupdto);
 		if (!group)
 			return false;
 		const message = await this.messagesService.identify(client.userId, 'has left the channel');
-		const members = await this.groupsService.getMemberByChannel(groupdto.id_group, client.data.id);
 		console.log('members ', members);
-		if (!members)
-			return false;
 		//* send to all users in the room
 		for (const member of members) {
-			if (this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
+			if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {
 				this.server.to(member.user.id.toString()).emit('leaveGroup_server', message);
 			}
 		}
+		return true;
 	}
 
 
