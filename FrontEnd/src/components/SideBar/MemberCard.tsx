@@ -307,9 +307,9 @@ const App1: React.FC<{
 					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
 					</MenuGroup>
 					{
-						(role === Role.ADMIN) &&  <MenuItem> <MemberWork nameService={"i am fucking admin"} id={user.id} function1={kickMember}/></MenuItem>
+						(user.role === Role.ADMIN) &&  <MenuItem> <MemberWork nameService={"i am fucking admin"} id={user.id} function1={kickMember}/></MenuItem>
 					}
-					{(role === Role.ADMIN && user.role === "member") || (role === Role.OWNER && user.role !== "owner") && <>
+					{((role === Role.ADMIN && user.role === "member") || (role === Role.OWNER && user.role !== "owner")) && <>
 					<MenuDivider />
 					<MenuGroup title='Admin'>
 					{

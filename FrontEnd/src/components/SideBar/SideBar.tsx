@@ -97,6 +97,9 @@ const SideBar: React.FC<{
 
   };
   useEffect(() => {
+    console.log("state = ", usersState)
+  },[usersState])
+  useEffect(() => {
     console.log("users = .    ", users);
   }
 
@@ -376,24 +379,17 @@ export const AddUsers: React.FC<{
 }> = ({ setShowModal, users, currentUser,  choosenChat}) => {
 
 
-  const [notJoined, setNotJoined] = useState<any>();
+  const [notJoined, setNotJoined] = useState<userModel[]>();
   // const [s,setS] = useState(:)
   var boo : boolean = false;
   var test : userModel[] = [];
 
   useEffect(() => {
     GetFriends().then((res) => {
-        res?.map((user : userModel) => {
-          console.log("user map = ", user)
-          if (a(user.id, users) === true)
-          {
-            test.push(user);
-            console.log("i made it here too", test);
-          }
-        })
+        setNotJoined(res.filter((friend : userModel) => a(friend.id,users)))
       } )
 
-      console.log("res = ", test);
+      console.log("res = ", notJoined);
   },[users])
   //   GetFriends().then((res) => {
   //     console.log("res = ", res);
@@ -405,7 +401,7 @@ export const AddUsers: React.FC<{
   const socket = useContext(SocketContext);
 
   const addUser =  (id : number) => {
-    socket.emit("addUser_client",{id_user : id, id_groupe: parseInt(choosenChat._id)}, (data : any) => {
+    socket.emit("addUser_client",{id_user : id, id_group: parseInt(choosenChat._id)}, (data : any) => {
       toast({
 				title: `New User added Succesfully`,
 				description: `You added a New User`,
@@ -424,8 +420,8 @@ export const AddUsers: React.FC<{
     >
       <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
         <div className="w-[30rem] my-6 mx-auto h-[25rem]   " >
-          <div className="border-0 rounded-lg lg:rounded-r-lg justify-between h-[30rem] shadow-lg  flex flex-col w-full bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
-            <div className="sm:mx-auto w-full h-2/6 ">
+          <div className="border-0 rounded-lg lg:rounded-r-lg  h-[30rem] shadow-lg  flex flex-col w-full bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+            <div className="sm:mx-auto w-full h-1/6 ">
               <button
                 className="p-1 ml-auto bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
                 onClick={() => { setShowModal(false) }}
@@ -434,12 +430,13 @@ export const AddUsers: React.FC<{
               </button>
               <h2 className="mt-6 text-center text-xl font-bold text-white">Modify Your Channel Setting </h2>
             </div>
-            <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
+            <Flex flexDir={"column"} justifyContent={"space-between"} gap={5} alignItems={"center"}>
               {
-               test  && test?.map((user : userModel) => (
+               notJoined?.map((user : userModel) => (
                   <>
-                    <Flex>
-                      <Avatar src='https://bit.ly/sage-adebayo' />
+                    <Flex key={user.id} h={"50px"} w={"100%"} boxShadow="-1px 5px 30px #10111bd6" bgColor={"blue.900"} _hover={{bgColor:"blue.900", transitionDuration:"0.5s"}} flexDir={"row"} gap={5} justifyContent={"center"} alignItems={"center"}>
+                      <Flex flexDir={"row"} gap={5} justifyContent={"space-between"} alignItems={"center"} >
+                      <Avatar size={"sm"} src={user.avatar} />
                       <Box ml='3'>
                         <Text fontWeight='bold'>
                           {user.name}
@@ -451,6 +448,7 @@ export const AddUsers: React.FC<{
                       </Box>
                       <Box> <Button onClick={() => addUser(user.id)}> Invite</Button></Box>
                     </Flex>
+                    </Flex>
                   </>
 
                )
@@ -458,7 +456,7 @@ export const AddUsers: React.FC<{
               }
               {
                   
-                  !test && <><Text>All Your Friend Are with You </Text></>
+                  !notJoined && <><Text>All Your Friend Are with You </Text></>
                 }
             </Flex>
           </div>
