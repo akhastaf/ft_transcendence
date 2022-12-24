@@ -117,7 +117,6 @@ const Home: React.FC<{
 
 	
 	const [messages1, setMessages1] = useState<MessageModal[]> (
-		DUMMY_MESSAGES
 	);
 		const [myRole, setMyRole] = useState<Role>(Role.MEMBER);
 		const [usersState, setUsersState] = useState<boolean>(false);

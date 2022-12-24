@@ -279,9 +279,7 @@ const App1: React.FC<{
 
 
 		<>
-			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`} onClick={() => {
-							onClick(user.name);
-						}}>
+			<div id="element" className={`flex items-center p-2 mb-2  hover:bg-[#5c5e62]`} >
 				<Menu>
 				<MenuButton as={Button} bgColor={"transparent"} >
 					<Flex flexDir={"row"} justifyContent={"space-between"}>

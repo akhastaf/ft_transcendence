@@ -1,4 +1,4 @@
-import { Game, UserType } from "../Types/types";
+import { Game, Userstatus, UserType } from "../Types/types";
 import { Box, VStack, Flex, Text, Button, Image, MenuList, Menu, MenuButton, LinkBox, Heading } from "@chakra-ui/react"
 
 
@@ -72,6 +72,8 @@ export const ScoreCard: React.FC<{
     game : Game
 }> = ({ game }) => {
     console.log("res score == ", game);
+    let color : string = game?.player1.status === Userstatus.ONLINE ? "text-green-300" : game?.player1.status === Userstatus.OFFLINE ? "text-red-700" : "text-blue-700";
+    let color1 : string = game?.player2.status === Userstatus.ONLINE ? "text-green-300" : game?.player2.status === Userstatus.OFFLINE ? "text-red-700" : "text-blue-700";
     return (
         <>
             <li className="list-none py-3 sm:py-4 min-w-fit">
@@ -86,7 +88,7 @@ export const ScoreCard: React.FC<{
                         <p className="text-sm  text-beige_color dark:text-gray-400">
                             {game.player1.email}
                         </p>
-                        <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">
+                        <div className={`inline-flex items-center arcade text-base font-semibold ${color} `}>
                             {game.player1.status}
                         </div>
                     </div>
@@ -104,7 +106,7 @@ export const ScoreCard: React.FC<{
                             <p className="text-sm  text-beige_color truncate dark:text-gray-400">
                                 {game.player2.email}
                             </p>
-                            <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">
+                            <div className={`inline-flex items-center arcade text-base font-semibold ${color1}`}>
                                 {game.player2.status}
                             </div>
                         </div>

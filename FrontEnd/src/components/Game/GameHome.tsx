@@ -40,7 +40,7 @@ const GameHome : React.FC <{
                         <LeaderBoad1 games={games} />
                         <Flex gap={5} position={"relative"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
                         <CardMode mode={"Classic (PvP)"} desc={"Enter the Queue and Enjoy the PongGame with A random Player"} />
-                        <CardMode mode={"Custom (PvCO"} desc={"Enjoy The Game against Our beloved CO"} />
+                        <CardMode mode={"Custom (PvCO)"} desc={"Enjoy The Game against Our beloved CO"} />
                 </Flex>
             </Flex>
             </VStack>
