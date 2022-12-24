@@ -111,7 +111,7 @@ export class GroupsService {
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
 			.leftJoinAndSelect("userToGroup.group", "group")
-			.select(['userToGroup.id', 'group.id', 'group.privacy'])
+			.select(['userToGroup.id', 'group.id', 'group.privacy','user.status'])
 			.where("group.privacy = :privacy", {privacy: 'dm'})
 			.andWhere("user.id = :user_id", {user_id: user_id})
 			.getMany();
@@ -123,13 +123,14 @@ export class GroupsService {
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
 				.leftJoinAndSelect("userToGroup.group", "group")
-				.select(['userToGroup.id','group.id','user.id', 'user.username', 'user.avatar', 'group.privacy'])
+				.select(['userToGroup.id','group.id','user.id', 'user.username', 'user.avatar', 'user.status', 'group.privacy'])
 				.where("group.id = :group_id", {group_id: dm.group.id})
 				.andWhere("user.id != :user_id", {user_id: user_id})
 				.getOne();
 				dm.group.id = second_user.user.id;
 				dm.group.name = second_user.user.username;
 				dm.group.avatar = second_user.user.avatar;
+				dm.user.status = second_user.user.status;
 			}
 			return dms;
 		}
