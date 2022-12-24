@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common';
-import { messageModel, RequestWithUser } from 'src/types';
+import { memberModel, messageModel, RequestWithUser } from 'src/types';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
 import { channelModel } from 'src/types';
@@ -24,13 +24,13 @@ export class MessagesController {
 		const dms = await this.groupsService.getDmByUser(req.user.id);
 		if (dms){
 			dms.forEach(element => {
-				let dm = new channelModel();
+				let dm = new memberModel();
 				dm.id = element.group.id;
 				dm.name = element.group.name;
 				dm.avatar = element.group.avatar;
-				dm.privacy = element.group.privacy;
+				dm.status = element.user.status;
 				arr.push(dm);
-				// console.log("======= dm =======", dm);
+				console.log("======= dm =======", dm);
 			});
 			return arr;
 		}
