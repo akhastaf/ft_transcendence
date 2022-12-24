@@ -119,8 +119,6 @@ export class GroupsService {
 			return null;
 			for(const dm of dms)
 			{
-				console.log("dm : ", dm);
-				console.log(" id : ", dm.group.id);
 				let second_user = await this.userToGroupRepository
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
@@ -129,7 +127,7 @@ export class GroupsService {
 				.where("group.id = :group_id", {group_id: dm.group.id})
 				.andWhere("user.id != :user_id", {user_id: user_id})
 				.getOne();
-				console.log("second_user : ", second_user);
+				dm.group.id = second_user.user.id;
 				dm.group.name = second_user.user.username;
 				dm.group.avatar = second_user.user.avatar;
 			}
