@@ -60,10 +60,12 @@ export class GameService {
         const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
         if (mode === GameMode.CUSTOM) {
             const p: Player = this.createPlayer(socket, gamelocal);
-            const comp : Player = this.createPlayerComp(gamelocal);
+            const com = await this.userService.getUser(1);
+            const comp : Player = this.createPlayerComp(com, gamelocal);
             gamelocal.players.push(p);
             gamelocal.players.push(comp);
             game.player1 = p.user;
+            game.player2 = com;
             gamelocal.status = GameStatus.PLAYING;
             game.status = GameStatus.PLAYING;
             p.socket.join(gamelocal.room);
@@ -89,9 +91,9 @@ export class GameService {
         this.games.set(gamelocal.room, gamelocal)
         
     }
-    createPlayerComp(game: GameLocal): Player {
+    createPlayerComp(comp : User, game: GameLocal): Player {
         const player: Player = {
-            user: null,
+            user: comp,
             socket: null,
             x: game.width - 15,
             y: game.height / 2 - 150 / 2,
@@ -165,7 +167,7 @@ export class GameService {
             ball: new Ball(),
             width: 800,
             height: 500,
-            maxScore: 50,
+            maxScore: 11,
             mode: mode,
             countdown: 0,
             computerLevel: 0.1,

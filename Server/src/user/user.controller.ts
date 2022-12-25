@@ -37,16 +37,16 @@ export class UserController {
     }
     @Get('add/:id')
     async addFriend(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
-        return this.userService.addFriend(req.user.id, id);
+        return this.userService.addFriend(req.user, id);
     }
     @Get('block/:id')
     async blockFriend(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
-        return this.userService.blockFriend(req.user.id, id);
+        return this.userService.blockFriend(req.user, id);
     }
 
     @Post('2fa/verify')
     async verify2fa(@Req() req: RequestWithUser, @Body() twofaVerificationDTO : TwofaVerificationDTO) : Promise<any> {
-        return this.userService.verify2fa(req.user.id, twofaVerificationDTO);
+        return this.userService.verify2fa(req.user, twofaVerificationDTO);
     }
 
     @Get()

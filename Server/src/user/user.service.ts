@@ -1,21 +1,14 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegisterUserDTO } from 'src/auth/dto/register-user.dto';
 import { Repository } from 'typeorm';
-import { User, UserProvider, Userstatus } from './entities/user.entity';
-import * as bcrypt from 'bcryptjs';
+import { User, UserProvider } from './entities/user.entity';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as speakeasy from "speakeasy";
-import * as Qrcode from 'qrcode';
 import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
-import { Privacy } from 'src/messages/entities/group.entity';
-import { emit } from 'process';
 import { ConfigService } from '@nestjs/config';
-import { Player } from 'src/types';
 import { AchievmentService } from 'src/achievment/achievment.service';
 import { Achievment } from 'src/achievment/entities/achievment.entity';
-import { use } from 'passport';
-
+import { v4 as uuidv4} from "uuid";
 @Injectable()
 export class UserService {
     private logger: Logger = new Logger(UserService.name);
@@ -59,7 +52,7 @@ export class UserService {
         }
         catch (err)
         {
-            throw new ForbiddenException(err.message);
+            throw new UnauthorizedException();
         }
     }
 
@@ -118,14 +111,16 @@ export class UserService {
         }
     }
 
-    async verify2fa(id: number, twofaVerificationDTO: TwofaVerificationDTO) : Promise<any> {
-        const user = await this.userRepository.findOneBy({id});
+    async verify2fa(user: User, twofaVerificationDTO: TwofaVerificationDTO) : Promise<any> {
+        // const user = await this.userRepository.findOneBy({id});
+        if (user.twofa)
+            throw new ForbiddenException('2 factor authentication alredy verified');
         const verified = speakeasy.totp.verify({ secret: user.secret_tmp, encoding: 'base32', token: twofaVerificationDTO.token, window: 6});
-        console.log(verified);
         if (verified)
         {
-            await this.userRepository.update(user.id, { twofa: true ,secret: user.secret_tmp, recoveryCode: twofaVerificationDTO.token});
-            return { recoveryCode : twofaVerificationDTO.token};
+            const recoveryCode: string = uuidv4();
+            await this.userRepository.update(user.id, { twofa: true ,secret: user.secret_tmp, recoveryCode: recoveryCode});
+            return { recoveryCode };
         }
         throw new ForbiddenException('token is invalide');
     }
@@ -140,26 +135,19 @@ export class UserService {
             }
         })).friends;
     }
-    async addFriend(userId: number, id: number) : Promise<User>{
+    async addFriend(user: User, id: number) : Promise<User>{
         try {
-            const user = await this.userRepository.findOneOrFail({
-                where: {
-                    id: userId
-                },
-                relations: {
-                    friends: true
-                }
-            });
             const friend = await this.userRepository.findOneOrFail({
                 where: {
                     id
                 },
             });
             console.log('before', user.friends);
-            if (user.friends!.find((f) => friend.id === f.id) || userId === id)
+            if (user.friends!.find((f) => friend.id === f.id) || user.id === id)
                 return user;
             user.friends.push(friend);
-            console.log('after', user.friends);
+            const i = user.bloked.findIndex((u) => u.id === friend.id);
+            user.bloked.splice(i, 1);
             await this.userRepository.save(user);
             return user;
         } catch (error) {
@@ -177,17 +165,8 @@ export class UserService {
             }
         })).bloked;
     }
-    async blockFriend(userId: number, id: number) : Promise<User>{
+    async blockFriend(user: User, id: number) : Promise<User>{
         try {
-            const user = await this.userRepository.findOneOrFail({
-                where: {
-                    id: userId
-                },
-                relations: {
-                    bloked: true,
-                    friends: true,
-                }
-            })
             const userToBlock =  await this.userRepository.findOneOrFail({
                 where: {
                     id
@@ -195,15 +174,8 @@ export class UserService {
             });
             if (!user.bloked.find((f) => id === f.id) && userToBlock.id != user.id)
                 user.bloked.push(userToBlock);
-            if (user.friends.find((f) => id === f.id))
-            {
-                user.friends = user.friends.map((f) => {
-                    if (f.id != id)
-                        return f;
-                });
-            }
-            console.log('friends ', user.friends);
-            console.log('block ', user.bloked);
+            const i = user.friends.findIndex((u) => u.id === userToBlock.id);
+            user.friends.splice(i, 1);
             await this.userRepository.save(user);
             return user;
         } catch (error) {

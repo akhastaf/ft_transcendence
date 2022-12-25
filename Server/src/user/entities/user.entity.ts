@@ -75,7 +75,7 @@ export class User {
 
     @OneToMany(() => Message, message => message.sender)
 	messages: Message[];
-	@OneToMany(() => Group, group => group.owner)
+	@OneToMany(() => Group, group => group.owner, { onDelete: 'CASCADE' })
 	groups: Group[];
 	@OneToMany(() => UserToGroup, usertogroup => usertogroup.user)
 	usertogroup: UserToGroup[];

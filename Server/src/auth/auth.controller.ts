@@ -46,7 +46,7 @@ export class AuthController {
             res.redirect(`http://localhost:3001/callback?accessToken=${access["access_token"]}`);
         }
 		else
-       		res.redirect(this.configService.get('CILENT_HOST') + '/callback?user_id=' + user.id + '&twfa=true');
+       		res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&tnrue`);
     }
     
     @UseGuards(JWTGuard)
