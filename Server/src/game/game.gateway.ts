@@ -53,6 +53,7 @@ export class GameGateway {
 
   @SubscribeMessage('add')
   async add(client: SocketWithUser, mode: string): Promise<void> {
+    console.log(mode, client.user.username);
     await this.gameService.add(client, mode, this.server);
   }
   @SubscribeMessage('joingame')
