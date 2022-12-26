@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, ParseIntPipe, Req, UseGuards } from '@nes
 import { memberModel, messageModel, RequestWithUser } from 'src/types';
 import { GroupsService } from './groups.service';
 import { MessagesService } from './messages.service';
-import { channelModel } from 'src/types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 
