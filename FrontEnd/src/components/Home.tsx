@@ -1,4 +1,5 @@
 import {  useContext, useEffect, useState } from 'react';
+import React from "react";
 import { Dms, getAllRooms, getRoomUsers } from './Services/room'
 
 import {  useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -69,7 +70,8 @@ import Game from './Game/Game';
 
 // ];
 
-
+let updates1 : boolean = false;
+export const updates = React.createContext(updates1);
 const DUMMY_MESSAGES:  MessageModal[]  = [
 	// botRoom: [
 		{
@@ -178,7 +180,7 @@ const Home: React.FC<{
 			console.log(data);
 			getAllRooms()
 				.then((res) => {
-					console.log("her spam");
+					// console.log("her spam");
 					setRooms(res);
 				})
 				.catch(err => console.log(""));
@@ -217,7 +219,7 @@ const Home: React.FC<{
 		if (state === "HomeGAME" || state === "allChannels" || state === "GAME")
 		{
 			Dms().then((res) => {
-				// console.log("users =       ", res);
+				console.log("users =       ", res);
 
 				setUsers(res)
 				
@@ -229,7 +231,7 @@ const Home: React.FC<{
 			setMyRole(Role.MEMBER);
 		}
 		if (state === "DM") {
-			// console.log(`user id = ${id2}`)
+
 
 
 
@@ -299,7 +301,7 @@ const Home: React.FC<{
 		}
 
 
-	},[ id2, state ,messageRef, users.friends, usersState])
+	},[ id2, state ,messageRef, users.friends, usersState, ])
 
 
 

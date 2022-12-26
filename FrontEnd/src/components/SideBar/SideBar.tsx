@@ -107,16 +107,19 @@ const SideBar: React.FC<{
   const toast = useToast();
   const leaveGroup = () => {
     socket.emit("leaveGroup_client", { id_group : parseInt(choosenChat._id)} , (data: any) => {
-      toast({
-        title: `Channels update`,
-        description: `You Left the Channel`,
-        status: 'info',
-        duration: 9000,
-        isClosable: true,
-      })
-      console.log("aaaaa = ", data);
-
+      console.log("leave group ", data)
+      if (data === true)
+      {
+        toast({
+          title: `Channels update`,
+          description: `You Left the Channel`,
+          status: 'info',
+          duration: 9000,
+          isClosable: true,
+        })
+        console.log("aaaaa = ", data);
         navigate("/channels");
+      }
       
       })
   }

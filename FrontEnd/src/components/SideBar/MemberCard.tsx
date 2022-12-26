@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar,useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack } from '@chakra-ui/react'
+import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar,useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack, Heading } from '@chakra-ui/react'
 // import { toast, ToastContainer } from 'react-toastify';
 import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from '../Services/user';
 import { ChatType, Role, Status, userModel, Userstatus, UserType } from '../Types/types';
@@ -228,6 +228,7 @@ const App1: React.FC<{
 	};
 
 	const AddFriendf = (id : number) => {
+		console.log("id of friend = ",id )
 		AddFriend(id).then((res) =>
 		{
 			// console.log("res ====== ", res);
@@ -246,7 +247,9 @@ const App1: React.FC<{
 
 
 	const BlockFriend1 = (id :  number) => {
+		console.log("id of blocked = ",id )
 			BlockFriend(id).then((res) =>{
+
 			})
 			setIsShown(false)
 
@@ -273,7 +276,7 @@ const App1: React.FC<{
 		setIsBlocked(checkIfBlocked(user.id));
 	}, [FBUpdate])
 
-	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
+	const Memberstat = user.status === "online" ? "text-green-400" : user.status === "offline" ? "text-red-500" : "text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
 	return (
 
@@ -291,11 +294,9 @@ const App1: React.FC<{
 						<h4 className={` ${MemberColl} + font-semibold text-white important `} >{user.name}</h4>
 					</div>
 
-					<div className="ml-auto">
-						<h6 className={`${Memberstat} +  text-xs `}>
-							{user.status === "online" ? "Online" : user.status === "offline" ? "Offline" : "in-game"}
-						</h6>
-					</div>
+					<Heading as='h5' size={"xs"} className={`${Memberstat} +  text-xs `}>
+						{user.status === "online" ? "Online" : user.status === "offline" ? "Offline" : "in-game"}
+					</Heading>
 					</Flex>
 				</MenuButton>
 				<MenuList>

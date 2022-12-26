@@ -17,10 +17,10 @@ export const getMyRole = (id: number) : Promise<any> => {
 	return localService.get("channels/role/" +id).then((res) => res.data).catch(err => console.log(err));
 }
 export const AddFriend = (id: number) : Promise<any> => {
-	return localService.get("user/add/" +id).then((res) => res.data).catch(err => console.log(err));
+	return localService.get("/user/add/" +id).then((res) => res.data).catch(err => console.log(err));
 }
 export const BlockFriend = (id: number) : Promise<any> => {
-	return localService.get("user/add/" +id).then((res) => res.data).catch(err => console.log(err));
+	return localService.get("/user/block/" +id).then((res) => res.data).catch(err => console.log(err));
 }
 export const GetFriends = () : Promise<any> => {
 	return localService.get("channels/friend-users").then((res) => { return res.data}).catch(err => console.log(err));
