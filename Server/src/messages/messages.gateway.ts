@@ -49,7 +49,7 @@ export class MessagesGateway {
 			// console.log('Halima da5lat', member.user.id, this.connectedList.has(member.user.id), this.connectedList);
 			//* get all bocked users:
 			const isBlocked = await this.groupsService.isBlocked(member.user.id, client.data.id);
-			if (isBlocked)
+			if (isBlocked || member.status === Status.BANNED)
 				continue;
 			//TODO check if the user is blocked:
 			if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED ) {
@@ -177,8 +177,8 @@ export class MessagesGateway {
 			this.connectedList.add(client.data.id);
 			this.messagesService.setStatus(client.data.id, Userstatus.ONLINE);
 		}
+		console.log("connected", client.data.id);
 		console.log('connectedlist ', this.connectedList);
-		console.log("###id###", client.data.id);
 		client.join(client.data.id.toString());
 		console.log("rooom size", this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
 		//! I may should add that the user is connected:
