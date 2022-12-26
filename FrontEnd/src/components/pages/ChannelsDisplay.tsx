@@ -205,7 +205,7 @@ const PasswordInput : React.FC <{
                     <div className="h-auto w-full overflow-y-scroll scrollbar-hide">
                         <form className="space-y-2 gap-y-3" onSubmit={handleSubmit(submitForm)}>
                             <div className="flex flex-col gap-3 ml-3 w-5/6">
-                            <input className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("password", { required: true  })} />
+                            <input type={"password"} className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("password", { required: true  })} />
                             </div>
                         </form>
                     </div>

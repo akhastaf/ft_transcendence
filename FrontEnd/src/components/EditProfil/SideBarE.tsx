@@ -14,9 +14,14 @@ const SideBarE: React.FC<{
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
     currentUser: UserType;
     logoutHandler: () => void;
+    usersState : boolean,
+    setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
 
-}> = ({ setShowModal, currentUser, logoutHandler }) => {
+}> = ({ usersState, setUsersState, setShowModal, currentUser, logoutHandler }) => {
 
+    useEffect(() => {
+
+    },[usersState])
     const closeModal = () => {
 
         setShowModal(false);
@@ -55,7 +60,7 @@ const SideBarE: React.FC<{
 
                     </Box>
                     <Flex className="h-full shadow-lg w-3/5 overflow-y-auto flex-grow flex flex-col  bg-discord_serverBg  outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
-                        <Settings1 closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/> 
+                        <Settings1 usersState={usersState} setUsersState={setUsersState}  closeModal={closeModal} currentUser={currentUser} logoutHandler={logoutHandler} selected={selected}/> 
                     </Flex>
                 </div>
             </div>

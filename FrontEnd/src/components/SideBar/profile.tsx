@@ -1,9 +1,13 @@
 import { Button, ButtonGroup, Flex, Text } from "@chakra-ui/react";
+import { current } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { Fcard } from "../EditProfil/Profile";
 import { getAUser } from "../Services/user";
 import { userModel, Userstatus, UserType } from "../Types/types";
+
+
+
 
 const Profile : React.FC <{
     closeModal : React.Dispatch<React.SetStateAction<boolean>>
@@ -29,7 +33,7 @@ const Profile : React.FC <{
         setUserInfo(res);
     }) 
 },[])
-
+   
     return <>
       <div
             className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"

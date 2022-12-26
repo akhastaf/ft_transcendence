@@ -77,6 +77,9 @@ const SideBar: React.FC<{
   const [showSettingModal1, setSettingModal1] = useState(false);
 
 
+    useEffect(() => {
+
+    }, [usersState])
   const openModal = () => {
     // console.log("hello world!");
     setShowModal(true);
@@ -209,7 +212,7 @@ const SideBar: React.FC<{
           </div>
           <div onClick={openModal} className="hover:bg-[#3A3C43] p-2 rounded-md">
             <CogIcon className="h-5 icon" />
-            {showModal ? <SideBarE setShowModal={setShowModal} currentUser={currentUser} logoutHandler={logoutHandler} /> : null}
+            {showModal ? <SideBarE usersState={usersState} setUsersState={setUsersState} setShowModal={setShowModal} currentUser={currentUser} logoutHandler={logoutHandler} /> : null}
           </div>
         </div>
       </div>

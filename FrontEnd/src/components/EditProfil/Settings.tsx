@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Flex, Progress, useToast } from "@chakra-ui/react";
 import { avatar } from "@material-tailwind/react";
-import { useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { getCurrentUser, updateInfo } from "../Services/user";
@@ -15,6 +15,8 @@ import { BasicButtons, BasicButtons1 } from "./SideBarE";
 // import QRCode from "qrcode.react";
 import {QRCodeSVG} from 'qrcode.react'
 import { localService } from "../../api/axios";
+// import { updates } from "../Home";
+
 
 // import logo1 from "../../images/cardBack.webp"
 
@@ -37,14 +39,16 @@ const Settings: React.FC<{
     selected: string
     logoutHandler: () => void
     closeModal: () => void;
-}> = ({ selected, closeModal, currentUser, logoutHandler }) => {
+    usersState : boolean,
+    setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({usersState, setUsersState, selected, closeModal, currentUser, logoutHandler }) => {
 
 
 
 
     return (<>
         {
-            selected === "My Account" && <UserCard closeModal={closeModal} currentUser={currentUser} />
+            selected === "My Account" && <UserCard  usersState={usersState} setUsersState={setUsersState}  closeModal={closeModal} currentUser={currentUser} />
         }
         {
             selected === "My Profile" && <Profil currentUser={currentUser} closeModal={closeModal} />
@@ -70,21 +74,24 @@ export default Settings;
 const UserCard: React.FC<{
     currentUser: UserType
     closeModal: () => void
-}> = ({ closeModal, currentUser }) => {
+    usersState : boolean,
+    setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({usersState, setUsersState, closeModal, currentUser }) => {
 
-
-    // const [tfa, setTfa] = useState(false);
     const [tfaModal, setTfaModal] = useState(false);
     let twofa = currentUser.twofa;
     const state = twofa === true ? "Diseable" : "Enable";
     const [qrCode, setQrCode] = useState("");
     const [secret, setSecret] = useState("");
 
+    useEffect(() => {
 
+    },[usersState])
 
     const changeImage = () => {
 
     }
+  
 
     const Enable2fa = () => {
         let formData = new FormData();
@@ -92,8 +99,12 @@ const UserCard: React.FC<{
         formData.append("twofa",tfa );
         updateInfo(formData).then((data) => {
             console.log("data = ", data);
-            setQrCode(data.secret.otpauthURL);
-            setSecret(data.secret.base32);
+            if (twofa === false)
+            {
+                setQrCode(data.secret.otpauthURL);
+                setSecret(data.secret.base32);
+            }
+            setUsersState(!usersState);
         })
         if (twofa === false)
             setTfaModal(true);
@@ -133,7 +144,7 @@ const UserCard: React.FC<{
                                 </div> */}
                             </div>
                             <div id="mail setting" className="border-5 rounded-lg h-[15rem] m-auto w-2/3 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
-                                <SettingInfo type="mail" CurrentUser={currentUser} />
+                                <SettingInfo   usersState={usersState} setUsersState={setUsersState}  type="mail" CurrentUser={currentUser} />
                                 <SettingInfo1 type="mail" CurrentUser={currentUser} />
                                 {/* <Progress colorScheme='green' height='32px' value={20} > Level 1</Progress> */}
                                 {/* <SettingInfo2 type="mail" CurrentUser={currentUser} /> */}
@@ -196,7 +207,9 @@ const UserCard: React.FC<{
 const SettingInfo: React.FC<{
     type: string
     CurrentUser: UserType
-}> = ({ type, CurrentUser }) => {
+    usersState : boolean,
+    setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({usersState, setUsersState, type, CurrentUser }) => {
 
     const [state, setState] = useState(false);
     const changeUserName = () => {
@@ -216,7 +229,7 @@ const SettingInfo: React.FC<{
             </div>
             <div className="m-auto">
                 <BasicButtons onClick={changeUserName} text="Modify" />
-                {state ? <SettingModal avatar={CurrentUser.avatar} Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
+                {state ? <SettingModal usersState={usersState} setUsersState={setUsersState} avatar={CurrentUser.avatar} Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
             </div>
         </div>
 
@@ -265,9 +278,12 @@ const SettingModal: React.FC<{
     username: string 
     avatar : string
     Subject: string
-}> = ({ setState, username, Subject }) => {
+    usersState : boolean,
+    setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ usersState,setUsersState,setState, username, Subject }) => {
 
     const toast = useToast();
+    // let up = useContext(updates);
     const { register, handleSubmit, setError, formState: { errors } } = useForm<profileUpdate>();
     const closeModal = () => {
 
@@ -284,8 +300,8 @@ const SettingModal: React.FC<{
     const upload = (event : any) =>
    {
         setImage(true);
-    let image_as_base64 = URL.createObjectURL(event.target.files[0])
-      let image_as_files = event.target.files[0];
+        let image_as_base64 = URL.createObjectURL(event.target.files[0])
+        let image_as_files = event.target.files[0];
 
         setImagePreview(image_as_base64)
         setImageFile(image_as_files)
@@ -299,6 +315,7 @@ const SettingModal: React.FC<{
         console.log("formdata" , data.name, "avatar ", imageFile);
         updateInfo(formData).then((data) => {
             console.log(data);
+            // updates = !updates;
             toast({
 				title: `Info update`,
 				description: `Your Profile Info have been updated`,
@@ -306,6 +323,7 @@ const SettingModal: React.FC<{
 				duration: 9000,
 				isClosable: true,
 			  })
+              setUsersState(!usersState);
             })
             closeModal();
     }
@@ -364,25 +382,50 @@ const TfaModal: React.FC<{
 
 }> = ({ setState , qrcodeUrl, base32}) => {
 
-    const toast = useToast();
     const { register, handleSubmit, setError, formState: { errors } } = useForm<{token : string}>();
     const closeModal = () => {
 
         setState(false);
 
     };
+    const [tok, setTok] = useState<string>("");
+    const toast = useToast({
+        position: 'top',
+       
+        containerStyle: {
+          width: '800px',
+          maxWidth: '100%',
+        },
+      })
+      const toast2 = useToast();
 
     const submitForm : SubmitHandler<{token : string}> = (data) => {
 
         let formData = new FormData();
         const name = data.token ? data.token : "9999";
         console.log("aaa", name);
+
         localService.post("user/2fa/verify", {token : name}).then(() => 
         
             {
+                    setTok(name);
+                toast({
+                    title: `Save this Number to reset 2fa : ${name} `,
+          containerStyle: {
+            border: '20px solid red',
+          },
+          
+        })
+        toast2({
+            title: `user update`,
+            description: `two fa is activated Now`,
+            status: 'info',
+            duration: 9000,
+            isClosable: true,
+          })
                 console.log("enabled");
+                setState(false);
             })
-            // setState(false);
     	
     }
 

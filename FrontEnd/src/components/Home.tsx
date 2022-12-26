@@ -71,7 +71,7 @@ import Game from './Game/Game';
 // ];
 
 let updates1 : boolean = false;
-export const updates = React.createContext(updates1);
+// export const updates = React.createContext(updates1);
 const DUMMY_MESSAGES:  MessageModal[]  = [
 	// botRoom: [
 		{
@@ -130,6 +130,7 @@ const Home: React.FC<{
 	const [users, setUsers] = useState<any>([]);
 	// eslint-disable-next-line
 	const [allRooms, setAllRooms] = useState<any>([]);
+	const [userUpated, setUserUpdated] = useState<boolean>(false);
 
 	const [rooms, setRooms] = useState<any>([
 		{
@@ -187,7 +188,7 @@ const Home: React.FC<{
 
 		})
 
-		}, [rooms]);
+		}, [rooms, usersState]);
 
 		// eslint-disable-next-line
 		const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
