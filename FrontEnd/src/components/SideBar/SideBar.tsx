@@ -88,7 +88,7 @@ const SideBar: React.FC<{
   };
   const openModal1 = () => {
     // console.log("hello world!");
-    if (state === "ROOM")
+    if (state === "ROOM" && role === Role.OWNER)
     setSettingModal(true);
     // Navigate("/EditInfo");
 
@@ -231,7 +231,7 @@ export const ChannelSetting: React.FC<{
 }> = ({ setShowModal, id }) => {
 
   
-  const { register, handleSubmit, setError, formState: { errors } } = useForm<{oldPassword : string, newPassword : string} >();
+  const { register, trigger ,handleSubmit, setError, formState: { errors } } = useForm<{oldPassword : string, newPassword : string} >();
   const [privacy, setPrivacy] = useState(Privacy.PROTECTED);
   
   const closeModal = () => {
@@ -244,8 +244,12 @@ export const ChannelSetting: React.FC<{
       const toast = useToast();
   const submitForm1 : SubmitHandler<{oldPassword : string}> = (data) => {
     
-    
+    console.log("sub 2 = ", data.oldPassword);
+    if (data.oldPassword)
+    {
     deletePassword(parseInt(id), data.oldPassword).then((res) => {
+      console.log("res in del = ", res)
+      if (res) {
       toast({
         title: `Channel update`,
         description: `Password deleted`,
@@ -253,10 +257,42 @@ export const ChannelSetting: React.FC<{
         duration: 9000,
         isClosable: true,
         })
-    })
-    closeModal();
-
+        closeModal();
+      }
+      else
+      {
+        closeModal();
+      toast({
+      title: `Channel update`,
+      description: `Wrong Password`,
+      status: 'error',
+      duration: 9000,
+      isClosable: true,
+      })
+      }
+    }).catch(err => {console.log("hayat is hard", err)
+    toast({
+      title: `Channel update`,
+      description: `Wrong Password`,
+      status: 'error',
+      duration: 9000,
+      isClosable: true,
+      })
+    });
   }
+
+    else {
+      closeModal();
+      toast({
+      title: `Channel update`,
+      description: `Wrong Password`,
+      status: 'error',
+      duration: 9000,
+      isClosable: true,
+      })
+    }
+    }
+
 
   useEffect(() => {
   getPrivacy(parseInt(id)).then((res) => {
@@ -265,6 +301,7 @@ export const ChannelSetting: React.FC<{
   }
   )},[])
   const submitForm : SubmitHandler<{oldPassword : string, newPassword : string}> = (data) => {
+    console.log("sub 1 = ")
     // let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
     if (privacy === Privacy.PUBLIC || privacy === Privacy.PRIVATE)
     {
@@ -311,10 +348,10 @@ export const ChannelSetting: React.FC<{
             className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"
             onClick={() => { closeModal(); }}
         >
-            <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
+            <div className="flex items-center " onClick={handleSubmit(submitForm)} >
                 {/* <div className="w-[30rem] my-6 mx-auto h-[25rem]   " > */}
                     <Flex gap={12} onClick={e => { e.stopPropagation(); }} bg={"#36393f"} flexDir={"column"} justifyContent={"space-between"} w={"30rem"} alignItems={"center"} h={"25rem"}>
-                    <form className="w-full h-full" onSubmit={handleSubmit(submitForm)}>
+                    <form className="w-full h-full" onSubmit={(e) => {e.preventDefault()}}>
                         <Flex  h={"100%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={8}>
                         <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
                             <button
@@ -337,13 +374,22 @@ export const ChannelSetting: React.FC<{
                                 <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
                                     <label htmlFor="newUserName">Old Password</label>
                                          <input className="text-black" {...register("oldPassword")}  type="password"  />
+                                         {errors.oldPassword  && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 " role="alert">
+                                  <p className="font-bold">Error : </p>
+                                  <p>{errors.oldPassword.message}</p>
+                              </div>}
                                     <label htmlFor="newUserName">New Password</label>
                                     <Flex gap={"20px"} flexDir={"row"} justifyContent={"space-between"} alignItems={"center"}>
-                                         <input  className="w-[10rem] text-black" {...register("newPassword")}  type="password"  />
+                                         <input  className="w-[10rem] text-black" {...register("newPassword",{ minLength: {value : 8, message: "password must be more than 3 characters"}, maxLength: {value : 20, message: "password must be less than 20 characters"}})} type="password"  />
+                                         
                                          <Text>Or </Text>
-                                    <Button colorScheme={'red'}   onClick={handleSubmit(submitForm1)} > Delete Passoword </Button>
+                                    <Button colorScheme={'red'}  onClick={handleSubmit(submitForm1)} > Delete Passoword </Button>
                                     </Flex>
                                 </Flex>
+                                {errors.newPassword && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 " role="alert">
+                                  <p className="font-bold">Error</p>
+                                  <p>{errors.newPassword.message}</p>
+                              </div>}
                                 <Flex px={"30px"}  alignItems={"center"} justifyItems={"center"} >
                                 <Heading color={"red"} as='h5' size='sm' >Ps : Setting A Password will change the Privacy to Protected</Heading>
                                 </Flex>
@@ -352,7 +398,9 @@ export const ChannelSetting: React.FC<{
                         <Flex w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-end"} alignItems={"center"} bg={"#2f3136"}>
                         <ButtonGroup pr={"3%"}>
                                     <Button colorScheme={'whatsapp'}   onClick={closeModal} > Cancel </Button>
-                                    <Button  colorScheme={'whatsapp'} type="submit" > Sumbit </Button>
+                                    <Button  colorScheme={'whatsapp'}  onClick={
+                           handleSubmit(submitForm)
+                           } > Sumbit </Button>
                                 </ButtonGroup>
                         </Flex>
                         </Flex>

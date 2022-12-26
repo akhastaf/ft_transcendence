@@ -23,7 +23,7 @@ import { useAuth } from './components/Services/auth';
 import { current } from '@reduxjs/toolkit';
 import { useToast } from '@chakra-ui/react';
 import NotFound from './NotFound';
-
+import { Button, Modal } from 'react-bootstrap';
 
 export interface gameInvite {
     id : number;
@@ -41,7 +41,10 @@ const App : React.FC <{}> = ({}) => {
     useEffect(() => {
 
         socket.on("sendMessage_server", (data : any) => {
-          setMessageRef(data);
+          if (data)
+         {
+            console.log("dasad = ", data);
+            setMessageRef(data);
             console.log("sift lik message")
             toast({
               title: `user jah message`,
@@ -50,7 +53,7 @@ const App : React.FC <{}> = ({}) => {
               duration: 5000,
               isClosable: true,
               })
-              socket.off();
+              socket.off();}
         })
         socket.on("inviteToGame_server", (data : gameInvite ) => {
             setShow(true);
@@ -70,7 +73,13 @@ const App : React.FC <{}> = ({}) => {
       <>
         <Router>
               <SocketContext.Provider value={socket}>
+          
+          <InviteModal show={show} setShow={setShow} />
+          
           <Routes>
+                <Route path='/callback' element={<> 
+								<Callback />
+						 </>} />
 
             <Route
 						path="/"
@@ -82,6 +91,7 @@ const App : React.FC <{}> = ({}) => {
 					/>
 
             {/* <Route path='/' element={<><Welcome /> </>}> </Route> */}
+                    
             <Route
 						element={
 							<RequireAuth>
@@ -108,8 +118,6 @@ const App : React.FC <{}> = ({}) => {
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
                 <Route path="*" element={<NotFound />} />
             </Route>
-            <Route path='/callback' element={<> <Callback /> </>} >
-                </Route>
           </Routes>
             </SocketContext.Provider>
         </Router>
@@ -117,7 +125,37 @@ const App : React.FC <{}> = ({}) => {
     );
   }
 
+export const InviteModal : React.FC <{
+  show : boolean,
+  setShow :  React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({show, setShow}) => {
 
+  // const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return <>
+       <Button variant="primary" onClick={handleShow}>
+        Open Modal
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal Title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Modal body text goes here.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Decline
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Accept
+          </Button>
+        </Modal.Footer>
+      </Modal>
+  </>
+}
 
 export const RequireAuth = ({ children } : { children: JSX.Element } ) => {
 
@@ -148,7 +186,10 @@ export const RequireNoAuth = ({ children } : { children: JSX.Element }) => {
     return <Navigate to={"/channels"} />;
 
     if (children)
-      return children;
+    {
+      console.log("i am here = ", children)
+        return children;
+    }
     return <Outlet />;
 };
 

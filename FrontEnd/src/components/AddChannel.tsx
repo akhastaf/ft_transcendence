@@ -120,7 +120,7 @@ const AddChannel: React.FC<{
                           <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                           <div className="mt-1">
                             {/* <input ref={passwordRef} id="password" name="password" type="password" required className="" /> */}
-                            <input className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("password", { required: {value : true, message: "Field must not be empty"}, minLength: {value : 3, message: "password must be more than 3 characters"}, maxLength: {value : 20, message: "password must be less than 20 characters"}})} />
+                            <input className="border-solid border-gray-300 border py-2 px-4 w-full rounded text-gray-700" {...register("password", { required: {value : true, message: "Field must not be empty"}, minLength: {value : 8, message: "password must be more than 3 characters"}, maxLength: {value : 20, message: "password must be less than 20 characters"}})} />
                             {!errors.name && errors.password && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 " role="alert">
                                   <p className="font-bold">Error</p>
                                   <p>{errors.password.message}</p>
