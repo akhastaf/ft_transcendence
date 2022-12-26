@@ -199,7 +199,7 @@ export class GroupsService {
 
 //* ################################## a more convenient version ###########################
 
-	async joinGroup(id_user: number, groupdto:joinGroupDto){
+	async joinGroup(id_user: number, groupdto:joinGroupDto, usePwd : boolean = true){
 		try
 		{
 			const user = await this.userRepository.findOneOrFail(
@@ -213,7 +213,7 @@ export class GroupsService {
 				return null;
 				// throw new Error("You can't join");
 			}
-			if (group.privacy == 'protected')
+			if (usePwd && group.privacy == 'protected')
 			{
 				console.log("protected");
 				if (!await bcrypt.compare(groupdto.password, group.password))
@@ -306,7 +306,7 @@ export class GroupsService {
 			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
 			{
 				const dto:joinGroupDto = info;
-				return await this.joinGroup(info.id_user, dto);
+				return await this.joinGroup(info.id_user, dto, false);
 			}
 			//! I may should throw an exception
 			console.log("You are not allowed to add user");
@@ -809,6 +809,7 @@ export class GroupsService {
 	{
 		try
 		{
+			console.log("deletePwd : ", data, id_user);
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
@@ -830,7 +831,7 @@ export class GroupsService {
 		}
 	}
 
-	// * ############################################# delete members ##############################
+	// * ############################################# delete group ##############################
 	
 	async deleteGroup(id_user: number, id_group: number)
 	{
@@ -843,10 +844,10 @@ export class GroupsService {
 				return false;
 			}
 			return await this.groupRepository
-			.createQueryBuilder('users')
+			.createQueryBuilder('group')
 			.delete()
-			.from(User)
-			.where("id = :id", { id: 1 })
+			.from(Group)
+			.where("id = :id", { id: id_group })
 			.execute();
 		}
 		catch(e)
@@ -898,13 +899,17 @@ export class GroupsService {
 		try
 		{
 			const isBlocked = await this.getBockedUser(id_user);
-			if (!isBlocked)
-				return false;
-			isBlocked.forEach(user => {
-				if(user.id === id_blocked)
-					return true;
-			});
-			return false;
+            if (!isBlocked)
+                return false;
+            let ret: boolean = false ;
+            isBlocked.forEach(user => {
+                if(user.id === id_blocked)
+                {
+                    ret = true;
+                    return true;
+                }
+            });
+            return ret;
 		}
 		catch(error)
 		{

@@ -30,7 +30,7 @@ export class MessagesController {
 				dm.avatar = element.group.avatar;
 				dm.status = element.user.status;
 				arr.push(dm);
-				console.log("======= dm =======", dm);
+				// console.log("======= dm =======", dm);
 			});
 			return arr;
 		}
