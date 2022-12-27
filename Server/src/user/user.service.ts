@@ -55,6 +55,27 @@ export class UserService {
             throw new UnauthorizedException();
         }
     }
+    async getUserByEmail(email: string): Promise<User> {
+        try 
+        {
+            return await this.userRepository.findOneOrFail({
+                where: {
+                    email: email,
+                },
+                relations: {
+                    usertogroup: true,
+                    friends: true,
+                    bloked: true,
+                    achievments: true,
+                }
+            });
+            
+        }
+        catch (err)
+        {
+            throw new UnauthorizedException();
+        }
+    }
 
     async findOneByUsername(username: string): Promise<User>
     {

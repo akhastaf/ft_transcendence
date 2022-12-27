@@ -59,7 +59,7 @@ export class GameGateway {
   }
   @SubscribeMessage('joingame')
   async joinGame(client: SocketWithUser, room: string): Promise<void> {
-    await this.gameService.joinGame(client, room);
+    await this.gameService.joinGame(client, room, this.server);
   }
   @SubscribeMessage('input')
   async getInput(client: SocketWithUser, input: Input): Promise<void> {
