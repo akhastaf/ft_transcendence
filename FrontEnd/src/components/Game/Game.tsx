@@ -118,7 +118,7 @@ import { Gamestate, Net } from "../Types/types";
         <canvas ref={canvasRef} width="800" height="500" id="ponggame"></canvas>
         </Flex>
                 <Box>
-                    <Heading color={"#ffffff"}> User Your Mouse to Move </Heading>
+                    <Heading color={"#ffffff"}> Use Your Mouse to Move </Heading>
                 </Box>
             <button onClick={() => {socket.emit('add',  "classic");}}>
               Play Game

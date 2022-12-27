@@ -108,9 +108,9 @@ export const ScoreCard: React.FC<{
                         <p className="text-lg font-medium arcade text-white  dark:text-white">
                             {game.player1.username}
                         </p>
-                        <p className="text-sm  text-beige_color dark:text-gray-400">
+                        {/* <p className="text-sm  text-beige_color dark:text-gray-400">
                             {game.player1.email}
-                        </p>
+                        </p> */}
                         <div className={`inline-flex items-center arcade text-base font-semibold ${color} `}>
                             {game.player1.status}
                         </div>
@@ -126,9 +126,9 @@ export const ScoreCard: React.FC<{
                             <p className="text-lg font-medium arcade text-white truncate dark:text-white">
                                 {game.player2.username}
                             </p>
-                            <p className="text-sm  text-beige_color truncate dark:text-gray-400">
+                            {/* <p className="text-sm  text-beige_color truncate dark:text-gray-400">
                                 {game.player2.email}
-                            </p>
+                            </p> */}
                             <div className={`inline-flex items-center arcade text-base font-semibold ${color1}`}>
                                 {game.player2.status}
                             </div>
