@@ -5,7 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "proxy": "http://127.0.0.1:3001/",
+  "proxy": "http://10.11.6.2:3001/",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
