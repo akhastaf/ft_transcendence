@@ -16,11 +16,7 @@ export class AuthController {
     private logger: Logger = new Logger(AuthController.name);
     constructor(private authService: AuthService,
         private configService: ConfigService) {}
-
-    // @Post('register')
-    // register(@Body() registerUserDTO: RegisterUserDTO): any {
-    //     return this.authService.registerLocal(registerUserDTO);
-    // }
+        
     @Get('login/42')
     @UseGuards(FTAuthGuard)
     loginft(@Req() req: any, @Res() res: Response) {

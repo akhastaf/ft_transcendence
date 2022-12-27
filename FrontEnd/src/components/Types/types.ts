@@ -44,14 +44,14 @@ export type MessageModal = {
 }
 
 export type Game = {
-	_id : string,
+	id : string,
 	score1 : number
 	score2 : number
 	status : GameStatus
-	roomGame: string
+	room: string
 	player1: UserType
 	player2: UserType
-	gameStates : GameStates[]
+	// gameStates : GameStates[]
 
 }
 

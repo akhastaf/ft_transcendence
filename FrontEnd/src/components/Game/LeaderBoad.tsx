@@ -1,5 +1,7 @@
 import { Game, Userstatus, UserType } from "../Types/types";
-import { Box, VStack, Flex, Text, Button, Image, MenuList, Menu, MenuButton, LinkBox, Heading } from "@chakra-ui/react"
+import { Box, VStack, Flex, Text, Button, Image, MenuList, Menu, MenuButton, LinkBox, Heading, useToast } from "@chakra-ui/react"
+import { socket } from "../Services/sockets";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -23,7 +25,7 @@ const Leaderboard1: React.FC<{
                             <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                                 {
                                      games?.map((game : Game) => (
-                                        <ScoreCard game= {game} key={game._id} />
+                                        <ScoreCard game= {game} key={game.id} />
                                     ))
                                 }
                                
@@ -57,7 +59,7 @@ const Leaderboard: React.FC<{
                 }}>
                      {
                                      games?.map((game : Game) => (
-                                        <ScoreCard game= {game} key={game._id} />
+                                        <ScoreCard game= {game} key={game.id} />
                                     ))
                                 }
 
@@ -71,12 +73,33 @@ const Leaderboard: React.FC<{
 export const ScoreCard: React.FC<{
     game : Game
 }> = ({ game }) => {
-    console.log("res score == ", game);
+    // console.log("res score == ", game);
+    const toast = useToast();
+    const navigate = useNavigate();
+    const watchGame = () => {
+        console.log("game = ", game.room)
+        if (game.status === "playing")
+        {
+            socket.emit("joingame",game.room)
+            navigate("/channels/Game/1");
+        }
+        else
+        {
+            toast({
+				title: 'Game',
+				description: "The Game is Finnished",
+				status: 'info',
+				duration: 9000,
+				isClosable: true,
+			  })
+        }
+    }
     let color : string = game?.player1.status === Userstatus.ONLINE ? "text-green-300" : game?.player1.status === Userstatus.OFFLINE ? "text-red-700" : "text-blue-700";
     let color1 : string = game?.player2.status === Userstatus.ONLINE ? "text-green-300" : game?.player2.status === Userstatus.OFFLINE ? "text-red-700" : "text-blue-700";
     return (
         <>
-            <li className="list-none py-3 sm:py-4 min-w-fit">
+            <li onClick={watchGame} className="list-none  hover:brightness-50  p-3 sm:py-4 min-w-fit">
+            
                 <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
                         <img className="w-12 h-12 rounded-full" src={game.player1.avatar} alt="Neil image" />
@@ -85,9 +108,9 @@ export const ScoreCard: React.FC<{
                         <p className="text-lg font-medium arcade text-white  dark:text-white">
                             {game.player1.username}
                         </p>
-                        <p className="text-sm  text-beige_color dark:text-gray-400">
+                        {/* <p className="text-sm  text-beige_color dark:text-gray-400">
                             {game.player1.email}
-                        </p>
+                        </p> */}
                         <div className={`inline-flex items-center arcade text-base font-semibold ${color} `}>
                             {game.player1.status}
                         </div>
@@ -103,9 +126,9 @@ export const ScoreCard: React.FC<{
                             <p className="text-lg font-medium arcade text-white truncate dark:text-white">
                                 {game.player2.username}
                             </p>
-                            <p className="text-sm  text-beige_color truncate dark:text-gray-400">
+                            {/* <p className="text-sm  text-beige_color truncate dark:text-gray-400">
                                 {game.player2.email}
-                            </p>
+                            </p> */}
                             <div className={`inline-flex items-center arcade text-base font-semibold ${color1}`}>
                                 {game.player2.status}
                             </div>
@@ -114,7 +137,7 @@ export const ScoreCard: React.FC<{
                             <img className="w-12 h-12 rounded-full" src={game.player2.avatar} alt="Neil image" />
                         </div>
                     </div>
-
+                   
                 </div>
 
             </li>

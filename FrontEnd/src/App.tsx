@@ -1,6 +1,6 @@
 
 import './App.css';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import Welcome from './components/Welcome/Welcome';
 import {
   BrowserRouter as Router,
@@ -10,6 +10,7 @@ import {
   Route,
   Routes,
   useLocation,
+  useNavigate,
   // Link,
 } from "react-router-dom";
 
@@ -21,43 +22,51 @@ import { UserType } from './components/Types/types';
 import {socket, SocketContext} from './components/Services/sockets'
 import { useAuth } from './components/Services/auth';
 import { current } from '@reduxjs/toolkit';
-import { useToast } from '@chakra-ui/react';
+import { ButtonGroup, Flex, useToast, Button } from '@chakra-ui/react';
 import NotFound from './NotFound';
-import { Button, Modal } from 'react-bootstrap';
+import {  Modal } from 'react-bootstrap';
+import { IoCloseCircleSharp } from 'react-icons/io5';
 
 export interface gameInvite {
     id : number;
-    name : string;
+    username : string;
 }
 
-const App : React.FC <{}> = ({}) => {
 
+export const AuthContext = createContext<any >(null)
+export const AuthProvider = ({children} :  { children: JSX.Element }) => {
+	const [token, setToken] = useState<any>()
+
+
+	return (
+    <AuthContext.Provider value={{token, setToken}}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+export const useAuthq = () => useContext(AuthContext)
+
+const App : React.FC <{}> = ({}) => {
+  
   const toast = useToast();
     
     const socket = useContext(SocketContext);
     const [show, setShow] = useState(false);
-    const [user1, setUser1] = useState<gameInvite>({id : -1, name : ""});
+    const [user1, setUser1] = useState<gameInvite>({id : -1, username : ""});
     const [messageRef, setMessageRef] = useState<{name : string, message : string}>({ name: "", message: ""});
     useEffect(() => {
       
         socket.on("inviteToGame_server", (data : gameInvite ) => {
-            // setShow(true);
+            setShow(true);
             setUser1(data);
             // console.log("sift lik message")
-            toast({
-              title: `Game Invite`,
-              description: `U received a game from ${data.name}`,
-              status: 'success',
-              duration: 5000,
-              isClosable: true,
-              })
         })
         socket.on("sendMessage_server", (data : any) => {
           if (data)
          {
             console.log("dasad = ", data);
             setMessageRef(data);
-            console.log("sift lik message")
+            // console.log("sift lik message")
             toast({
               title: `user jah message`,
               description: `jak message`,
@@ -72,9 +81,11 @@ const App : React.FC <{}> = ({}) => {
     return (
       <>
         <Router>
+        <AuthProvider>
+
               <SocketContext.Provider value={socket}>
           
-          <InviteModal show={show} setShow={setShow} />
+          <InviteModal user={user1.id} show={show} setShow={setShow} />
           
           <Routes>
                 <Route path='/callback' element={<> 
@@ -120,6 +131,7 @@ const App : React.FC <{}> = ({}) => {
             </Route>
           </Routes>
             </SocketContext.Provider>
+            </AuthProvider>
         </Router>
       </>
     );
@@ -127,34 +139,60 @@ const App : React.FC <{}> = ({}) => {
 
 export const InviteModal : React.FC <{
   show : boolean,
+  user : number
   setShow :  React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({show, setShow}) => {
+}> = ({show, setShow, user}) => {
 
   // const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const navigate = useNavigate();
 
-  return <>
-       <Button variant="primary" onClick={handleShow}>
-        Open Modal
-      </Button>
+  const accept = () => {
+      socket.emit("acceptGame_client", user, (data : any) => {
+      })
+      navigate("/channels/Game/1");
+  }
+  const decline = () => {
+      socket.emit("rejectGame_client", user, (data : any) => {
+            // navigate("/channels/GAME/1"); 
+      })
+  }
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal Title</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Modal body text goes here.</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Decline
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Accept
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  return<>
+
+  { show && <> <div
+    className=" absolute justify-center items-center  flex overflow-x-hidden  inset-0 z-50 outline-none focus:outline-none"
+    onClick={() => { handleClose(); }}
+  >
+    <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
+      <div className="w-[30rem] my-6 mx-auto h-[25rem]   " >
+        <div className="border-0 rounded-lg lg:rounded-r-lg  h-[30rem] shadow-lg  flex flex-col w-full bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
+          <div className="sm:mx-auto w-full h-1/6 ">
+            <button
+              className="p-1 ml-auto bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
+              onClick={() => { handleClose() }}
+            >
+              <IoCloseCircleSharp className="text-emerald-400" />
+            </button>
+            <h2 className="mt-6 text-center text-xl font-bold text-white">Modify Your Channel Setting </h2>
+          </div>
+          <Flex flexDir={"column"} justifyContent={"space-between"} gap={5} alignItems={"center"}>
+             
+             
+                <Button colorScheme={"whatsapp"} onClick={() => {accept(); handleClose()}} >Accept</Button>
+          <Button colorScheme='red' onClick={() => {decline(); handleClose()}}>Decline</Button>
+            
+          </Flex>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div className="opacity-80 fixed inset-0 z-40 bg-black"></div>
   </>
+  }
+</>
 }
 
 export const RequireAuth = ({ children } : { children: JSX.Element } ) => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { io } from "socket.io-client";
 
 let token = null;
@@ -19,3 +19,5 @@ export const socket = io(URL, {
 });
 
 export const SocketContext = React.createContext(socket);
+
+// socket.emit("connection");

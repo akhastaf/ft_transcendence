@@ -9,6 +9,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
     if (status === 401 && exception.message === 'Unauthorized')
-        response.redirect('http://localhost:3001');
+        response.redirect('http://10.11.6.2:3001');
   }
 }

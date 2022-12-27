@@ -12,7 +12,7 @@ import { UserService } from './user/user.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: 'http://localhost:3001',
+      origin: 'http://10.11.6.2:3001',
       credentials: true,
     }
   });
@@ -35,6 +35,6 @@ async function bootstrap() {
                     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
-  await app.listen(parseInt(configService.get('PORT')));
+  await app.listen(parseInt(configService.get('PORT')), '0.0.0.0');
 }
 bootstrap();
