@@ -15,7 +15,7 @@ class Header extends React.PureComponent {
 
   async Login(event : any) {
 
-    window.location.assign("http://localhost:3000/auth/login/42");
+    window.location.assign("http://10.11.6.2:3000/auth/login/42");
   }
 
   render() {

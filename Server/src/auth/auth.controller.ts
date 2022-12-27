@@ -42,7 +42,7 @@ export class AuthController {
             expireIn.setMonth(expireIn.getMonth() + 3);
             res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
             // res.status(200).send(access.access_token);
-            res.redirect(`http://localhost:3001/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
+            res.redirect(`http://10.11.6.2:3001/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
         }
 		else
        		res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&twofa=true`);

@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   token = localStorage.getItem('accessToken');
 }
 
-const URL = "http://localhost:3000";
+const URL = "http://10.11.6.2:3000";
 
 export const socket = io(URL, {
   withCredentials: true,

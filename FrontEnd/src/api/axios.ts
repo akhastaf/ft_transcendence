@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 
 export const localService = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://10.11.6.2:3000/',
     headers: {
         crossdomain: true,
     },
