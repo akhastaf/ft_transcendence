@@ -55,7 +55,7 @@ const App : React.FC <{}> = ({}) => {
               })
               socket.off();}
         })
-        socket.on("inviteToGame_server", (data : gameInvite ) => {
+        socket.on("invitetogame_server", (data : gameInvite ) => {
             setShow(true);
             setUser1(data);
             // console.log("sift lik message")

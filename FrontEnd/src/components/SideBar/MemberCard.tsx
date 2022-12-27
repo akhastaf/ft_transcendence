@@ -125,7 +125,7 @@ const MemberCard: React.FC<{
 	}
 
 	const inviteToGame = (id : number) => {
-			socket.emit("inviteToGame_client", {id_user : id}, (date : any) => {
+			socket.emit("inviteToGame_client", {userId : id}, (date : any) => {
 				toast({
 					title: `invitation sent`,
 					description: `user invited to game`,
