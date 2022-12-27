@@ -15,6 +15,7 @@ import { BasicButtons, BasicButtons1 } from "./SideBarE";
 // import QRCode from "qrcode.react";
 import {QRCodeSVG} from 'qrcode.react'
 import { localService } from "../../api/axios";
+// import { current } from "@reduxjs/toolkit";
 // import { updates } from "../Home";
 
 
@@ -229,7 +230,7 @@ const SettingInfo: React.FC<{
             </div>
             <div className="m-auto">
                 <BasicButtons onClick={changeUserName} text="Modify" />
-                {state ? <SettingModal usersState={usersState} setUsersState={setUsersState} avatar={CurrentUser.avatar} Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
+                {state ? <SettingModal usersState={usersState} tfa={CurrentUser.twofa} setUsersState={setUsersState} avatar={CurrentUser.avatar} Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
             </div>
         </div>
 
@@ -277,10 +278,11 @@ const SettingModal: React.FC<{
     setState: React.Dispatch<React.SetStateAction<boolean>>;
     username: string 
     avatar : string
+    tfa : boolean
     Subject: string
     usersState : boolean,
     setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ usersState,setUsersState,setState, username, Subject }) => {
+}> = ({ usersState,setUsersState,setState, tfa,username, Subject }) => {
 
     const toast = useToast();
     // let up = useContext(updates);
@@ -312,9 +314,11 @@ const SettingModal: React.FC<{
         const name = data.name ? data.name : username;
     	formData.append('username', name);
     	formData.append('avatar', imageFile);
+        
+    	formData.append('twofa', tfa ? "true" : "false");
         console.log("formdata" , data.name, "avatar ", imageFile);
         updateInfo(formData).then((data) => {
-            console.log(data);
+            // console.log(data);
             // updates = !updates;
             toast({
 				title: `Info update`,

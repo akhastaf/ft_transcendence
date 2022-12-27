@@ -25,7 +25,7 @@ const Leaderboard1: React.FC<{
                             <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                                 {
                                      games?.map((game : Game) => (
-                                        <ScoreCard game= {game} key={game._id} />
+                                        <ScoreCard game= {game} key={game.id} />
                                     ))
                                 }
                                
@@ -59,7 +59,7 @@ const Leaderboard: React.FC<{
                 }}>
                      {
                                      games?.map((game : Game) => (
-                                        <ScoreCard game= {game} key={game._id} />
+                                        <ScoreCard game= {game} key={game.id} />
                                     ))
                                 }
 
@@ -77,10 +77,10 @@ export const ScoreCard: React.FC<{
     const toast = useToast();
     const navigate = useNavigate();
     const watchGame = () => {
-        console.log("game = ", game.status)
+        console.log("game = ", game.room)
         if (game.status === "playing")
         {
-            socket.emit("joingame",game.roomGame)
+            socket.emit("joingame",game.room)
             navigate("/channels/Game/1");
         }
         else

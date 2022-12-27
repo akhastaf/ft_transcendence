@@ -366,7 +366,7 @@ export const ChannelSetting: React.FC<{
                         {  ( privacy === Privacy.PUBLIC || privacy === Privacy.PRIVATE )?<>
                                 <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
                                     <label htmlFor="newUserName">New Password</label>
-                                         <input className="text-black" {...register("newPassword")}  type="password"  />
+                                         <input className="text-black" {...register("newPassword", { minLength: {value : 8, message: "password must be more than 3 characters"}, maxLength: {value : 20, message: "password must be less than 20 characters"}})}  type="password"  />
                                 </Flex>
                                 <Flex px={"30px"}  alignItems={"center"} justifyItems={"center"} >
                                 <Heading color={"red"} as='h5' size='sm' >Ps : Setting A Password will change the Privacy to Protected</Heading>

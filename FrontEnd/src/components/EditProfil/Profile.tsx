@@ -90,7 +90,7 @@ export const LeaderBoad1: React.FC <{
                 }}>
           {
            games?.map((game : Game) => (
-              <ScoreCard key={game._id} game={game} />
+              <ScoreCard key={game.id} game={game} />
             )) 
           }
           {
