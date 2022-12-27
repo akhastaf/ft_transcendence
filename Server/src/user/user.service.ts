@@ -239,5 +239,10 @@ export class UserService {
             throw new ForbiddenException(error.message);
         }
     }
+
+    async setStatus(user: User, status: string) {
+        user.status = status;
+        await this.userRepository.save(user);
+    }
     
 }

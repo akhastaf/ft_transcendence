@@ -8,6 +8,7 @@ import { joinGroupDto } from './dto/join-group.dto';
 import { Userstatus } from 'src/user/entities/user.entity';
 import { addUserDto } from './dto/add-user.dto';
 import { Status } from './entities/usertogroup.entity';
+import { GameService } from 'src/game/game.service';
 
 @WebSocketGateway({
 	cors: {
@@ -28,6 +29,7 @@ export class MessagesGateway {
 	server: Server; // Is a refrence to the socket.io server under the hood //* A reference to the underlying Engine.IO server.
 	constructor(
 		private readonly messagesService: MessagesService,
+		private readonly gameService: GameService,
 		private readonly groupsService: GroupsService) { }
 		
 	connectedList =	new Set<number>();
@@ -236,8 +238,9 @@ export class MessagesGateway {
 	}
 
 	@SubscribeMessage('disconnect_client')
-	handleDisconnect(@ConnectedSocket() client: SocketWithUserId)
+	async handleDisconnect(@ConnectedSocket() client: SocketWithUserId)
 	{
+		await this.gameService.removePlayer(client);
 		console.log('disconnect ', client.userId);
 		client.leave(client.userId.toString());
 		if (this.server.sockets.adapter.rooms.get(client.data.id.toString()) == undefined)//(client.rooms.size === 0) // io.sockets.adapter.rooms.get(roomName).size

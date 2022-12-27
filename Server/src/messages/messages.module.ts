@@ -9,6 +9,8 @@ import { GroupsService } from './groups.service';
 import { MessagesController } from './message.controller';
 import { User } from 'src/user/entities/user.entity';
 import { GroupController } from './group.controller';
+import { GameMode } from 'src/game/entites/game.entity';
+import { GameModule } from 'src/game/game.module';
 
 @Module({
 	imports: [
@@ -17,7 +19,9 @@ import { GroupController } from './group.controller';
 			Message,
 			Group,
 			UserToGroup
-		])],
+		]),
+		GameModule
+	],
 	providers: [
 		MessagesGateway,
 		MessagesService,

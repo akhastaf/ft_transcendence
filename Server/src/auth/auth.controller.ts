@@ -1,17 +1,14 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Logger, Param, ParseIntPipe, Post, Redirect, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Logger, Param, ParseIntPipe, Post, Req, Res, UnauthorizedException, UseGuards, UseFilters } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ApiTags } from "@nestjs/swagger";
 import { Request, Response } from "express";
-import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
-import { LoginUserDTO } from "./dto/login-user.dto";
-import { RegisterUserDTO } from "./dto/register-user.dto";
 import { Verify2FaDTO } from "./dto/verify-2fa.dto";
 import { FTAuthGuard } from "./guards/ft-auth.guard";
-import {access} from "./dto/access"
 import { RequestWithUser, tokens } from "src/types";
 import { JWTGuard } from "./guards/jwt.guard";
 import { Reset2FaDto } from "./dto/reset2fa.dto";
+import { HttpExceptionFilter } from "./http-exception.filter";
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,8 +29,10 @@ export class AuthController {
 
     @Get('login/42/return')
     @UseGuards(FTAuthGuard)
+    @UseFilters(new HttpExceptionFilter())
     async ftcallback(@Req() req : any, @Res() res: Response)
     {
+        console.log('here not accept the login');
         const user = await this.authService.register(req.user);
         console.log(user);
         const access: tokens = await this.authService.login(user);

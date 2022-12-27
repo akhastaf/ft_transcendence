@@ -204,6 +204,7 @@ export type Player = {
     width: number,
     height : number,
     score: number,
+	username: string,
     // color: string,
     // top?: number,
     // bottom?: number,

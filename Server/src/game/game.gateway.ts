@@ -47,12 +47,14 @@ export class GameGateway {
   //   return 'Hello world!';
   // }
 
-  async handleDisconnect(client: SocketWithUser) {
-    await this.gameService.removePlayer(client);
-  }
+  // async handleDisconnect(client: SocketWithUser) {
+  //   console.log('stop game event');
+  //   await this.gameService.removePlayer(client);
+  // }
 
   @SubscribeMessage('add')
   async add(client: SocketWithUser, mode: string): Promise<void> {
+    console.log(mode, client.user.username);
     await this.gameService.add(client, mode, this.server);
   }
   @SubscribeMessage('joingame')
