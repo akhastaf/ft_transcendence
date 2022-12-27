@@ -43,6 +43,7 @@ export class GameService {
         const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
         if (mode === GameMode.CUSTOM) {
             const p: Player = this.createPlayer(socket, gamelocal);
+            await this.userService.setStatus(p.user, Userstatus.PLAYING);
             const com = await this.userService.getUser(1);
             const comp : Player = this.createPlayerComp(com, gamelocal);
             gamelocal.players.push(p);
@@ -84,6 +85,8 @@ export class GameService {
             console.log('add to the game');
             const s: SocketWithUser = this.sockets.shift();
             const player: Player = this.createPlayer(s, gamelocal);
+            await this.userService.setStatus(player.user, Userstatus.PLAYING);
+            this.server.emit('connection', {});
             gamelocal.players.push(player);
             player.socket.join(gamelocal.room);
             this.server.to(player.socket.id).emit('game', gamelocal.room);
@@ -152,13 +155,17 @@ export class GameService {
             });
             if (game.players.length === 2)
             {
+                console.log('stop game func');
                 const looser = game.players.find((p) => p.user.id != winner.user.id);
                 await this.userService.updateLevel(winner.user.id, looser.user.id);
                 gameUpdated.status = GameStatus.END;
                 game.status = GameStatus.END;
-                await this.gameRepository.update(gameUpdated.id, gameUpdated);
+                await this.gameRepository.save(gameUpdated);
                 this.server.socketsLeave(game.room);
+                this.userService.setStatus(looser.user, Userstatus.ONLINE);
+                this.userService.setStatus(winner.user, Userstatus.ONLINE);
                 this.emit(game, 'stopgame', { winner: winner.user, looser: looser.user });
+                this.server.emit('disconnect_server', {});
                 this.games.delete(game.room);
                 // winner.socket.leave(game.room);
                 // looser.socket.leave(game.room);
@@ -181,7 +188,7 @@ export class GameService {
             ball: new Ball(),
             width: 800,
             height: 500,
-            maxScore: 11,
+            maxScore: 50,
             mode: mode,
             countdown: 0,
             computerLevel: 0.1,
@@ -276,7 +283,8 @@ export class GameService {
                 y: game.players[0].y,
                 width: game.players[0].width,
                 height: game.players[0].height,
-                score: game.players[0].score
+                score: game.players[0].score,
+                username: game.players[0].user.username,
             },
             rightPlayer: {
                 x: game.players[1].x,
@@ -284,6 +292,7 @@ export class GameService {
                 width: game.players[1].width,
                 height: game.players[1].height,
                 score: game.players[1].score,
+                username: game.players[1].user.username,
             },
             ball: {
                 x: game.ball.x,
@@ -357,21 +366,21 @@ export class GameService {
     }
 
     async removePlayer(client: SocketWithUser) {
+        console.log('remove player');
         const i: number = this.sockets.indexOf(client);
         this.sockets.splice(i, 1);
         for (const game of this.games.values()) {
             if (game.mode === GameMode.CUSTOM)
             {
-                game.players[0].user.status = Userstatus.OFFLINE;
+                // game.players[0].user.status = Userstatus.OFFLINE;
                 game.status = GameStatus.END;
             }
             for (const player of game.players) {
                 if (player.user.id === client.user.id) {
-                    player.user.status = Userstatus.OFFLINE;
-                    game.status = GameStatus.END;
+                    // player.user.status = Userstatus.OFFLINE;
                     player.score = 0;
                     const winner = game.players.find((p) => p.user.id != player.user.id);
-                    this.stopGame(game, winner);
+                    await this.stopGame(game, winner);
                 }
             }
         }
@@ -396,7 +405,10 @@ export class GameService {
                 this.gameRepository.save(game);
                 gameLocal.status = GameStatus.PLAYING;
                 this.games.set(gameLocal.room, gameLocal);
+                this.inviteGames.delete(gameLocal.room);
                 this.server.to(client.user.id.toString()).emit('ready');
+                await this.userService.setStatus(player.user, Userstatus.PLAYING);
+                await this.userService.setStatus(gameLocal.players[0].user, Userstatus.PLAYING);
             }
         }
     }

@@ -26,12 +26,13 @@ import { Gamestate, Net } from "../Types/types";
                         }
                     drawRect(0, 0, canvas!.width, canvas!.height, 'black');
                     canvas?.addEventListener('mousemove', movePaddle);
+                    socket.on('stopgame', (end) => {
+                      console.log("Game over");
+                      drawText('Game over', canvas?.width / 2, canvas?.height / 2, 2, '#0F9B8E');
+                    })
                     socket.on('gamestate', (gamestate) => {
                         render(gamestate);
                      });
-                     socket.on('stopgame', (end) => {
-                       console.log("dadahbduabdabjdbajb");
-                     })
                     //  console.log('after');
                 },[])
                 
@@ -50,6 +51,8 @@ import { Gamestate, Net } from "../Types/types";
                     ctx!.fillStyle = color;
                     size *= 45;
                     ctx!.font = `${size}px arial`;
+                    ctx!.textBaseline = 'middle';
+                    ctx!.textAlign = "center";
                     ctx?.fillText(text, x, y);
                 }
                 function drawNet() : void {
@@ -76,8 +79,12 @@ import { Gamestate, Net } from "../Types/types";
                     const sizeX =  1;//rect!.width / gamestate.width || 1;
                     const sizeY = 1;//rect!.height / gamestate.height || 1;
                     
-                    drawRect(0, 0, canvas!.width, canvas!.height, 'black');drawNet();drawText(gamestate.rightPlayer.score.toString(), 3 *  canvas!.width/4, canvas!.height/5, sizeX, 'white');
+                    drawRect(0, 0, canvas!.width, canvas!.height, 'black');
+                    drawNet();
+                    drawText(gamestate.rightPlayer.score.toString(), 3 * canvas!.width/4, canvas!.height/5, sizeX, 'white');
+                    drawText(gamestate.rightPlayer.username, 3 * canvas!.width/4, 0.5 * canvas!.height/5, 0.5, 'white');
                     drawText(gamestate.leftPlayer.score.toString(), canvas!.width/4, canvas!.height/5, sizeX, 'green');
+                    drawText(gamestate.leftPlayer.username, canvas!.width/4, 0.5 * canvas!.height/5, 0.5, 'green');
                     drawRect(gamestate.rightPlayer.x * sizeX, gamestate.rightPlayer.y * sizeY, gamestate.rightPlayer.width * sizeX, gamestate.rightPlayer.height * sizeY, 'white');
                     drawRect(gamestate.leftPlayer.x *sizeX, gamestate.leftPlayer.y * sizeY, gamestate.leftPlayer.width * sizeX, gamestate.leftPlayer.height * sizeY, 'green');
                     drawCircle(gamestate.ball.x * sizeX, gamestate.ball.y * sizeY, gamestate.ball.radius * sizeX, 'white');
