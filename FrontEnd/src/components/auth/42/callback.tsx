@@ -1,6 +1,6 @@
 // import { useRouter } from "next/router";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { getCurrentUser } from "../../Services/user";
 
@@ -10,6 +10,9 @@ import { useAuth } from "../../Services/auth";
 import { Button, ButtonGroup, Flex } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { localService } from "../../../api/axios";
+import { socket, SocketContext } from "../../Services/sockets";
+import { AuthContext, useAuthq } from "../../../App";
+import { io } from "socket.io-client";
 
 
 export default function Callback() {
@@ -26,12 +29,18 @@ export default function Callback() {
   
   const id_user = searchParams.get("user_id");
   const a : number = (id_user) ? parseInt(id_user) : 0;
+  const { token, setToken } = useAuthq();
+  const r = useContext(SocketContext);
+  console.log("socker = ", r);
+
   const [at, setAt] = useState<any>()
  
 useEffect(() => {
       // const access_token = queryParams.get('accessToken');
       const access_token  = searchParams.get("accessToken");
+      const URL = "http://localhost:3000";
       const twfa = searchParams.get("twfa");
+      r.auth = {token : access_token};
       if (twfa)
       {
         console.log("heelo i am tfa" , at );
@@ -41,7 +50,8 @@ useEffect(() => {
         console.log("aaaaaaa");
         // localStorage.setItem(keyPrefix, JSON.stringify(value));
         localStorage.setItem('accessToken', access_token);
-
+        setToken(access_token);
+        
         
         getCurrentUser().then((res) => {
           console.log(res);
@@ -54,7 +64,7 @@ useEffect(() => {
         .catch(err => console.log(err))
         navigate("/channels");
       }
-    }, [])
+    },[])
 
     const { register, handleSubmit, setError, formState: { errors } } = useForm<{token : string} >();
     const submitForm : SubmitHandler<{token : string}>= (data) => {

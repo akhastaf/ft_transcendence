@@ -19,6 +19,7 @@ import { ChevronDownIcon } from '@heroicons/react/outline';
 import { ChannelSetting } from './SideBar';
 import Profile from './profile';
 import { SocketContext } from '../Services/sockets';
+import { useNavigate } from 'react-router-dom';
 
 
 // export const [refreshVar, setRefreshVar] = useState(false);
@@ -123,9 +124,9 @@ const MemberCard: React.FC<{
 			  })
 		})
 	}
-
+	const navigate = useNavigate()
 	const inviteToGame = (id : number) => {
-			socket.emit("inviteToGame_client", {userId : id}, (date : any) => {
+			socket.emit("inviteToGame_client", id, (date : any) => {
 				toast({
 					title: `invitation sent`,
 					description: `user invited to game`,
@@ -134,6 +135,7 @@ const MemberCard: React.FC<{
 					isClosable: true,
 				  })
 			})
+			navigate("/channels/Game/1");
 	}
 	
 

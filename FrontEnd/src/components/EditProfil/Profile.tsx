@@ -67,14 +67,16 @@ export const LeaderBoad1: React.FC <{
 
         // const [games, setGame] = useState<>()
 
+
+
     return <>
-   <Card h={"100%"} w={"100%"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
+   <Card  h={"100%"} w={"100%"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
   <CardHeader>
     <Heading size='md'>Recent Games</Heading>
   </CardHeader>
 
   <CardBody >
-    <Stack  spacing='4' maxH={"100%"} w={"100%"} h={"100%"} overflowY={"auto"} css={{
+    <Stack  spacing='4' maxH={"400px"} w={"100%"} h={"100%"} overflowY={"auto"} css={{
                     "&::-webkit-scrollbar": {
                         width: "0px",
                     },
