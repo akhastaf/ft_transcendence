@@ -67,6 +67,7 @@ export class GameService {
             return;
         if (socket.user.status === Userstatus.PLAYING)
             return;
+        this.clearRoom(socket);
         if (mode === GameMode.CUSTOM)
             return this.playVsComp(socket, mode);
         for (const s of this.sockets)
@@ -104,7 +105,18 @@ export class GameService {
         }
         await this.gameRepository.save(game);
         this.games.set(gamelocal.room, gamelocal)
-        
+    }
+    clearRoom(socket: SocketWithUser) {
+        for (const g of this.games.values())
+        {
+            for (const s of g.spectators)
+            {
+                if (s.user.id === socket.user.id) {
+                    socket.leave(g.room);
+                    g.spectators.splice(g.spectators.findIndex((sp) => sp.user.id === socket.user.id), 1);
+                }
+            }
+        }
     }
     createPlayerComp(comp : User, game: GameLocal): Player {
         const player: Player = {
@@ -138,19 +150,7 @@ export class GameService {
     {
         if (!socket.user || socket.user.status === Userstatus.PLAYING)
             return;
-        for (const g of this.games.values())
-        {
-            for (const s of g.spectators)
-            {
-                console.log('user id ', s.user.id, 'room ', g.room);
-                if (s.user.id === socket.user.id) {
-                    console.log('room ', g.room);
-                    socket.leave(g.room);
-                    // server.in(socket.id).socketsLeave(g.room);
-                    // g.spectators.splice(g.spectators.findIndex((sp) => sp.user.id === socket.user.id), 1);
-                }
-            }
-        }
+        this.clearRoom(socket);
         const game = this.games.get(room);
         if (!game)
             return;
@@ -182,10 +182,6 @@ export class GameService {
                 this.emit(game, 'stopgame', { winner: winner.user, looser: looser.user });
                 this.server.emit('disconnect_server', {});
                 this.games.delete(game.room);
-                // winner.socket.leave(game.room);
-                // looser.socket.leave(game.room);
-                // for (const s of game.spectators)
-                //     s.leave(game.room);
             }
         } catch (error) {
             console.log(error.message);
