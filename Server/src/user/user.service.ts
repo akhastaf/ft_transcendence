@@ -69,16 +69,11 @@ export class UserService {
         console.log(userData.email);
         const user = await this.userRepository.findOneBy({email: userData.email});
         if (user)
-            return user;
-        // if (user)
-        // {
-        //     const { password, ...rest } =user;
-        //     return rest;
-        // }
+            return { user, newLog: false };
+      
         const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image.link, provider: UserProvider.FT, coalition: userData.color});
         const newUser = await this.userRepository.save(createduser);
-        // const { password, ...rest } =newUser;
-        return newUser;
+        return { user: newUser, newLog: true };
     }
     // async createLocal(userData: RegisterUserDTO): Promise<any> 
     // {

@@ -188,7 +188,7 @@ export class GameService {
             ball: new Ball(),
             width: 800,
             height: 500,
-            maxScore: 50,
+            maxScore: 11,
             mode: mode,
             countdown: 0,
             computerLevel: 0.1,
@@ -386,29 +386,40 @@ export class GameService {
         }
     }
 
-    async inviteToGame(client: SocketWithUser, userId: number) {
-        this.server.to(userId.toString()).emit('invitetogame_server', {id: client.user.id, username: client.user.username});
+    async inviteToGame(client: SocketWithUser, userId: number, server: Server) {
+        if (this.server === null)
+            this.server = server;
+        for (const g of this.inviteGames.values()) {
+            if (g.players[0].user.id == userId)
+            {
+                console.log('return ');
+                return;
+            }
+        }
+        this.server.to(userId.toString()).emit('inviteToGame_server', {id: client.user.id, username: client.user.username});
         const game = this.createGame(GameMode.CLASSIC);
         const player = this.createPlayer(client, game);
         game.players.push(player);
+        // console.log(player.user);
         this.inviteGames.set(game.room, game);
     }
 
     async accept_game(client: SocketWithUser, userId: number) {
         for (const gameLocal of this.inviteGames.values()) {
-            if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
+            if (gameLocal.players[0].user.id == userId) {
                 const player = this.createPlayer(client, gameLocal);
                 gameLocal.players.push(player);
                 const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.PLAYING, room: gameLocal.room, mode: gameLocal.mode});
                 game.player1 = gameLocal.players[0].user;
-                game.player2 = gameLocal.players[1].user;
-                this.gameRepository.save(game);
+                game.player2 = player.user;
+                await this.gameRepository.save(game);
                 gameLocal.status = GameStatus.PLAYING;
                 this.games.set(gameLocal.room, gameLocal);
                 this.inviteGames.delete(gameLocal.room);
                 this.server.to(client.user.id.toString()).emit('ready');
                 await this.userService.setStatus(player.user, Userstatus.PLAYING);
                 await this.userService.setStatus(gameLocal.players[0].user, Userstatus.PLAYING);
+                break;
             }
         }
     }

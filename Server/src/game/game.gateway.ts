@@ -67,7 +67,7 @@ export class GameGateway {
   }
   @SubscribeMessage('inviteToGame_client')
   async inviteToGame(client : SocketWithUser, userId: number) {
-    await this.gameService.inviteToGame(client, userId);
+    await this.gameService.inviteToGame(client, userId, this.server);
   }
   @SubscribeMessage('acceptGame_client')
   async acceptGame(client : SocketWithUser, userId: number) {
