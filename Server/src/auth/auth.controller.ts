@@ -33,7 +33,7 @@ export class AuthController {
     async ftcallback(@Req() req : any, @Res() res: Response)
     {
         console.log('here not accept the login');
-        const user = await this.authService.register(req.user);
+        const {user, newLog} = await this.authService.register(req.user);
         console.log(user);
         const access: tokens = await this.authService.login(user);
         if (!user.twofa)
@@ -42,10 +42,10 @@ export class AuthController {
             expireIn.setMonth(expireIn.getMonth() + 3);
             res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
             // res.status(200).send(access.access_token);
-            res.redirect(`http://localhost:3001/callback?accessToken=${access["access_token"]}`);
+            res.redirect(`http://localhost:3001/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
         }
 		else
-       		res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&tnrue`);
+       		res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&twofa=true`);
     }
     
     @UseGuards(JWTGuard)

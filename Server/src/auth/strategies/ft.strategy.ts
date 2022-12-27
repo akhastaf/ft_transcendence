@@ -27,7 +27,6 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
     async validate(
         accessToken: string,
         refreshToken: string) : Promise<any> {
-            console.log('access_token ', accessToken, ' refresh_token ', refreshToken);
             const { data } = await this.http.axiosRef.get('https://api.intra.42.fr/v2/me', {
 				headers: { Authorization: `Bearer ${ accessToken }` },
 			});
@@ -35,7 +34,6 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
                 headers: { Authorization: `Bearer ${ accessToken }` },
             });
             data.coalition = coalition.color;
-            // console.log(accessToken);
             return data;
         }
 }
