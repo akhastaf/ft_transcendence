@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException} from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { Message } from './entities/message.entity';
 import * as dotenv from 'dotenv';
@@ -41,6 +41,7 @@ export class MessagesService {
 			return modelMsg;
 		}
 		catch (e) {
+			throw new NotFoundException(e.message);
 			console.log("sendMessage: Error");
 		}
 	}
@@ -77,6 +78,7 @@ export class MessagesService {
 			return messages;
 		}
 		catch (e) {
+			throw new NotFoundException(e.message);
 			console.log("getDmMessages: Error");
 		}
 	}
@@ -97,6 +99,7 @@ export class MessagesService {
 			return messages;
 		}
 		catch (e) {
+			throw new NotFoundException(e.message);
 			console.log("getDmMessages: Error");
 		}
 	}
@@ -111,6 +114,7 @@ export class MessagesService {
 			return await this.userRepository.save(user);
 		}
 		catch (e) {
+			throw new NotFoundException(e.message);
 			console.log("setStatus: Error");
 		}
 	}

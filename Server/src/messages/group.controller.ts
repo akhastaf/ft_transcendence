@@ -59,8 +59,8 @@ export class GroupController {
 		@Body() body: CreateGroupDto,
         @UploadedFile(SharpPipe) avatar: string)
 	{
-		console.log("##########  createChannel  ##########", req.user.id);
-		console.log("body", body);
+		// console.log("##########  createChannel  ##########", req.user.id);
+		// console.log("body", body);
 		if (avatar)
 			body.avatar = this.configService.get('SERVER_HOST') + avatar;
 		const group = await this.groupsService.createGroup(req.user, body);
@@ -156,55 +156,56 @@ export class GroupController {
 	//* Set admin role
 	@Post('set-admin')
 	async setAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
-		console.log("setAdmin", data);
+		// console.log("setAdmin", data);
 		return await this.groupsService.setAdmin(req.user.id, data);
 	}
 	//* Unset admin role
 	@Post('unset-admin')
 	async unsetAdmin(@Req() req: RequestWithUser, @Body() data: addUserDto) {
-		console.log("unsetAdmin", data);
+		// console.log("unsetAdmin", data);
 		return await this.groupsService.unsetAdmin(req.user.id, data);
 	}
 
 	@Post('set-status')
 	async setStatus(@Req() req: RequestWithUser, @Body() data: setStatusDto) {
-		console.log("setStatus", data);
+		// console.log("setStatus", data);
 		return await this.groupsService.setStatus(req.user.id, data);
 	}
 
 	@Post('unset-status')
 	async unsetStatus(@Req() req: RequestWithUser, @Body() data: unsetStatusDto) {
-		console.log("setStatus", data);
+		// console.log("setStatus", data);
 		return await this.groupsService.unsetStatus(req.user.id, data);
 	}
 
 	@Post('password')
 	async setPassword(@Req() req: RequestWithUser, @Body() data: passwordDto) {
-		console.log("setPassword", data);
+		// console.log("setPassword", data);
 		return await this.groupsService.setPwd(req.user.id, data);
 	}
 
 	@Patch('password')
 	async updatePassword(@Req() req: RequestWithUser, @Body() data: updatePasswordDto) {
-		console.log("updatePassword", data);
+		// console.log("updatePassword", data);
 		return await this.groupsService.updatePwd(req.user.id, data);
 	}
 
 	@Delete('password')
 	async deletePassword(@Req() req: RequestWithUser, @Body() data: passwordDto) {
-		console.log("deletePassword", data);
+		// console.log("deletePassword", data);
 		return await this.groupsService.deletePwd(req.user.id, data);
+		return true;
 	}
 
 	@Delete(':id')
 	async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-		console.log("deleteChannel", id);
+		// console.log("deleteChannel", id);
 		return await this.groupsService.deleteGroup(req.user.id, id);
 	}
-	@Patch()
-	async updateChannel(@Req() req: RequestWithUser, @Body() data: UpdateGroupDto) {
-		console.log("updateChannel : ", data);
-		return await this.groupsService.updateGroup(req.user.id, data);
-	}
+	// @Patch()
+	// async updateChannel(@Req() req: RequestWithUser, @Body() data: UpdateGroupDto) {
+	// 	console.log("updateChannel : ", data);
+	// 	return await this.groupsService.updateGroup(req.user.id, data);
+	// }
 
   }

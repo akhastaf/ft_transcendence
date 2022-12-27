@@ -34,6 +34,7 @@ export class GroupsService {
 				});
 			return group;
 		} catch (error) {
+			throw new NotFoundException(error.message);
 			console.log("dmExists : ", error.message);
 		}
 	}
@@ -73,6 +74,7 @@ export class GroupsService {
 			return channel;
 		}
 		catch(error){
+			throw new NotFoundException(error.message);
 			console.log("createDm : ", error.message);
 		}
 	}
@@ -96,6 +98,7 @@ export class GroupsService {
 		}
 		catch(error)
 		{
+			throw new ForbiddenException(error.message);
 			console.log("createGroup : ", error.message);
 		}
 	}
@@ -116,7 +119,7 @@ export class GroupsService {
 			.andWhere("user.id = :user_id", {user_id: user_id})
 			.getMany();
 			if (!dms)
-			return null;
+				return null;
 			for(const dm of dms)
 			{
 				let second_user = await this.userToGroupRepository
@@ -135,6 +138,7 @@ export class GroupsService {
 			return dms;
 		}
 		catch(error){
+			throw new ForbiddenException(error.message);
 			console.log("getDmByUser : ", error.message);
 		}
 	}
@@ -155,6 +159,7 @@ export class GroupsService {
 			.getMany();
 			return channels;
 		} catch (error) {
+			throw new NotFoundException(error.message);
 			console.log("getChannelByUser: ", error.message);
 			// throw error;
 		}
@@ -177,7 +182,7 @@ export class GroupsService {
 				.andWhere("user.id = :user_id", {user_id: user_id})
 				.getOne();
 				if (!is_allowed)
-					throw new Error("You are not allowed to check this group's member");
+					throw new ForbiddenException("You are not allowed to check this group's member");
 			// }
 			const members = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
@@ -191,6 +196,7 @@ export class GroupsService {
 		}
 		catch(error)
 		{
+			throw new ForbiddenException(error.message);
 			console.log("getMemberByChannel : ", error.message);
 		}
 	}
@@ -210,15 +216,15 @@ export class GroupsService {
 			);
 			if (group.privacy == 'dm')
 			{
+				throw new ForbiddenException("You can t join");
 				return null;
-				// throw new Error("You can't join");
 			}
 			if (usePwd && group.privacy == 'protected')
 			{
-				console.log("protected");
+				// console.log("protected");
 				if (!await bcrypt.compare(groupdto.password, group.password))
 				{
-					throw new Error("Wrong password");
+					throw new ForbiddenException("Wrong password");
 					return null;
 				}
 			}
@@ -239,9 +245,10 @@ export class GroupsService {
 			}
 			return null;
 		}
-		catch(e)
+		catch(error)
 		{
-			console.log("joinGroup :", e.message);
+			throw new ForbiddenException(error.message);
+			console.log("joinGroup :", error.message);
 		}
 	}
 
@@ -309,11 +316,13 @@ export class GroupsService {
 				return await this.joinGroup(info.id_user, dto, false);
 			}
 			//! I may should throw an exception
+			throw new ForbiddenException("You are not allowed to add user");
 			console.log("You are not allowed to add user");
 			return null;
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("addUser : ", e.message);
 		}
 	}
@@ -407,7 +416,10 @@ export class GroupsService {
 		try{
 			const join = await this.isGroupMember(id_user, info.id_group);
 			if (!join)
+			{
+				throw new ForbiddenException();
 				return null;
+			}
 			if (join?.role === Role.ADMIN || join?.role === Role.OWNER)
 			{
 				const user = await this.getUserRole(info.id_user, info.id_group);
@@ -417,10 +429,11 @@ export class GroupsService {
 				return kicked;
 			}
 			else
-				throw new Error("Permissiom denied");
+				throw new ForbiddenException("Permissiom denied");
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("removeUser : ", e.message);
 		}
 	}
@@ -494,23 +507,27 @@ export class GroupsService {
 			.where("user.id = :user_id", {user_id: id_user})
 			.andWhere("group.id = :group_id", {group_id: groupdto.id_group})
 			.execute();
-			return joined;
+			return joined && true;
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("leaveGroup : ", e.message);
 		}
 	}
 
 	// * ############################################# isAllowed ##############################
-
+	//? check if the one of the users is blocked (dm case)
+	//? check if the user isnt muted or banned (group case)
 	async isAllowed(id_user: number, id_group: number)
 	{
 		try
 		{
 			const is_member = await this.isGroupMember(id_user, id_group);
+			//* check if the user is a member of the group
 			if (!is_member)
 			{
+				throw new ForbiddenException("You are not allowed to send a message to this group");
 				console.log("You are not allowed to send a message to this group");
 				return false;
 			}
@@ -519,7 +536,7 @@ export class GroupsService {
 			);
 			if (group.privacy == Privacy.DM)
 			{
-				// * check if the sender is included in the receiver's blocked list
+				// * check if one of the users is blocked by the other
 				const join = await this.userToGroupRepository
 				.createQueryBuilder("userToGroup")
 				.leftJoinAndSelect("userToGroup.user", "user")
@@ -528,12 +545,15 @@ export class GroupsService {
 				.where("group.id = :group_id", {group_id : id_group})
 				.andWhere("user.id != :user_id", {user_id: id_user})
 				.getOne();
+				//join.user is the second user in the dm
+				// we check if the first user is blocked by the second user
 				const is_blocked = join?.user?.bloked?.some(el => el.id === is_member.user.id);
 				const user = await this.userRepository
 				.createQueryBuilder("user")
 				.leftJoinAndSelect("user.bloked", "blocked")
 				.where("user.id = :user_id", {user_id: id_user})
 				.getOne();
+				// we check if the second user is blocked by the first user
 				const is_blocked2 = user?.bloked?.some(el => el.id === join.user.id);
 				return !is_blocked && !is_blocked2;
 			}
@@ -554,10 +574,11 @@ export class GroupsService {
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("isAllowed : ", e.message);
 		}
 	}
-
+// * ############################################# isAllowedR ##############################
 	async isAllowedR(id_user: number, id_group: number)
 	{
 		try{
@@ -569,7 +590,8 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, id_group);
 			if (!is_member)
 			{
-				console.log("You are not a member of this group");
+				// console.log("You are not a member of this group");
+				throw new ForbiddenException("You are not a member of this group");
 				return false;
 			}
 			let date = new Date();
@@ -589,6 +611,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("isAllowedR : ", e.message);
 		}
 	}
@@ -605,6 +628,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
+				throw new ForbiddenException("You are not allowed to set admin");
 				console.log("You are not allowed to set admin");
 				return false;
 			}
@@ -617,6 +641,7 @@ export class GroupsService {
 			.getOne();
 			if (!join)
 			{
+				throw new ForbiddenException("This user is not a member of this group");
 				console.log("This user is not a member of this group");
 				return false;
 			}
@@ -626,6 +651,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("setAdmin : ", e.message);
 		}
 	}
@@ -641,6 +667,7 @@ export class GroupsService {
 				return false;
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
+				throw new ForbiddenException("You are not allowed to unset admin");
 				console.log("You are not allowed to unset admin");
 				return false;
 			}
@@ -653,6 +680,7 @@ export class GroupsService {
 			.getOne();
 			if (!join)
 			{
+				throw new ForbiddenException("This user is not a member of this group");
 				console.log("This user is not a member of this group");
 				return false;
 			}
@@ -662,6 +690,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("Unset setAdmin : ", e.message);
 		}
 	}
@@ -675,6 +704,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
 			{
+				"This user is not a member of this group"
 				console.log("You are not allowed to set status");
 				return false;
 			}
@@ -687,16 +717,19 @@ export class GroupsService {
 			.getOne();
 			if (!join)
 			{
+				throw new ForbiddenException("This user is not a member of this group");
 				console.log("This user is not a member of this group");
 				return false;
 			}
 			if (join.role == Role.OWNER)
 			{
+				throw new ForbiddenException("You can't set a status of an owner");
 				console.log("You can't set a status of an owner");
 				return false;
 			}
 			if (join.role == Role.ADMIN && is_member.role == Role.ADMIN)
 			{
+				throw new ForbiddenException("An admin can't set status of another admin");
 				console.log("An admin can't set status of another admin");
 				return false;
 			}
@@ -706,6 +739,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("setMuted : ", e.message);
 		}
 	}
@@ -718,6 +752,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
 			{
+				throw new ForbiddenException("You are not allowed to unset status");
 				console.log("You are not allowed to unset status");
 				return false;
 			}
@@ -730,11 +765,13 @@ export class GroupsService {
 			.getOne();
 			if (!join)
 			{
+				throw new ForbiddenException("This user is not a member of this group");
 				console.log("This user is not a member of this group");
 				return false;
 			}
 			if (join.role == Role.OWNER)
 			{
+				throw new ForbiddenException("Action can t be processed");
 				console.log("Action can t be processed");
 				return false;
 			}
@@ -750,6 +787,7 @@ export class GroupsService {
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("unsetMuted : ", e.message);
 		}
 	}
@@ -763,6 +801,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
+				throw new ForbiddenException("You are not allowed to set password");
 				console.log("You are not allowed to update password");
 				return null;
 			}
@@ -771,15 +810,17 @@ export class GroupsService {
 				throw new Error("You can't set pwd");
 			group.password = await bcrypt.hash(data.password, 10);
 			group.privacy = Privacy.PROTECTED;
-			return await this.groupRepository.save(group);
+			return await this.groupRepository.save(group) && true;
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("setPwd : ", e.message);
 		}
 	}
 
 	// * ############################################# update pwd ##############################
+	
 	async updatePwd(id_user: number, data: updatePasswordDto)
 	{
 		try
@@ -787,6 +828,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
+				throw new ForbiddenException("You are not allowed to delete password");
 				console.log("You are not allowed to update password");
 				return null;
 			}
@@ -796,10 +838,11 @@ export class GroupsService {
 			if (!await bcrypt.compare(data.old_password, group.password))
 				throw new Error("Wrong password");
 			group.password = await bcrypt.hash(data.new_password, 10);
-			return await this.groupRepository.save(group);
+			return await this.groupRepository.save(group) && true;
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("updatePwd : ", e.message);
 		}
 	}
@@ -809,10 +852,11 @@ export class GroupsService {
 	{
 		try
 		{
-			console.log("deletePwd : ", data, id_user);
+			// console.log("deletePwd : ", data, id_user);
 			const is_member = await this.isGroupMember(id_user, data.id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
+				throw new ForbiddenException("You are not allowed to delete password");
 				console.log("You are not allowed to update password");
 				return null;
 			}
@@ -820,19 +864,24 @@ export class GroupsService {
 			if (group.privacy !== Privacy.PROTECTED)
 				throw new Error("You can't delete pwd");
 			if (!await bcrypt.compare(data.password, group.password))
+			{
+				// console.log("Wrong password");
+				// return false;
 				throw new Error("Wrong password");
+			}
 			group.password = null;
 			group.privacy = Privacy.PUBLIC;
-			return await this.groupRepository.save(group);
+			return await this.groupRepository.save(group) && true;
 		}
 		catch(e)
 		{
+			throw new ForbiddenException(e.message);
 			console.log("updatePwd : ", e.message);
 		}
 	}
 
 	// * ############################################# delete group ##############################
-	
+	//! I my need to exig a password to delete a protected group.
 	async deleteGroup(id_user: number, id_group: number)
 	{
 		try
@@ -840,6 +889,7 @@ export class GroupsService {
 			const is_member = await this.isGroupMember(id_user, id_group);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
+				throw new ForbiddenException("You are not allowed to delete this group");
 				console.log("You are not allowed to delete this group");
 				return false;
 			}
@@ -857,40 +907,40 @@ export class GroupsService {
 	}
 
 	// * ############################################# update group ##############################
-	async updateGroup(id_user: number, data: UpdateGroupDto)
-	{
-		try
-		{
-			const is_member = await this.isGroupMember(id_user, data.id_group);
-			if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
-			{
-				console.log("You are not allowed to update this group");
-				return false;
-			}
-			const group = is_member.group;
-			if (data.name)
-				group.name = data.name;
-			if (data.description)
-				group.description = data.description;
-			//! hna wash possible nsupprimi the old image
-			if (data.avatar)
-			{
-				console.log("avatar : ", group.avatar);
-				await fs.unlink(group.avatar, (err) => {
-					if (err) {
-					 console.error(err);
-					 return err;
-					}
-				   });
-				group.avatar = data.avatar;
-			}
-			return await this.groupRepository.save(group);
-		}
-		catch(e)
-		{
-			console.log("updateGroup : ", e.message);
-		}
-	}
+	// async updateGroup(id_user: number, data: UpdateGroupDto)
+	// {
+	// 	try
+	// 	{
+	// 		const is_member = await this.isGroupMember(id_user, data.id_group);
+	// 		if (!is_member || (is_member.role !== Role.OWNER && is_member.role !== Role.ADMIN))
+	// 		{
+	// 			console.log("You are not allowed to update this group");
+	// 			return false;
+	// 		}
+	// 		const group = is_member.group;
+	// 		if (data.name)
+	// 			group.name = data.name;
+	// 		if (data.description)
+	// 			group.description = data.description;
+	// 		//! hna wash possible nsupprimi the old image
+	// 		if (data.avatar)
+	// 		{
+	// 			console.log("avatar : ", group.avatar);
+	// 			await fs.unlink(group.avatar, (err) => {
+	// 				if (err) {
+	// 				 console.error(err);
+	// 				 return err;
+	// 				}
+	// 			   });
+	// 			group.avatar = data.avatar;
+	// 		}
+	// 		return await this.groupRepository.save(group);
+	// 	}
+	// 	catch(e)
+	// 	{
+	// 		console.log("updateGroup : ", e.message);
+	// 	}
+	// }
 
 	// ************************************************* isBlocked **********************************************
 
@@ -929,7 +979,7 @@ export class GroupsService {
 			.where("group.id = :group_id", {group_id : id_group})
 			.andWhere("user.id = :user_id", {user_id: id_user})
 			.getOne();
-			console.log("getGrouPrivacy : ", is_member);
+			// console.log("getGrouPrivacy : ", is_member);
 			if (!is_member)
 				throw new ForbiddenException("You are not allowed to get the group privacy");
 			// return null;
