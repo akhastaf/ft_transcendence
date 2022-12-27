@@ -98,6 +98,7 @@ export type PlayerState = {
     width: number,
     height : number,
     score: number,
+    username: string,
 }
 
 export type GameState = {
