@@ -240,11 +240,11 @@ export class MessagesGateway {
 	@SubscribeMessage('disconnect_client')
 	async handleDisconnect(@ConnectedSocket() client: SocketWithUserId)
 	{
-		await this.gameService.removePlayer(client);
 		console.log('disconnect ', client.userId);
 		client.leave(client.userId.toString());
 		if (this.server.sockets.adapter.rooms.get(client.data.id.toString()) == undefined)//(client.rooms.size === 0) // io.sockets.adapter.rooms.get(roomName).size
 		{
+			await this.gameService.removePlayer(client);
 			this.connectedList.delete(client.data.id);
 			this.messagesService.setStatus(client.data.id, Userstatus.OFFLINE);
 			this.server.emit('disconnect_server', this.connectedList);

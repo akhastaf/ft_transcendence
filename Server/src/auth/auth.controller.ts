@@ -16,11 +16,7 @@ export class AuthController {
     private logger: Logger = new Logger(AuthController.name);
     constructor(private authService: AuthService,
         private configService: ConfigService) {}
-
-    // @Post('register')
-    // register(@Body() registerUserDTO: RegisterUserDTO): any {
-    //     return this.authService.registerLocal(registerUserDTO);
-    // }
+        
     @Get('login/42')
     @UseGuards(FTAuthGuard)
     loginft(@Req() req: any, @Res() res: Response) {
@@ -41,8 +37,7 @@ export class AuthController {
             const expireIn = new Date();
             expireIn.setMonth(expireIn.getMonth() + 3);
             res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
-            // res.status(200).send(access.access_token);
-            res.redirect(`http://localhost:3001/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
+            res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
         }
 		else
        		res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&twofa=true`);
