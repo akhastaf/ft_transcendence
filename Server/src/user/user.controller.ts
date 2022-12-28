@@ -1,11 +1,10 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Logger, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { RequestWithUser } from 'src/types';
 import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
-// import { ApiFile } from './decorators/apifile.decorator';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { SharpPipe } from './pipes/sharp.pipe';
@@ -18,7 +17,6 @@ import { UserService } from './user.service';
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(JWTGuard)
 export class UserController {
-    private logger: Logger = new Logger(UserController.name);
     constructor(private readonly userService: UserService, private readonly configService: ConfigService) {}
 
 
@@ -91,8 +89,4 @@ export class UserController {
             updateUserDTO.avatar = this.configService.get('SERVER_HOST') + avatar;
         return await this.userService.updateUser(req.user, updateUserDTO);
     }
-
-    
-
-
 }
