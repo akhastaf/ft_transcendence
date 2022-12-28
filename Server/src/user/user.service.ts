@@ -39,7 +39,6 @@ export class UserService {
                     id: id,
                 },
                 relations: {
-                    usertogroup: true,
                     friends: true,
                     bloked: true,
                     achievments: true,
