@@ -42,7 +42,7 @@ export class UserService {
                     id: id,
                 },
                 relations: {
-                    usertogroup: true,
+                    usertogroup: false,
                     friends: true,
                     bloked: true,
                     achievments: true,
@@ -63,7 +63,7 @@ export class UserService {
                     email: email,
                 },
                 relations: {
-                    usertogroup: true,
+                    usertogroup: false,
                     friends: true,
                     bloked: true,
                     achievments: true,
