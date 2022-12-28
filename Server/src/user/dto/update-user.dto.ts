@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsBoolean, IsBooleanString, IsOptional, IsString, Length, Max, Min } from "class-validator";
+import { IsBoolean, IsOptional, IsString, Length } from "class-validator";
 
 export class UpdateUserDTO {
     @ApiPropertyOptional()

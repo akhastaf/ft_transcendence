@@ -1,4 +1,3 @@
-import { User } from "src/user/entities/user.entity";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname+'/../../../.env' });
 

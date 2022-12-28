@@ -1,5 +1,4 @@
 import { Request } from "express";
-import { type } from "os";
 import { Socket } from "socket.io";
 import { Status } from "./messages/entities/usertogroup.entity";
 import { GameMode, GameStatus } from "./game/entites/game.entity";
@@ -87,9 +86,6 @@ export type BallState = {
     x: number,
     y: number,
     radius: number,
-    // speed: number = 5;
-    // velocityX: number = 5;
-    // velocityY: number = 5;
 }
 
 export type PlayerState = {
@@ -102,7 +98,6 @@ export type PlayerState = {
 }
 
 export type GameState = {
-    // players: Array<Player>,
     leftPlayer : PlayerState,
     rightPlayer : PlayerState,
 	ball: BallState,
