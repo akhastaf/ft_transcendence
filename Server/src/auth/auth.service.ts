@@ -16,7 +16,7 @@ export class AuthService {
         private jwtService: JwtService) {}
 
     async login(user :any): Promise<any> {
-        const payload = { username: user.username, sub: user.id };
+        const payload = { email: user.email, sub: user.id };
         return {
             access_token: this.jwtService.sign(payload),
             refresh_token: this.jwtService.sign(payload, {
@@ -61,7 +61,7 @@ export class AuthService {
     async getToken(id: number) : Promise<string>{
         try {
             const user = await this.userService.getUser(id);
-            const payload = { username: user.username, sub: user.id };
+            const payload = { email: user.email, sub: user.id };
             return this.jwtService.sign(payload);
         } catch (error) {
             throw new ForbiddenException(error.message);
