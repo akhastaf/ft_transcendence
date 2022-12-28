@@ -8,6 +8,7 @@ import { Game, GameMode, GameStatus } from "./entites/game.entity";
 import { v4 as uuidv4} from "uuid";
 import { UserService } from "src/user/user.service";
 import { Server } from "socket.io";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class GameService {
@@ -15,7 +16,7 @@ export class GameService {
     games: Map<string, GameLocal> = new Map();
     inviteGames: Map<string, GameLocal> = new Map();
     server : Server| null = null;
-    constructor(private userService: UserService, @InjectRepository(Game) private gameRepository: Repository<Game>,) {}
+    constructor(private configService: ConfigService, private userService: UserService, @InjectRepository(Game) private gameRepository: Repository<Game>,) {}
     
     async getAllGames() {
         return this.gameRepository.find({
@@ -47,8 +48,8 @@ export class GameService {
         const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
         if (mode === GameMode.CUSTOM) {
             const p: Player = this.createPlayer(socket, gamelocal);
-            await this.userService.setStatus(p.user, Userstatus.PLAYING);
-            const com = await this.userService.getUserByEmail('pongpirate@pong.com');
+            await this.userService.setStatus(p.user.id, Userstatus.PLAYING);
+            const com = await this.userService.getUserByEmail(this.configService.get('COMP_EMAIL'));
             const comp : Player = this.createPlayerComp(com, gamelocal);
             gamelocal.players.push(p);
             gamelocal.players.push(comp);
@@ -90,7 +91,7 @@ export class GameService {
         {
             const s: SocketWithUser = this.sockets.shift();
             const player: Player = this.createPlayer(s, gamelocal);
-            await this.userService.setStatus(player.user, Userstatus.PLAYING);
+            await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
             this.server.emit('connection', {});
             gamelocal.players.push(player);
             player.socket.join(gamelocal.room);
@@ -176,8 +177,8 @@ export class GameService {
                 game.status = GameStatus.END;
                 await this.gameRepository.save(gameUpdated);
                 this.server.socketsLeave(game.room);
-                this.userService.setStatus(looser.user, Userstatus.ONLINE);
-                this.userService.setStatus(winner.user, Userstatus.ONLINE);
+                this.userService.setStatus(looser.user.id, Userstatus.ONLINE);
+                this.userService.setStatus(winner.user.id, Userstatus.ONLINE);
                 this.emit(game, 'stopgame', { winner: winner.user, looser: looser.user });
                 this.server.emit('disconnect_server', {});
                 this.games.delete(game.room);
@@ -409,8 +410,8 @@ export class GameService {
                 this.games.set(gameLocal.room, gameLocal);
                 this.inviteGames.delete(gameLocal.room);
                 this.server.to(client.user.id.toString()).emit('ready');
-                await this.userService.setStatus(player.user, Userstatus.PLAYING);
-                await this.userService.setStatus(gameLocal.players[0].user, Userstatus.PLAYING);
+                await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
+                await this.userService.setStatus(gameLocal.players[0].user.id, Userstatus.PLAYING);
                 client.join(game.room);
                 break;
             }

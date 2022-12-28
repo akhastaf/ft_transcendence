@@ -201,7 +201,7 @@ export class UserService {
             looser.loss++;
             winner.level += (winner.level === 0 ? 0.25 : winner.level * 0.25);
             if (looser.level > 0,20)
-                looser.loss =- 0,20;
+            looser.loss =- 0,20;
             winner.achievments = [];
             looser.achievments = [];
             const achievments : Achievment[] = await this.achievmentService.findAll();
@@ -210,10 +210,10 @@ export class UserService {
                     && winner.loss <= achievment.loss 
                     && winner.level >= achievment.level)
                     winner.achievments = [achievment, ...winner.achievments];
-                if (looser.win >= achievment.win
-                    && looser.loss <= achievment.loss 
-                    && looser.level >= achievment.level)
-                    looser.achievments = [achievment, ...looser.achievments];
+                    if (looser.win >= achievment.win
+                        && looser.loss <= achievment.loss 
+                        && looser.level >= achievment.level)
+                        looser.achievments = [achievment, ...looser.achievments];
             }
             await this.userRepository.save(winner);
             await this.userRepository.save(looser);
@@ -234,9 +234,18 @@ export class UserService {
         }
     }
 
-    async setStatus(user: User, status: string) {
-        user.status = status;
-        await this.userRepository.save(user);
+    async setStatus(userId: number, status: string) {
+        try {
+            const user = await this.userRepository.findOneOrFail({
+                where : {
+                    id: userId
+                }
+            });
+            user.status = status;
+            await this.userRepository.save(user);
+        } catch (error) {
+            throw new ForbiddenException(error.message);
+        }
     }
     
 }
