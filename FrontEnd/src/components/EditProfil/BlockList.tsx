@@ -50,7 +50,7 @@ const BlockList : React.FC <{
                          <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
                                 (!blocked) ? <li className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</li> : 
-                                blocked.map((blocked: userModel) => (
+                                blocked?.map((blocked: userModel) => (
                                    <li> <BlockCard currentUser={blocked}/></li>
 
                                 ))

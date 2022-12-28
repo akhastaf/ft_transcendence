@@ -34,7 +34,7 @@ const ChannelsDisplay: React.FC<{
                 <Box w={"100%"} h={"400px"} className={"channelScroll"}>
                  <Grid className={"overflow-y-auto scrollbar-hide"} overflowX={"hidden"} w={"100%"} h={"100%"}  p={"2%"} templateColumns={{ base: 'repeat(autofill, 1fr)', lg :'repeat(3, 1fr)'}} gap={12}>
                  {
-                        rooms.map((room: roomModal) => (
+                        rooms?.map((room: roomModal) => (
                             <ChannelCard joinRoomHandler={joinRoomHandler} key={room.id} room={room} />
                         ))
                     }
