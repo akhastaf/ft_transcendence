@@ -1,4 +1,3 @@
-import axios from "axios";
 import { localService } from "../../api/axios";
 
 export const getAllRooms = (): Promise<any> => {

@@ -6,7 +6,7 @@ import {MenuIcon} from '@heroicons/react/outline';
 // import {localService} from '../api/axios'
 
 const logo = require('../../images/rsz_ponglogo.png');
-var scrollTrigger = 60;
+
       
 class Header extends React.PureComponent {
 
@@ -15,7 +15,7 @@ class Header extends React.PureComponent {
 
   async Login(event : any) {
 
-    window.location.assign("http://localhost:3000/auth/login/42");
+    window.location.assign(`${process.env.REACT_APP_ServerHostName}/auth/login/42`);
   }
 
   render() {

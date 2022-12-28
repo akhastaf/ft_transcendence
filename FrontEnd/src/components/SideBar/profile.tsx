@@ -1,5 +1,4 @@
-import { Button, ButtonGroup, Flex, Text } from "@chakra-ui/react";
-import { current } from "@reduxjs/toolkit";
+import { Flex} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { Fcard } from "../EditProfil/Profile";

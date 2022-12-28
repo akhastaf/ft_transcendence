@@ -1,4 +1,3 @@
-import React from 'react';
 import { GiPingPongBat } from "react-icons/gi";
 import {GiChatBubble} from "react-icons/gi";
 import TeamSection from '../Home/DevCard';

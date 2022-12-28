@@ -1,10 +1,9 @@
 // import React, {useRef} from 'react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Privacy, IFormInput } from './Types/types';
-import { avatar } from '@material-tailwind/react';
-import { setConsent } from 'firebase/analytics';
+
 const formImage = require('../images/form.gif');
 
 const logo = require('../images/ponglogo.png');

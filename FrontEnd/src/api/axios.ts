@@ -1,11 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-// import { getLocalItem } from "../app/hooks/useLocalStorage";
+
 
 
 
 
 export const localService = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: `${process.env.REACT_APP_ServerHostName}`,
     headers: {
         crossdomain: true,
     },
@@ -55,21 +55,11 @@ localService.interceptors.response.use((response: AxiosResponse) => {
    if (errMessage.includes('Unauthorized') && !originalRequest._retry) {
     originalRequest._retry =true;
     
-    await refreshAccesToken();
-
-    return localService(originalRequest);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("currentUser");
+   
+    
    }
     return Promise.reject(error);
 });
 
-async function refreshAccesToken() {
-    localService.get('/auth/refresh_token').then((data) => {
-        localStorage.setItem('accessToken', data.data.access_token)
-        console.log("yup i am njjj", data);
-            // return true;
-    }).catch((err) => {
-    localStorage.removeItem("accessToken");
-        console.log(err);
-        // return false
-    })
-}

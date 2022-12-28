@@ -1,4 +1,3 @@
-import { GiAchievement } from "react-icons/gi";
 
 
 export enum GameStatus {

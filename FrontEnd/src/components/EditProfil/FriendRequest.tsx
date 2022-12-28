@@ -1,6 +1,6 @@
 import { IoCloseCircleSharp } from "react-icons/io5"
 import { Userstatus, UserType } from "../Types/types"
-import { BasicButtons2 } from "./SideBarE"
+
 
 
 const FriendListRequest : React.FC <{

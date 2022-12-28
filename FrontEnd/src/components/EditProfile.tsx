@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react"
-import { getCurrentUser } from "./Services/user";
-import SideBar from "./SideBar/SideBar";
-import SideBarE from "./EditProfil/SideBarE";
-import { ChatType, Userstatus, UserType } from "./Types/types";
+import { useEffect } from "react"
+
 
 
 const EditProfile : React.FC <{

@@ -1,9 +1,9 @@
 import { Button, ButtonGroup, Flex, Progress, useToast } from "@chakra-ui/react";
 import { avatar } from "@material-tailwind/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
-import { getCurrentUser, updateInfo } from "../Services/user";
+import {updateInfo } from "../Services/user";
 // import { SiWappalyzer } from "react-icons/si";
 import { profileUpdate, UserType } from "../Types/types";
 import BlockList from "./BlockList";
@@ -78,15 +78,16 @@ const UserCard: React.FC<{
     usersState : boolean,
     setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({usersState, setUsersState, closeModal, currentUser }) => {
-
+    
+    
     const [tfaModal, setTfaModal] = useState(false);
-    let twofa = currentUser.twofa;
+    let twofa = currentUser?.twofa;
     const state = twofa === true ? "Diseable" : "Enable";
     const [qrCode, setQrCode] = useState("");
     const [secret, setSecret] = useState("");
 
     useEffect(() => {
-
+            console.log("current User : ", currentUser)
     },[usersState])
 
     const changeImage = () => {
@@ -131,12 +132,12 @@ const UserCard: React.FC<{
                              <div className="flex gap-x-1 w-full md:w-[50rem] m-auto flex-row justify-between flex-nowrap  lg:pl-12 ">
                                 <div className="flex flex-row jusifty-start gap-x-1 w-auto ">
                                     <img
-                                        src={currentUser.avatar}
+                                        src={currentUser?.avatar}
                                         alt=""
                                         className="h-24 rounded-full"
                                     />
-                                    <h1 className="arcade  text-white pt-12 "> {currentUser.username}</h1>
-                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser.id}</h1>
+                                    <h1 className="arcade  text-white pt-12 "> {currentUser?.username}</h1>
+                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser?.id}</h1>
                              </div>
 
 
@@ -224,13 +225,13 @@ const SettingInfo: React.FC<{
 
                 <h1> Username</h1>
                 <div className="flex flex-row ml-5 gap-1">
-                    <h2 className="arcade text-white">{CurrentUser.username} </h2>
-                    <h2 className="arcade text-gray-400"> {"#" + CurrentUser.id} </h2>
+                    <h2 className="arcade text-white">{CurrentUser?.username} </h2>
+                    <h2 className="arcade text-gray-400"> {"#" + CurrentUser?.id} </h2>
                 </div>
             </div>
             <div className="m-auto">
                 <BasicButtons onClick={changeUserName} text="Modify" />
-                {state ? <SettingModal usersState={usersState} tfa={CurrentUser.twofa} setUsersState={setUsersState} avatar={CurrentUser.avatar} Subject="Username" username={CurrentUser.username} setState={setState} /> : null}
+                {state ? <SettingModal usersState={usersState} tfa={CurrentUser?.twofa} setUsersState={setUsersState} avatar={CurrentUser?.avatar} Subject="Username" username={CurrentUser?.username} setState={setState} /> : null}
             </div>
         </div>
 
@@ -252,7 +253,7 @@ const SettingInfo1: React.FC<{
     const swap = () => {
         setShown(!shown);
     }
-    const a: string = maskEmailsPhones(CurrentUser.email);
+    const a: string = maskEmailsPhones(CurrentUser?.email);
     // const b : string = 
     return (<>
         <div className="w-full flex flex-row ml-3">
@@ -260,7 +261,7 @@ const SettingInfo1: React.FC<{
 
                 <h1> Email</h1>
                 <div className="flex flex-row ml-5 gap-1">
-                    <h2 className="arcade text-white">{(shown) ? a : CurrentUser.email} </h2>
+                    <h2 className="arcade text-white">{(shown) ? a : CurrentUser?.email} </h2>
                     <div className="ml-5">
                         <BasicButtons1 classNam="" onClick={swap} text={"Show"} />
                     </div>
@@ -311,12 +312,14 @@ const SettingModal: React.FC<{
     const submitForm : SubmitHandler<profileUpdate> = (data) => {
 
         let formData = new FormData();
-        const name = data.name ? data.name : username;
+        const name = data?.name ? data.name : username;
+        console.log("name from profile = ", name, "printi all data =", data);
     	formData.append('username', name);
     	formData.append('avatar', imageFile);
         
     	formData.append('twofa', tfa ? "true" : "false");
-        console.log("formdata" , data.name, "avatar ", imageFile);
+        console.log("formdata" , data?.name, "avatar ", imageFile);
+        console.log("form data = ", formData);
         updateInfo(formData).then((data) => {
             // console.log(data);
             // updates = !updates;
@@ -405,14 +408,12 @@ const TfaModal: React.FC<{
 
     const submitForm : SubmitHandler<{token : string}> = (data) => {
 
-        let formData = new FormData();
         const name = data.token ? data.token : "9999";
-        console.log("aaa", name);
-
-        localService.post("user/2fa/verify", {token : name}).then(() => 
+        localService.post("user/2fa/verify", {token : name}).then((res) => 
         
             {
-                    setTok(name);
+                console.log("res == ", res)
+                    setTok(res.data.recoveryCode);
                 toast({
                     title: `Save this Number to reset 2fa : ${name} `,
           containerStyle: {

@@ -1,11 +1,11 @@
-import { Box, Flex, Grid, useToast } from "@chakra-ui/react";
+import { Box, Grid, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { IoCloseCircleSharp } from "react-icons/io5";
-import { Navigate, useNavigate } from "react-router-dom";
-import { BasicButtons, BasicButtons1 } from "../EditProfil/SideBarE";
-import { AllRooms, joinRoom } from "../Services/room";
-import { socket, SocketContext } from "../Services/sockets";
+import { useNavigate } from "react-router-dom";
+import { BasicButtons } from "../EditProfil/SideBarE";
+import { AllRooms } from "../Services/room";
+import { SocketContext } from "../Services/sockets";
 import { Privacy, roomModal } from "../Types/types";
 
 const logo = require("../../images/searchImage.jpeg");

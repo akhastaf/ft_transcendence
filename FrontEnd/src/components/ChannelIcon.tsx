@@ -4,7 +4,7 @@ import { Avatar } from "@material-tailwind/react";
 
 import { useDispatch } from 'react-redux';
 import { setChannelInfo } from '../features/channelSlice';
-import { ChatType, RoomType } from './Types/types';
+import {  RoomType } from './Types/types';
 
 
 const image = require('../images/yoko.png');

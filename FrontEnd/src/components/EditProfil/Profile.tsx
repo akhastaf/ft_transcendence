@@ -1,10 +1,9 @@
 import { Flex, VStack , Image, Stack, Heading, Button, Text, Box, Menu, MenuList, StackDivider, Avatar} from '@chakra-ui/react';
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
 import React, {useEffect, useState} from 'react'
-import { set } from 'react-hook-form';
+
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { ScoreCard } from '../Game/LeaderBoad';
-import { getGames } from '../Services/game';
 import { getCurrentUser, getUserAchivements, getUsergame } from '../Services/user';
 import { Achievements, Game, UserType } from '../Types/types';
 
@@ -14,12 +13,12 @@ import { Achievements, Game, UserType } from '../Types/types';
 const Achievement: React.FC <{}> 
 = ({}) => {
 
-    const [achievements, setAchievements] = useState<Achievements[]> ();
+    const [user, setUser] = useState<UserType> ();
 
     useEffect(() => {
-      getUserAchivements().then((res) => {
-        setAchievements(res);
-        console.log("achivement = ", res, "set achi ", achievements);
+      getCurrentUser().then((res) => {
+        setUser(res);
+        // console.log("achivement = ", res, "set achi ", achievements);
       })
     },[])
     return <>
@@ -42,7 +41,7 @@ const Achievement: React.FC <{}>
                     },
                 }}>
         {
-          achievements ? achievements?.map((achi) => (
+          user?.achievements ? user.achievements?.map((achi) => (
             <Box>
             <Heading size='xs' textTransform='uppercase'>
               {achi.type}
@@ -54,7 +53,7 @@ const Achievement: React.FC <{}>
               </Text>
             </Flex>
           </Box>
-          )) : <Text>not Found</Text>
+          )) : <Heading>No achivement Yet</Heading>
         }
     </Stack>
   </CardBody>
@@ -174,7 +173,7 @@ export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos})
       
           <CardFooter>
           <Text py='2'>
-            Recent Achivement : won 3 games
+            Recent Achivement : {user?.achievements ? user?.achievements.at(-1)?.type : "No Achievement Yet"}
             </Text>
           </CardFooter>
         </Stack>
@@ -190,7 +189,6 @@ const Profil : React.FC <{currentUser : UserType, closeModal : () => void}> = ({
       currentUser = res;
       setUser1(res);
       getUsergame(res.id).then((res) => {
-        // console.log("user. ", currentUser.id)
         setGames(res);
     })
     })

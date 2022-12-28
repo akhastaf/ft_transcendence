@@ -9,7 +9,7 @@ import { ChatType, MessageModal, Privacy, Role, roomModal, RoomType , Userstatus
 import ChatHeader from './ChatSide/ChatHeader';
 import { localService } from '../api/axios'
 import MessagesSection from './ChatSide/MessagesSection';
-import { getAUser, getCurrentUser, GetFriends, getMyRole } from './Services/user';
+import { getAUser, getCurrentUser, getMyRole } from './Services/user';
 import MessageInput from './ChatSide/MessageInput';
 import GameHome from './Game/GameHome';
 import { SocketContext } from './Services/sockets'
@@ -17,94 +17,14 @@ import ChannelsDisplay from './pages/ChannelsDisplay';
 import { getDmMessages, getRoomMessages } from './Services/messages';
 import { toast } from 'react-toastify';
 
-import { refreshVar } from './SideBar/MemberCard';
 import { Flex, Box } from '@chakra-ui/react';
 import Game from './Game/Game';
 
-// const channel2 = require('../images/yoko.png');
 
-// const users1: UserType[] = [
 
-// 	{
-// 		_id: "1",
-// 		username: 'John Smith',
-// 		createdAt: new Date(),
-// 		updatedAt: new Date(),
-// 		notifications: 0,
-// 		isOnline: false,
-// 		avatar: channel2,
-// 		email: "hello@gmail.com",
-// 		phoneNumber: "",
-// 		friends: [],
-// 		bloked: [],
-// 		status: Userstatus.OFFLINE,
-// 	},
-// 	{
-// 		_id: "2",
-// 		username: 'med trevor',
-// 		createdAt: new Date(),
-// 		updatedAt: new Date(),
-// 		notifications: 1,
-// 		isOnline: true,
-// 		avatar: channel2,
-// 		email: "hello@gmail.com",
-// 		phoneNumber: "",
-// 		friends: [],
-// 		bloked: [],
-// 		status: Userstatus.OFFLINE,
-// 	},
-// 	{
-// 		_id: "2",
-// 		username: 'John www',
-// 		createdAt: new Date(),
-// 		updatedAt: new Date(),
-// 		notifications: 6,
-// 		isOnline: true,
-// 		avatar: channel2,
-// 		email: "hello@gmail.com",
-// 		phoneNumber: "",
-// 		friends: [],
-// 		bloked: [],
-// 		status: Userstatus.OFFLINE,
-// 	}
 
-// ];
-
-let updates1 : boolean = false;
-// export const updates = React.createContext(updates1);
-const DUMMY_MESSAGES:  MessageModal[]  = [
-	// botRoom: [
-		{
-			userId: 999999,
-			userName: "Jarvis",
-			currentUser: true,
-			message: "Jarvis say Hi , Congrats You are banned",
-			date: new Date(),
-			avatar: "nvm",
-			roomId : "1",
-		},
-		// ],
-	]
 	
-	
-	
-	// const createNewMsg = (
-		// 	content: string,
-		// 	roomId: string,
-		// 	user: UserType
-		// ): MessageModal => {
-			
-			// 	return {
-				// 		roomId: roomId,
-				// 		avatar: user.avatar,
-				// 		userName : user.username,
-				// 		message: content,
-				// 		date : new Date(),
-				// 		currentUser : true,
-				// 		userId : parseInt(user._id),
-				// 	};
-				// };
-				
+
 				
 const Home: React.FC<{
 	state: string
@@ -129,8 +49,7 @@ const Home: React.FC<{
 
 	const [users, setUsers] = useState<any>([]);
 	// eslint-disable-next-line
-	const [allRooms, setAllRooms] = useState<any>([]);
-	const [userUpated, setUserUpdated] = useState<boolean>(false);
+
 
 	const [rooms, setRooms] = useState<any>([
 		{
@@ -173,6 +92,7 @@ const Home: React.FC<{
 			getCurrentUser()
 				.then((user) => {
 					setUserInfo(user);
+					// console.log("hello = ", userInfo);
 
 				})
 				.catch((err) => console.log(err));
@@ -198,7 +118,6 @@ const Home: React.FC<{
 		// eslint-disable-next-line
 		const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 		// eslint-disable-next-line
-		const [friends, setFriends] = useState<string[]>([]);
 		const [wrongId, setWrongId] = useState<any>("");
 	
 		const [choosenChat, setChoosenChat] = useState<ChatType>({

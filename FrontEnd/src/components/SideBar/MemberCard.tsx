@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar,useDisclosure, Modal, ModalOverlay, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, ModalContent, HStack, Input, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack, Heading } from '@chakra-ui/react'
+import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack, Heading } from '@chakra-ui/react'
 // import { toast, ToastContainer } from 'react-toastify';
-import { AddFriend, BlockFriend, GetBlockedFriends, getBlockedList, GetFriends, getMyRole, setADmin, setStatus, unsetADmin, unsetStatus } from '../Services/user';
-import { ChatType, Role, Status, userModel, Userstatus, UserType } from '../Types/types';
+import { AddFriend, BlockFriend, getBlockedList, GetFriends, setADmin, setStatus, unsetADmin, unsetStatus } from '../Services/user';
+import { ChatType, Role, Status, userModel } from '../Types/types';
 import {
 	Popover,
 	PopoverTrigger,
@@ -12,11 +12,7 @@ import {
 	PopoverFooter,
 	PopoverArrow,
 	PopoverCloseButton,
-	PopoverAnchor,
   } from '@chakra-ui/react';
-//   import { Radio, RadioGroup } from '@chakra-ui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline';
-import { ChannelSetting } from './SideBar';
 import Profile from './profile';
 import { SocketContext } from '../Services/sockets';
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +61,6 @@ const MemberCard: React.FC<{
 				duration: 9000,
 				isClosable: true,
 			  })
-			// console.log("he is banned/muted")
 		})
 
 	}

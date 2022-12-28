@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import { io, Socket } from "socket.io-client";
 // import { getAllRomsAndUsersApi } from "../Services/room";
-import { ChatType, IFormInput, Privacy, Role, userModel, UserType } from "../Types/types";
-import { ChevronDownIcon, CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
+import { ChatType, Privacy, Role, userModel, UserType } from "../Types/types";
+import { CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
 // import ChannelIcon from '../ChannelIcon';
 // import {IoCompassOutline } from 'react-icons/io5';
 import MemberCard from './MemberCard';
@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { socket, SocketContext } from "../Services/sockets";
-import { Avatar, Badge, Box, Button, ButtonGroup, Flex, FormControl, FormLabel, Heading, Input, Select, Text, Toast, useToast } from "@chakra-ui/react";
+import { Avatar, Badge, Box, Button, ButtonGroup, Flex, Heading,  Text,  useToast } from "@chakra-ui/react";
 import { changePassword, ChangePrivacy, deletePassword, GetFriends } from "../Services/user";
 import { getPrivacy } from "../Services/room";
 
@@ -81,16 +81,14 @@ const SideBar: React.FC<{
 
     }, [usersState])
   const openModal = () => {
-    // console.log("hello world!");
     setShowModal(true);
-    // Navigate("/EditInfo");
 
   };
   const openModal1 = () => {
-    // console.log("hello world!");
+
     if (state === "ROOM" && role === Role.OWNER)
     setSettingModal(true);
-    // Navigate("/EditInfo");
+  
 
   };
   const openModal2 = () => {
@@ -99,14 +97,7 @@ const SideBar: React.FC<{
     // Navigate("/EditInfo");
 
   };
-  useEffect(() => {
-    console.log("state = ", usersState)
-  },[usersState])
-  useEffect(() => {
-    console.log("users = .    ", users);
-  }
 
-    , [])
   const toast = useToast();
   const leaveGroup = () => {
     socket.emit("leaveGroup_client", { id_group : parseInt(choosenChat._id)} , (data: any) => {
@@ -132,7 +123,7 @@ const SideBar: React.FC<{
 
 
     <div className="bg-discord_secondSideBar h-screen flex flex-col min-win-max">
-      <h2 onClick={openModal1} className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.username} {choosenChat.username === "" && "FRIENDS"} <CogIcon className="h-4 ml-2" />
+      <h2 onClick={openModal1} className="flex text-white font-bold text-sm items-center justify-between border-b border-gray-800 p-4 hover:bg-emerald-400 cursor-pointer">{choosenChat.username} {choosenChat.username === "" && "Private Messages"} <CogIcon className="h-4 ml-2" />
 
         {
           (showSettingModal && state === "ROOM") && <ChannelSetting id={choosenChat._id} setShowModal={setSettingModal} />
@@ -143,7 +134,7 @@ const SideBar: React.FC<{
         {
 
           users?.length > 0 && users?.map((user: userModel) => {
-            if (user.name !== currentUser.username)
+            if (user.name !== currentUser?.username)
 
               return (
                 <MemberCard
@@ -190,13 +181,13 @@ const SideBar: React.FC<{
         <div className="flex items-center space-x-1">
           <img
             // src={user?.photoURL}
-            src={currentUser.avatar}
+            src={currentUser?.avatar}
             alt=""
             className="h-10 rounded-full"
             onClick={logoutHandler}
           />
           <h4 className="text-white text-xs font-medium">
-            {currentUser.username}{" "}
+            {currentUser?.username}{" "}
             {/* <span className="text-[#b9bbbe] block">
                   #{currentUser.id.substring(0, 4)}
                 </span> */}

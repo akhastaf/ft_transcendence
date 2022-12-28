@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Game, UserType } from "../Types/types"
+import {  UserType } from "../Types/types"
 import CardMode from "./GameCard"
 // import Leaderboard from "./LeaderBoad"
 import {LeaderBoad1} from "../EditProfil/Profile"
@@ -9,7 +9,7 @@ import { getGames } from "../Services/game"
 
 const GameHome : React.FC <{
     currentUser: UserType
-}> = ({currentUser}) => {
+}> = () => {
     const [games, setGames] = useState<any>(
 
     );

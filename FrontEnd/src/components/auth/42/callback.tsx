@@ -39,7 +39,6 @@ export default function Callback() {
   useEffect(() => {
     // const access_token = queryParams.get('accessToken');
     const access_token = searchParams.get("accessToken");
-    const URL = "http://localhost:3000";
     const twfa = searchParams.get("twofa");
     r.auth = { token: access_token };
     if (twfa) {

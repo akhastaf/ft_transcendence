@@ -4,7 +4,6 @@ import AddChannel from '../AddChannel';
 import {IoCompassOutline } from 'react-icons/io5';
 import ChannelIcon from '../ChannelIcon';
 import {PlusIcon } from '@heroicons/react/outline';
-import { GiSecurityGate } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 
