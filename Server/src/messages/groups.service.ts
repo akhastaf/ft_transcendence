@@ -289,6 +289,7 @@ export class GroupsService {
 	async isGroupMember(id_user: number, id_group: number){
 		try
 		{
+			console.log('user ', id_user, 'group ', id_group);
 			const is_member = await this.userToGroupRepository
 			.createQueryBuilder("userToGroup")
 			.leftJoinAndSelect("userToGroup.user", "user")
@@ -887,18 +888,20 @@ export class GroupsService {
 		try
 		{
 			const is_member = await this.isGroupMember(id_user, id_group);
+			console.log(is_member);
 			if (!is_member || is_member.role !== Role.OWNER)
 			{
 				throw new ForbiddenException("You are not allowed to delete this group");
 				console.log("You are not allowed to delete this group");
 				return false;
 			}
-			return await this.groupRepository
+			const ret= await this.groupRepository
 			.createQueryBuilder('group')
 			.delete()
 			.from(Group)
 			.where("id = :id", { id: id_group })
 			.execute();
+			return ret;
 		}
 		catch(e)
 		{

@@ -15,7 +15,6 @@ import { Gamestate, Net } from "../Types/types";
                 useEffect(() => {
                     canvas = canvasRef.current
                     ctx = canvas.getContext("2d"); 
-                    // console.log("canva", canvas);
 
                     net = {
                             x: canvas!.width / 2 - 1,

@@ -92,7 +92,7 @@ export class GameService {
             this.server.emit('connection', {});
             gamelocal.players.push(player);
             player.socket.join(gamelocal.room);
-            this.server.to(player.socket.id).emit('game', gamelocal.room);
+            //this.server.to(player.socket.id).emit('game', gamelocal.room);
             if (!game.player1)
                 game.player1 = s.user;
             else if (!game.player2)
@@ -200,7 +200,7 @@ export class GameService {
             ball: new Ball(),
             width: 800,
             height: 500,
-            maxScore: 30,
+            maxScore: 11,
             mode: mode,
             countdown: 0,
             computerLevel: 0.1,
@@ -411,7 +411,7 @@ export class GameService {
         const game = this.createGame(GameMode.CLASSIC);
         const player = this.createPlayer(client, game);
         game.players.push(player);
-        // console.log(player.user);
+        client.join(game.room);
         this.inviteGames.set(game.room, game);
     }
 
@@ -430,6 +430,7 @@ export class GameService {
                 this.server.to(client.user.id.toString()).emit('ready');
                 await this.userService.setStatus(player.user, Userstatus.PLAYING);
                 await this.userService.setStatus(gameLocal.players[0].user, Userstatus.PLAYING);
+                client.join(game.room);
                 break;
             }
         }
@@ -437,6 +438,7 @@ export class GameService {
     async reject_game(client: SocketWithUser, userId: number) {
         for (const gameLocal of this.inviteGames.values()) {
             if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
+                gameLocal.players[0].socket.leave(gameLocal.room);
                 this.inviteGames.delete(gameLocal.room);
             }
         }
