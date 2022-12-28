@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Logger, Param, ParseIntPipe, Post, Req, Res, UnauthorizedException, UseGuards, UseFilters } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Param, ParseIntPipe, Post, Req, Res, UnauthorizedException, UseGuards, UseFilters } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ApiTags } from "@nestjs/swagger";
 import { Request, Response } from "express";
@@ -13,7 +13,6 @@ import { HttpExceptionFilter } from "./http-exception.filter";
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-    private logger: Logger = new Logger(AuthController.name);
     constructor(private authService: AuthService,
         private configService: ConfigService) {}
         
@@ -28,9 +27,7 @@ export class AuthController {
     @UseFilters(new HttpExceptionFilter())
     async ftcallback(@Req() req : any, @Res() res: Response)
     {
-        console.log('here not accept the login');
         const {user, newLog} = await this.authService.register(req.user);
-        console.log(user);
         const access: tokens = await this.authService.login(user);
         if (!user.twofa)
         {

@@ -5,8 +5,7 @@ import { UserModule } from "../user/user.module";
 import { FtStrategy } from "./strategies/ft.strategy";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
-import { JwtModule } from "@nestjs/jwt";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import { JWTStrategy } from "./strategies/jwt.strategy";
 import { jwtModule } from "./jwt.module";
 

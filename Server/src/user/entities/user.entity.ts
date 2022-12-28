@@ -1,6 +1,5 @@
 import { Exclude } from "class-transformer";
 import { Achievment } from "src/achievment/entities/achievment.entity";
-import { Game } from "src/game/entites/game.entity";
 import { Group } from "src/messages/entities/group.entity";
 import { Message } from "src/messages/entities/message.entity";
 import { UserToGroup } from "src/messages/entities/usertogroup.entity";

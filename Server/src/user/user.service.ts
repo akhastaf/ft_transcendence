@@ -1,4 +1,4 @@
-import { ForbiddenException, UnauthorizedException, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserProvider } from './entities/user.entity';
@@ -11,15 +11,12 @@ import { Achievment } from 'src/achievment/entities/achievment.entity';
 import { v4 as uuidv4} from "uuid";
 @Injectable()
 export class UserService {
-    private logger: Logger = new Logger(UserService.name);
     constructor (
         private readonly configService: ConfigService,
         private achievmentService: AchievmentService,
         @InjectRepository(User) 
     private userRepository: Repository<User>,
-    ) {
-        // this.logger =
-    }
+    ) { }
     
     async getUsers(): Promise<User[]> {
         return await this.userRepository.find({
@@ -42,7 +39,6 @@ export class UserService {
                     id: id,
                 },
                 relations: {
-                    usertogroup: false,
                     friends: true,
                     bloked: true,
                     achievments: true,
@@ -87,7 +83,6 @@ export class UserService {
 
     async create(userData: any): Promise<any> 
     {
-        console.log(userData.email);
         const user = await this.userRepository.findOneBy({email: userData.email});
         if (user)
             return { user, newLog: false };
@@ -96,21 +91,9 @@ export class UserService {
         const newUser = await this.userRepository.save(createduser);
         return { user: newUser, newLog: true };
     }
-    // async createLocal(userData: RegisterUserDTO): Promise<any> 
-    // {
-    //     const user = this.userRepository.create(userData);
-    //     const newUser = await this.userRepository.save(user);
-    //     const { password, ...rest } =newUser;
-    //     return rest;
-    // }
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {
         try {
-            const updatedUser = await this.userRepository.findOneOrFail({
-                where: {
-                    id: user.id
-                }
-            });
             await this.userRepository.update(user.id, updateUserDTO);
             if (!user.twofa && updateUserDTO.twofa)
             {
@@ -128,7 +111,6 @@ export class UserService {
     }
 
     async verify2fa(user: User, twofaVerificationDTO: TwofaVerificationDTO) : Promise<any> {
-        // const user = await this.userRepository.findOneBy({id});
         if (user.twofa)
             throw new ForbiddenException('2 factor authentication alredy verified');
         const verified = speakeasy.totp.verify({ secret: user.secret_tmp, encoding: 'base32', token: twofaVerificationDTO.token, window: 6});
@@ -158,7 +140,6 @@ export class UserService {
                     id
                 },
             });
-            console.log('before', user.friends);
             if (user.friends!.find((f) => friend.id === f.id) || user.id === id)
                 return user;
             user.friends.push(friend);
@@ -167,7 +148,6 @@ export class UserService {
             await this.userRepository.save(user);
             return user;
         } catch (error) {
-            console.log('add firend error ', error.message);
             throw new ForbiddenException(error.message);
         }
     }
@@ -220,8 +200,8 @@ export class UserService {
             winner.win++;
             looser.loss++;
             winner.level += (winner.level === 0 ? 0.25 : winner.level * 0.25);
-            if (looser.level > 0)
-                looser.loss =- 0,20;
+            if (looser.level > 0,20)
+            looser.loss =- 0,20;
             winner.achievments = [];
             looser.achievments = [];
             const achievments : Achievment[] = await this.achievmentService.findAll();
@@ -230,17 +210,15 @@ export class UserService {
                     && winner.loss <= achievment.loss 
                     && winner.level >= achievment.level)
                     winner.achievments = [achievment, ...winner.achievments];
-                if (looser.win >= achievment.win
-                    && looser.loss <= achievment.loss 
-                    && looser.level >= achievment.level)
-                    looser.achievments = [achievment, ...looser.achievments];
+                    if (looser.win >= achievment.win
+                        && looser.loss <= achievment.loss 
+                        && looser.level >= achievment.level)
+                        looser.achievments = [achievment, ...looser.achievments];
             }
-            
             await this.userRepository.save(winner);
             await this.userRepository.save(looser);
-
         } catch (error) {
-            console.log('here ', error.message);
+            throw new ForbiddenException(error.message);
         }
     }
 
@@ -256,9 +234,18 @@ export class UserService {
         }
     }
 
-    async setStatus(user: User, status: string) {
-        user.status = status;
-        await this.userRepository.save(user);
+    async setStatus(userId: number, status: string) {
+        try {
+            const user = await this.userRepository.findOneOrFail({
+                where : {
+                    id: userId
+                }
+            });
+            user.status = status;
+            await this.userRepository.save(user);
+        } catch (error) {
+            throw new ForbiddenException(error.message);
+        }
     }
     
 }

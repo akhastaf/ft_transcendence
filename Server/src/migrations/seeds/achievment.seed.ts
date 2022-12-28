@@ -1,32 +1,35 @@
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/../../../.env' });
+
 export const AchievmentSeed = [
     {
         type: 'sliver',
-        icon: '/silver.png',
+        icon: process.env.SERVER_HOST + '/uploads/silver.webp',
         description: 'silver',
-        win: 10,
+        win: 15,
         loss: 2,
         level: 3
     },
     {
         type: 'gold',
-        icon: '/gold.png',
+        icon: process.env.SERVER_HOST + '/uploads/gold.webp',
         description: 'gold',
         win: 10,
         loss: 2,
         level: 3
     },
     {
-        type: 'platin',
-        icon: '/platin.png',
-        description: '/platin.png',
+        type: 'platinum',
+        icon: process.env.SERVER_HOST + '/uploads/platinum.webp',
+        description: 'platinum',
         win: 10,
         loss: 2,
         level: 3
     },
     {
-        type: 'bronz',
-        icon: '/bronz.png',
-        description: '/bronz.png',
+        type: 'bronze',
+        icon: process.env.SERVER_HOST + '/uploads/bronze.png',
+        description: 'bronze',
         win: 10,
         loss: 2,
         level: 3

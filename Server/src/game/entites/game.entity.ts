@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany, ManyToMany, ManyToOne, JoinTable } from "typeorm";
+import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne, JoinTable } from "typeorm";
 
 export enum GameStatus {
     WAITING = 'waiting',

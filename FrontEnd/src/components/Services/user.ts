@@ -73,5 +73,14 @@ export const updateInfo = (data : FormData) : Promise<any> => {
 export const kick = () : Promise<any> => {
 	return localService.post("",)
 }
+
+
+export const getUsergame = (id : number) : Promise<any> => {
+	return localService.get("/game/user/" + id).then((res) => res.data);
+}
+export const getUserAchivements = () : Promise<any> => {
+	return localService.get("/achievment").then((res) => res.data);
+}
+
 // export const enableTwoFa = ()
 

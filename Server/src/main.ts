@@ -3,12 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { JWTGuard } from './auth/guards/jwt.guard';
 import { SocketIoAdapter } from './messages/socket-io-adapter';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
-import { UserService } from './user/user.service';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
@@ -17,7 +14,6 @@ async function bootstrap() {
     }
   });
   const configService = app.get(ConfigService);
-//   const userService = app.get(UserService);
   app.useWebSocketAdapter(new SocketIoAdapter(app, configService))
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

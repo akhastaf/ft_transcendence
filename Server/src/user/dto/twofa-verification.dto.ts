@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumberString, IsString, Length, MaxLength } from "class-validator";
+import { IsNumberString, IsString, Length } from "class-validator";
 
 export class TwofaVerificationDTO {
     @ApiProperty()

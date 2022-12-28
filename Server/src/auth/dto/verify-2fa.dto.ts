@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsAlphanumeric, IsNotEmpty, IsNumber, IsNumberString, MaxLength, MinLength } from "class-validator";
+import { IsNumber, IsNumberString } from "class-validator";
 
 export class Verify2FaDTO {
     @ApiProperty()

@@ -196,8 +196,8 @@ const App1: React.FC<{
 		setIsShown(false);
 	};
 	
-	const [blocked, setBlocked] = useState<UserType[]>();
-	const [friends, setFriends] = useState<UserType[]>();
+	const [blocked, setBlocked] = useState<any[]>();
+	const [friends, setFriends] = useState<any[]>();
 
 
 	const checkIfFriend = (id : number) => {
@@ -205,23 +205,29 @@ const App1: React.FC<{
 		GetFriends().then((res)=> {
 			setFriends(res)
 		}).catch(err => console.log(err))
-
-		const check = (friends && friends.filter(friend => parseInt(friend._id) === id) ? true : false)
-		return check;
+		// setIsFriend(checkIfFriend(user.id));
+		// setIsBlocked(checkIfBlocked(user.id));
+		// const check = ((friends && friends.filter(friend => parseInt(friend.id) === id)) ? true : false)
+		friends?.map((friend) => {
+			if (friend.id === id)
+				setIsFriend(true);
+		})
+		// return check;
 	}
 	const checkIfBlocked = (id : number) => {
 		getBlockedList().then((res)=> {
 			setBlocked(res)
 		}).catch(err => console.log(err))
-
-		const check = (blocked && blocked.filter(blocked => parseInt(blocked._id) === id) ? true : false)
-		return check;
+		blocked?.map((block) => {
+			if (block.id === id)
+				setIsBlocked(true);
+		})
 	}
 
 	// Do what you want when an option in the context menu is selected
 	const [selectedValue, setSelectedValue] = useState<String>();
-	const [isblocked, setIsBlocked] = useState<boolean>();
-	const [isFriend, setIsFriend] = useState<boolean>();
+	const [isblocked, setIsBlocked] = useState<boolean>(false);
+	const [isFriend, setIsFriend] = useState<boolean>(false);
 	const [FBUpdate, setFBUpdate] = useState<boolean>(false);
 	const [che, setChe] = useState<boolean>(false);
 	
@@ -274,9 +280,14 @@ const App1: React.FC<{
 	const [pro, setPro] = useState(false);
 
 	useEffect (() => {
-		setIsFriend(checkIfFriend(user.id));
-		setIsBlocked(checkIfBlocked(user.id));
+		checkIfFriend(user.id);
+		checkIfBlocked(user.id);
 	}, [FBUpdate])
+
+	useEffect (() => {
+		checkIfFriend(user.id);
+		checkIfBlocked(user.id);
+	})
 
 	const Memberstat = user.status === "online" ? "text-green-400" : user.status === "offline" ? "text-red-500" : "text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";

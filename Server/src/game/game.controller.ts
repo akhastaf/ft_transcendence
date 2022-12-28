@@ -1,5 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, Post, UseFilters, UseGuards, UseInterceptors } from "@nestjs/common";
-import { Interval } from "@nestjs/schedule";
+import {ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JWTGuard } from "src/auth/guards/jwt.guard";
 import { Game } from "./entites/game.entity";
