@@ -68,7 +68,7 @@ async function refreshAccesToken() {
         console.log("yup i am njjj", data);
             // return true;
     }).catch((err) => {
-
+    localStorage.removeItem("accessToken");
         console.log(err);
         // return false
     })

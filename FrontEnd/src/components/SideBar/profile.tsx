@@ -3,7 +3,7 @@ import { current } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { Fcard } from "../EditProfil/Profile";
-import { getAUser } from "../Services/user";
+import { getAUser, getCurrentUser } from "../Services/user";
 import { userModel, Userstatus, UserType } from "../Types/types";
 
 
@@ -15,7 +15,7 @@ const Profile : React.FC <{
 }> = ({closeModal, user}) => {
 
     const [userInfo, setUserInfo] = useState<UserType>({
-        _id: "",
+        id: "",
 		username: "",
 		createdAt: new Date(),
 		updatedAt: new Date(),
@@ -26,12 +26,27 @@ const Profile : React.FC <{
 		bloked: [],
 		status: Userstatus.OFFLINE,
 		twofa : false,
+        level : 0,
+        win : 0,
+        loss : 0,
+        achievements : [],
     })
+    const [fon , setFon] = useState(true);
     useEffect(() => {
     getAUser(user.id)
     .then((res) => {
         setUserInfo(res);
-    }) 
+    })
+    // console.log("user = ", userInfo);
+    getCurrentUser().then((res) => {
+        console.log("res = ", res);
+    res.friends?.map((friend : any) => {
+        console.log("user c id = ", user.id, "friend id = ", friend.id)
+        if (parseInt(friend.id) == user.id)
+        {
+            setFon(false);
+        }
+    })})
 },[])
    
     return <>
@@ -53,7 +68,7 @@ const Profile : React.FC <{
                             <h2 className="text-center text-xl font-bold text-white">{user.name}'s Profile </h2>
                 
                         </Flex>
-                        <Fcard user={userInfo}/>
+                        <Fcard user={userInfo} pos={fon} />
                         </Flex>
                     </Flex>
 

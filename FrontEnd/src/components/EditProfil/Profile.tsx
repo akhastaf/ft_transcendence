@@ -1,18 +1,29 @@
-import { Flex, VStack , Image, Stack, Heading, Button, Text, Box, Menu, MenuList, StackDivider} from '@chakra-ui/react';
+import { Flex, VStack , Image, Stack, Heading, Button, Text, Box, Menu, MenuList, StackDivider, Avatar} from '@chakra-ui/react';
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
 import React, {useEffect, useState} from 'react'
+import { set } from 'react-hook-form';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { ScoreCard } from '../Game/LeaderBoad';
 import { getGames } from '../Services/game';
-import { Game, UserType } from '../Types/types';
+import { getCurrentUser, getUserAchivements, getUsergame } from '../Services/user';
+import { Achievements, Game, UserType } from '../Types/types';
 
 
 
 
 const Achievement: React.FC <{}> 
 = ({}) => {
+
+    const [achievements, setAchievements] = useState<Achievements[]> ();
+
+    useEffect(() => {
+      getUserAchivements().then((res) => {
+        setAchievements(res);
+        console.log("achivement = ", res, "set achi ", achievements);
+      })
+    },[])
     return <>
-   <Card bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
+   <Card w={"100%"} minW={"300px"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
   <CardHeader>
     <Heading size='md'>Achivements</Heading>
   </CardHeader>
@@ -30,30 +41,21 @@ const Achievement: React.FC <{}>
                         borderRadius: "24px",
                     },
                 }}>
-      <Box>
-        <Heading size='xs' textTransform='uppercase'>
-          Summary
-        </Heading>
-        <Text pt='2' fontSize='sm'>
-          View a summary of all your clients over the last month.
-        </Text>
-      </Box>
-      <Box>
-        <Heading size='xs' textTransform='uppercase'>
-          Overview
-        </Heading>
-        <Text pt='2' fontSize='sm'>
-          Check out the overview of your clients.
-        </Text>
-      </Box>
-      <Box>
-        <Heading size='xs' textTransform='uppercase'>
-          Analysis
-        </Heading>
-        <Text pt='2' fontSize='sm'>
-          See a detailed analysis of all your business clients.
-        </Text>
-      </Box>
+        {
+          achievements ? achievements?.map((achi) => (
+            <Box>
+            <Heading size='xs' textTransform='uppercase'>
+              {achi.type}
+            </Heading>
+            <Flex flexDir={"row"} gap={"10px"} justifyContent={"flex-start"} alignItems={"center"}>
+              <Avatar src={achi.icon} />
+              <Text pt='2' fontSize='sm'>
+                {achi.description}
+              </Text>
+            </Flex>
+          </Box>
+          )) : <Text>not Found</Text>
+        }
     </Stack>
   </CardBody>
 </Card></>
@@ -131,7 +133,10 @@ const Leaderboard: React.FC<{
     </>
 }
 
-export const Fcard : React.FC <{user : UserType}> = ({user}) => {
+export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos}) => {
+
+
+
     return (<Card
         direction={{ base: 'column', sm: 'row' }}
         overflow='hidden'
@@ -149,16 +154,22 @@ export const Fcard : React.FC <{user : UserType}> = ({user}) => {
         <Stack>
           <CardBody>
             <Heading size='md'>{user.username}</Heading>
-      
+            <Flex flexDir={"row"} justifyContent={"space-between"} align={"center"}>
+            <Flex flexDir={"column"}>
             <Text py='2'>
-              Level : 2
+              Level : {user.level}
             </Text>
             <Text py='2'>
-              Wins : 2
+              Wins : {user.win}
             </Text>
             <Text py='2'>
-              Loses : 2
+              Loses : {user.loss}
             </Text>
+            </Flex>
+            {
+              pos && <Button>ADD Friend</Button>
+            }
+            </Flex>
           </CardBody>
       
           <CardFooter>
@@ -172,10 +183,18 @@ export const Fcard : React.FC <{user : UserType}> = ({user}) => {
 
 const Profil : React.FC <{currentUser : UserType, closeModal : () => void}> = ({currentUser, closeModal}) => {
   const [games, setGames] = useState<any>();
+  const [user, setUser1] = useState<any>();
   useEffect(() => {
-  getGames().then((res) => {
-      setGames(res);
-  })
+
+    getCurrentUser().then((res) => {
+      currentUser = res;
+      setUser1(res);
+      getUsergame(res.id).then((res) => {
+        // console.log("user. ", currentUser.id)
+        setGames(res);
+    })
+    })
+
 
   },[])
     return (<>
@@ -191,7 +210,7 @@ const Profil : React.FC <{currentUser : UserType, closeModal : () => void}> = ({
                     <IoCloseCircleSharp className="text-emerald-400" />
                 </button>
             </div>
-            <Fcard user={currentUser} />
+            <Fcard user={currentUser} pos={false} />
             <Flex w={"100%"} flexDir={{ base : "column", xxl : "row"}} justifyContent={"space-between"} alignItems={"center"} gap={7} >
                 <Flex w={"100%"} p={"5%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={7}>
                     <Text> Recent Games</Text>
