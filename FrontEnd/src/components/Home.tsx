@@ -272,7 +272,7 @@ const Home: React.FC<{
 			// eslint-disable-next-line
 			getAllRooms().then((data) =>
 			{
-				data.map((room : roomModal) => {
+				data?.map((room : roomModal) => {
 					if (room.id === parseInt(id2))
 					{
 						setChoosenChat(() => ({username : room.name, _id: id2}));
@@ -299,7 +299,7 @@ const Home: React.FC<{
 				;
 			getRoomMessages(parseInt(id2))
 			.then ((res) => {
-				let sorted = res.sort((d1 : MessageModal, d2 : MessageModal) => (d1.date > d2.date ? 1 : d1.date < d2.date ? - 1 : 0));
+				let sorted = res?.sort((d1 : MessageModal, d2 : MessageModal) => (d1.date > d2.date ? 1 : d1.date < d2.date ? - 1 : 0));
 				setMessages1(sorted);
 			})
 			.catch((err) => console.log(err));
@@ -307,7 +307,7 @@ const Home: React.FC<{
 		}
 
 
-	},[ id2, state ,messageRef, users.friends, usersState, ])
+	},[ id2, state ,messageRef, users?.friends, usersState, ])
 
 
 

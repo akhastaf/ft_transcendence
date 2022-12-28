@@ -28,7 +28,7 @@ const MessagesSection : React.FC <{
     return (<>
     <div className="h-screen flex flex-col gap-10">
     <div  className="h-5/6 relative flex flex-col mt-[60px]  mb-[20px] gap-10 overflow-y-auto scrollbar-hide ">
-			{messages.map((message: MessageModal, idx) => (
+			{messages?.map((message: MessageModal, idx) => (
 				
 				message && <MessageCard
 					key={message.userId + "" + idx}

@@ -31,8 +31,8 @@ const FriendList : React.FC <{
                     <div className="flow-root">
                          <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
-                                (currentUser.friends.length === 0) ? <li className="text-black arcade"> You Have No Friends Yet</li> :
-                                currentUser.friends.map((friend: UserType) => (
+                                (currentUser?.friends?.length === 0) ? <li className="text-black arcade"> You Have No Friends Yet</li> :
+                                currentUser?.friends?.map((friend: UserType) => (
                                    <li> <FriendCard currentUser={friend}/></li>
 
                                 ))
