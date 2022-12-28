@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   token = localStorage.getItem('accessToken');
 }
 
-const URL = `${process.env.ServerHostName}`;
+const URL = `${process.env.REACT_APP_ServerHostName}`;
 
 export const socket = io(URL, {
   withCredentials: true,
