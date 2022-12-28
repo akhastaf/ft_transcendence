@@ -148,7 +148,7 @@ const Home: React.FC<{
 		}
 	]);
 	const [userInfo, setUserInfo] = useState<UserType>({
-		_id: "",
+		id: "",
 		username: "wqqewqeq",
 		createdAt: new Date(),
 		updatedAt: new Date(),
@@ -159,6 +159,11 @@ const Home: React.FC<{
 		bloked: [],
 		status: Userstatus.OFFLINE,
 		twofa : false,
+		win : 0, 
+		loss : 0,
+		level : 0,
+		achievements : [],
+
 	});
 
 

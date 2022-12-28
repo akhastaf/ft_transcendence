@@ -1,3 +1,4 @@
+import { GiAchievement } from "react-icons/gi";
 
 
 export enum GameStatus {
@@ -64,9 +65,18 @@ export type GameStates = {
 	updatedAt : Date
 }
 
+export type Achievements = {
+	id : number;
+	type : string;
+	icon : string;
+	description : string;
+	win : number;
+	loss : number;
+	level : number;
+}
 
 export type UserType = {
-	_id: string;
+	id: string;
 	username: string;
 	createdAt: Date;
 	updatedAt: Date;
@@ -78,8 +88,11 @@ export type UserType = {
 	friends: UserType[];
 	bloked: UserType[],
 	status: string,
-	twofa : boolean
-	// achievements: AchivementType[]
+	twofa : boolean,
+	win : number,
+	loss : number,
+	level : number
+	achievements: Achievements[];
 }
 
 export type AuthUserType = {

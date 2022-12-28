@@ -136,7 +136,7 @@ const UserCard: React.FC<{
                                         className="h-24 rounded-full"
                                     />
                                     <h1 className="arcade  text-white pt-12 "> {currentUser.username}</h1>
-                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser._id}</h1>
+                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser.id}</h1>
                              </div>
 
 
@@ -225,7 +225,7 @@ const SettingInfo: React.FC<{
                 <h1> Username</h1>
                 <div className="flex flex-row ml-5 gap-1">
                     <h2 className="arcade text-white">{CurrentUser.username} </h2>
-                    <h2 className="arcade text-gray-400"> {"#" + CurrentUser._id} </h2>
+                    <h2 className="arcade text-gray-400"> {"#" + CurrentUser.id} </h2>
                 </div>
             </div>
             <div className="m-auto">
