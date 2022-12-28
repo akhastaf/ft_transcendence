@@ -233,55 +233,59 @@ export class GameService {
 
     async update(game: GameLocal) {
 
-        // Get left player
-        const rightPlayer = game.players[1];
-        const leftPlayer = game.players[0];
-
-        game.ball.x += game.ball.velocityX;
-        game.ball.y += game.ball.velocityY;
-
-        // control computer paddle
-        if (game.mode === GameMode.CUSTOM)
-            rightPlayer.y += (game.ball.y - (rightPlayer.y + rightPlayer.height/2)) * game.computerLevel;
-
-        if (game.ball.y + game.ball.radius > game.height || game.ball.y - game.ball.radius < 0) {
-            game.ball.velocityY *= -1;
-        }
-        
-        const player = game.ball.x < game.width/2 ? leftPlayer : rightPlayer;
-        if (this.collision(game.ball, player)) {
-            let colliedPoint: number = (game.ball.y - (player.y + player.height/2));
-            colliedPoint /= (player.height/2);
-            const angleRad: number = colliedPoint * (Math.PI/4);
-
-            const direction: number = game.ball.x < game.width/2 ? 1 : -1;
-
-            game.ball.velocityX = direction * game.ball.speed * Math.cos(angleRad);
-            game.ball.velocityY = game.ball.speed * Math.sin(angleRad);
-
-            game.ball.speed += 0.3;
-        } 
-
-        if (game.ball.x - game.ball.radius < 0) {
-            rightPlayer.score++;
-            this.resetBall(game);
-        }
-        if (game.ball.x + game.ball.radius > game.width) {
-            leftPlayer.score++;
-            this.resetBall(game);
-        }
-        this.emit(game, 'gamestate', this.getGameState(game));
-        const updatedGame = await this.gameRepository.findOne({
-            where: {
-                room: game.room,
+        try {
+            // Get left player
+            const rightPlayer = game.players[1];
+            const leftPlayer = game.players[0];
+    
+            game.ball.x += game.ball.velocityX;
+            game.ball.y += game.ball.velocityY;
+    
+            // control computer paddle
+            if (game.mode === GameMode.CUSTOM)
+                rightPlayer.y += (game.ball.y - (rightPlayer.y + rightPlayer.height/2)) * game.computerLevel;
+    
+            if (game.ball.y + game.ball.radius > game.height || game.ball.y - game.ball.radius < 0) {
+                game.ball.velocityY *= -1;
             }
-        });
-        updatedGame.score1 = game.players[0].score;
-        updatedGame.score2 = game.players[1].score;
-        await this.gameRepository.update(updatedGame.id, updatedGame);
-        for (const player of game.players)
-            if (player.score >= game.maxScore)
-                return this.stopGame(game, player);
+            
+            const player = game.ball.x < game.width/2 ? leftPlayer : rightPlayer;
+            if (this.collision(game.ball, player)) {
+                let colliedPoint: number = (game.ball.y - (player.y + player.height/2));
+                colliedPoint /= (player.height/2);
+                const angleRad: number = colliedPoint * (Math.PI/4);
+    
+                const direction: number = game.ball.x < game.width/2 ? 1 : -1;
+    
+                game.ball.velocityX = direction * game.ball.speed * Math.cos(angleRad);
+                game.ball.velocityY = game.ball.speed * Math.sin(angleRad);
+    
+                game.ball.speed += 0.3;
+            } 
+    
+            if (game.ball.x - game.ball.radius < 0) {
+                rightPlayer.score++;
+                this.resetBall(game);
+            }
+            if (game.ball.x + game.ball.radius > game.width) {
+                leftPlayer.score++;
+                this.resetBall(game);
+            }
+            this.emit(game, 'gamestate', this.getGameState(game));
+            const updatedGame = await this.gameRepository.findOne({
+                where: {
+                    room: game.room,
+                }
+            });
+            updatedGame.score1 = game.players[0].score;
+            updatedGame.score2 = game.players[1].score;
+            await this.gameRepository.update(updatedGame.id, updatedGame);
+            for (const player of game.players)
+                if (player.score >= game.maxScore)
+                    return this.stopGame(game, player);
+        } catch (error) {
+            return;
+        }
     }
 
 
@@ -324,7 +328,6 @@ export class GameService {
     }
 
     collision(ball: Ball, player: Player): boolean {
-        
         ball.top = ball.y - ball.radius;
         ball.bottom = ball.y + ball.radius;
 
@@ -338,91 +341,111 @@ export class GameService {
         player.right = player.x + player.width;
 
         return ball.right > player.left && ball.bottom > player.top && ball.left < player.right && ball.top < player.bottom;
+        
     }
 
     getInput(socket: SocketWithUser, input: Input) {
-        
-        for (const game of this.games.values())
-        {
-            if (game.mode === GameMode.CUSTOM)
+        try {
+            for (const game of this.games.values())
             {
-                if (game.players[0].user.id === socket.user.id)
+                if (game.mode === GameMode.CUSTOM)
                 {
-                    const sizeY = game.height / input.height;
-                    game.players[0].y = (input.eventY * sizeY) - (input.top * sizeY) - game.players[0].height / 2;
-
-                    return this.emit(game, 'gamestate', this.getGameState(game));
-                }
-            }
-            else {
-                for(const player of game.players)
-                {
-                    if (player.user.id === socket.user.id)
+                    if (game.players[0].user.id === socket.user.id)
                     {
                         const sizeY = game.height / input.height;
-                        player.y = (input.eventY * sizeY) - (input.top * sizeY) - player.height / 2;
+                        game.players[0].y = (input.eventY * sizeY) - (input.top * sizeY) - game.players[0].height / 2;
+    
                         return this.emit(game, 'gamestate', this.getGameState(game));
                     }
                 }
+                else {
+                    for(const player of game.players)
+                    {
+                        if (player.user.id === socket.user.id)
+                        {
+                            const sizeY = game.height / input.height;
+                            player.y = (input.eventY * sizeY) - (input.top * sizeY) - player.height / 2;
+                            return this.emit(game, 'gamestate', this.getGameState(game));
+                        }
+                    }
+                }
             }
+        } catch (error) {
+            return;
         }
     }
 
     async removePlayer(client: SocketWithUser) {
-        const i: number = this.sockets.indexOf(client);
-        this.sockets.splice(i, 1);
-        for (const game of this.games.values()) {
-                for (const player of game.players) {
-                    if (player.user.id === client.user.id) {
-                        player.score = 0;
-                        const winner = game.players.find((p) => p.user.id != player.user.id);
-                        await this.stopGame(game, winner);
+        try {
+            const i: number = this.sockets.indexOf(client);
+            this.sockets.splice(i, 1);
+            for (const game of this.games.values()) {
+                    for (const player of game.players) {
+                        if (player.user.id === client.user.id) {
+                            player.score = 0;
+                            const winner = game.players.find((p) => p.user.id != player.user.id);
+                            await this.stopGame(game, winner);
+                        }
                     }
-                }
+            }
+        } catch (error) {
+            return;
         }
     }
 
     async inviteToGame(client: SocketWithUser, userId: number, server: Server) {
-        if (this.server === null)
-            this.server = server;
-        for (const g of this.inviteGames.values()) {
-            if (g.players[0].user.id == userId)
-                return;
+        try {
+            if (this.server === null)
+                this.server = server;
+            for (const g of this.inviteGames.values()) {
+                if (g.players[0].user.id == userId)
+                    return;
+            }
+            this.server.to(userId.toString()).emit('inviteToGame_server', {id: client.user.id, username: client.user.username});
+            const game = this.createGame(GameMode.CLASSIC);
+            const player = this.createPlayer(client, game);
+            game.players.push(player);
+            client.join(game.room);
+            this.inviteGames.set(game.room, game);
+        } catch (error) {
+            return;
         }
-        this.server.to(userId.toString()).emit('inviteToGame_server', {id: client.user.id, username: client.user.username});
-        const game = this.createGame(GameMode.CLASSIC);
-        const player = this.createPlayer(client, game);
-        game.players.push(player);
-        client.join(game.room);
-        this.inviteGames.set(game.room, game);
     }
 
     async accept_game(client: SocketWithUser, userId: number) {
-        for (const gameLocal of this.inviteGames.values()) {
-            if (gameLocal.players[0].user.id == userId) {
-                const player = this.createPlayer(client, gameLocal);
-                gameLocal.players.push(player);
-                const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.PLAYING, room: gameLocal.room, mode: gameLocal.mode});
-                game.player1 = gameLocal.players[0].user;
-                game.player2 = player.user;
-                await this.gameRepository.save(game);
-                gameLocal.status = GameStatus.PLAYING;
-                this.games.set(gameLocal.room, gameLocal);
-                this.inviteGames.delete(gameLocal.room);
-                this.server.to(client.user.id.toString()).emit('ready');
-                await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
-                await this.userService.setStatus(gameLocal.players[0].user.id, Userstatus.PLAYING);
-                client.join(game.room);
-                break;
+        try {
+            for (const gameLocal of this.inviteGames.values()) {
+                if (gameLocal.players[0].user.id == userId) {
+                    const player = this.createPlayer(client, gameLocal);
+                    gameLocal.players.push(player);
+                    const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.PLAYING, room: gameLocal.room, mode: gameLocal.mode});
+                    game.player1 = gameLocal.players[0].user;
+                    game.player2 = player.user;
+                    await this.gameRepository.save(game);
+                    gameLocal.status = GameStatus.PLAYING;
+                    this.games.set(gameLocal.room, gameLocal);
+                    this.inviteGames.delete(gameLocal.room);
+                    this.server.to(client.user.id.toString()).emit('ready');
+                    await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
+                    await this.userService.setStatus(gameLocal.players[0].user.id, Userstatus.PLAYING);
+                    client.join(game.room);
+                    break;
+                }
             }
+        } catch (error) {
+            return;
         }
     }
     async reject_game(client: SocketWithUser, userId: number) {
-        for (const gameLocal of this.inviteGames.values()) {
-            if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
-                gameLocal.players[0].socket.leave(gameLocal.room);
-                this.inviteGames.delete(gameLocal.room);
+        try {
+            for (const gameLocal of this.inviteGames.values()) {
+                if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
+                    gameLocal.players[0].socket.leave(gameLocal.room);
+                    this.inviteGames.delete(gameLocal.room);
+                }
             }
+        } catch (error) {
+            return;
         }
     }
 }
