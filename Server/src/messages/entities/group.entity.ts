@@ -28,7 +28,7 @@ export class Group {
 	})
 	privacy: Privacy;
 
-	@Column({nullable: false})
+	@Column({unique: true })
 	name: string;
 
 	@Column({default: "../../../default-user-icon.jpeg"})
