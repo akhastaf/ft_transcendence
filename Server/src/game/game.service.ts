@@ -161,7 +161,7 @@ export class GameService {
 
     joinGame(socket: SocketWithUser, room: string, server : Server): void
     {
-        if (!socket.user || socket.user.status === Userstatus.PLAYING)
+        if (!socket.user || this.checkPlaying(socket))
             return;
         this.clearRoom(socket);
         const game = this.games.get(room);
