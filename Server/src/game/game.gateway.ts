@@ -32,7 +32,7 @@ export class GameGateway {
   }
   @SubscribeMessage('acceptGame_client')
   async acceptGame(client : SocketWithUser, userId: number) {
-    await this.gameService.accept_game(client, userId);
+    await this.gameService.accept_game(client, userId, this.server);
   }
   @SubscribeMessage('rejectGame_client')
   async reject_game(client : SocketWithUser, userId: number) {

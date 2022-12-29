@@ -42,7 +42,7 @@ export class GameService {
     }
 
     async playVsComp(socket : SocketWithUser, mode : string) : Promise<void> {
-        if (socket.user.status === Userstatus.PLAYING)
+        if (this.checkPlaying(socket))
             return;
         const gamelocal : GameLocal = this.createGame(mode as GameMode);
         const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
@@ -63,13 +63,24 @@ export class GameService {
             this.server.emit('newGame_server');
         }
     }
+    checkPlaying(socket: SocketWithUser) {
+        for (const g of this.games.values())
+        {
+            for (const p of g.players) {
+                if (p.user.id === socket.user.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     async add(socket: SocketWithUser, mode: string, server: Server): Promise<void> {
         if (this.server === null)
             this.server = server;
         if (!socket.user)
             return;
-        if (socket.user.status === Userstatus.PLAYING)
+        if (this.checkPlaying(socket))
             return;
         this.clearRoom(socket);
         if (mode === GameMode.CUSTOM)
@@ -397,7 +408,12 @@ export class GameService {
         this.inviteGames.set(game.room, game);
     }
 
-    async accept_game(client: SocketWithUser, userId: number) {
+    async accept_game(client: SocketWithUser, userId: number, server: Server) {
+        if (this.checkPlaying(client))
+        {
+            server.to(userId.toString()).emit('rejectGame_server');
+            return;
+        }
         for (const gameLocal of this.inviteGames.values()) {
             if (gameLocal.players[0].user.id == userId) {
                 const player = this.createPlayer(client, gameLocal);
