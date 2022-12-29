@@ -201,11 +201,11 @@ export class GroupController {
 		return true;
 	}
 
-	@Delete(':id')
-	async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-		// console.log("deleteChannel", id);
-		return await this.groupsService.deleteGroup(req.user.id, id);
-	}
+	// @Delete(':id')
+	// async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+	// 	// console.log("deleteChannel", id);
+	// 	return await this.groupsService.deleteGroup(req.user.id, id);
+	// }
 	// @Patch()
 	// async updateChannel(@Req() req: RequestWithUser, @Body() data: UpdateGroupDto) {
 	// 	console.log("updateChannel : ", data);

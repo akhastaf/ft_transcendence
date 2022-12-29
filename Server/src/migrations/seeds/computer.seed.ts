@@ -10,20 +10,5 @@ export const ComputerSeed = {
 
 
 
-// public async up(queryRunner: QueryRunner): Promise<void> {
-//     const computer = queryRunner.manager.getRepository(User).create(ComputerSeed);
-//     await queryRunner.manager.getRepository(User).save(computer);
-// }
 
-// public async down(queryRunner: QueryRunner): Promise<void> {
-//     // await queryRunner.clearTable('achievment');
-// }
 
-// public async up(queryRunner: QueryRunner): Promise<void> {
-//     const achivments = queryRunner.manager.getRepository(Achievment).create(AchievmentSeed);
-//     await queryRunner.manager.getRepository(Achievment).save(achivments);
-// }
-
-// public async down(queryRunner: QueryRunner): Promise<void> {
-//     await queryRunner.clearTable('achievment');
-// }

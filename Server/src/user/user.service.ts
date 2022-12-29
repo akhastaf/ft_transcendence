@@ -209,11 +209,11 @@ export class UserService {
             })
             winner.win++;
             looser.loss++;
-            winner.level += (winner.level === 0 ? 1 : winner.level * 2);
+            winner.level += Math.ceil((winner.level === 0 ? 1 : winner.level * 0.1));
             winner.achievments = [];
             const achievments : Achievment[] = await this.achievmentService.findAll();
             for (const achievment of achievments) {
-                if (winner.level >= achievment.level)
+                if (winner.level >= achievment.level && this.hasNotAchivement(achievment, winner))
                     winner.achievments = [achievment, ...winner.achievments];
             }
             await this.userRepository.save(winner);
@@ -221,6 +221,13 @@ export class UserService {
         } catch (error) {
             throw new ForbiddenException(error.message);
         }
+    }
+    hasNotAchivement(achievment: Achievment, winner: User) {
+        for (const ach of winner.achievments) {
+            if (ach.id === achievment.id)
+                return false;
+        }
+        return true;
     }
 
     async reset2Fa(user: User) {

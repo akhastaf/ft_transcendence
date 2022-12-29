@@ -147,7 +147,7 @@ export class MessagesGateway {
 			if (!group)
 				return false;
 			const message = await this.messagesService.identify(client.userId, 'has left the channel');
-			console.log('members ', members);
+			// console.log('members ', members);
 			//* send to all users in the room
 			for (const member of members) {
 				if (client.data.id != member.user.id && this.connectedList.has(member.user.id) && member.user.status !== Status.BANNED) {

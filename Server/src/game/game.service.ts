@@ -208,7 +208,7 @@ export class GameService {
             ball: new Ball(),
             width: 800,
             height: 500,
-            maxScore: 11,
+            maxScore: 3,
             mode: mode,
             countdown: 0,
             computerLevel: 0.1,
