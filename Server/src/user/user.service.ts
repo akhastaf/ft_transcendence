@@ -94,13 +94,12 @@ export class UserService {
             const user = await this.userRepository.findOneBy({email: userData.email});
             if (user)
                 return { user, newLog: false };
-            const createduser = this.userRepository.create({ nickname: nickname, username: userData.login, email: userData.email, provider: UserProvider.FT, coalition: userData.color});
+            const createduser = this.userRepository.create({ nickname: nickname, username: userData.login, email: userData.email, avatar: userData.image.link, provider: UserProvider.FT, coalition: userData.color});
             const newUser = await this.userRepository.save(createduser);
             return { user: newUser, newLog: true };
         } catch (error) {
             throw new ForbiddenException();
         }
-        //avatar: userData.image.link
     }
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {
@@ -210,9 +209,7 @@ export class UserService {
             })
             winner.win++;
             looser.loss++;
-            winner.level += (winner.level === 0 ? 0.25 : winner.level * 0.25);
-            if (looser.level > 0,20)
-            looser.loss =- 0,20;
+            winner.level += (winner.level === 0 ? 1 : winner.level * 0.5);
             winner.achievments = [];
             looser.achievments = [];
             const achievments : Achievment[] = await this.achievmentService.findAll();
