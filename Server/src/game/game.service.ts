@@ -173,13 +173,13 @@ export class GameService {
             {
                 const looser = game.players.find((p) => p.user.id != winner.user.id);
                 await this.userService.updateLevel(winner.user.id, looser.user.id);
+                this.emit(game, 'stopgame', {});
                 gameUpdated.status = GameStatus.END;
                 game.status = GameStatus.END;
                 await this.gameRepository.save(gameUpdated);
                 this.server.socketsLeave(game.room);
                 this.userService.setStatus(looser.user.id, Userstatus.ONLINE);
                 this.userService.setStatus(winner.user.id, Userstatus.ONLINE);
-                this.emit(game, 'stopgame', { winner: winner.user, looser: looser.user });
                 this.server.emit('disconnect_server', {});
                 this.games.delete(game.room);
             }
@@ -417,11 +417,12 @@ export class GameService {
             }
         }
     }
-    async reject_game(client: SocketWithUser, userId: number) {
+    async reject_game(client: SocketWithUser, userId: number, server: Server) {
         for (const gameLocal of this.inviteGames.values()) {
             if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
                 gameLocal.players[0].socket.leave(gameLocal.room);
                 this.inviteGames.delete(gameLocal.room);
+                server.to(userId.toString()).emit('rejectGame_server');
             }
         }
     }

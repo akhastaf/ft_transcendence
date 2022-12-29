@@ -9,6 +9,9 @@ import { ConfigService } from '@nestjs/config';
 import { AchievmentService } from 'src/achievment/achievment.service';
 import { Achievment } from 'src/achievment/entities/achievment.entity';
 import { v4 as uuidv4} from "uuid";
+import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator';
+
+
 @Injectable()
 export class UserService {
     constructor (
@@ -83,13 +86,21 @@ export class UserService {
 
     async create(userData: any): Promise<any> 
     {
-        const user = await this.userRepository.findOneBy({email: userData.email});
-        if (user)
-            return { user, newLog: false };
-      
-        const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image.link, provider: UserProvider.FT, coalition: userData.color});
-        const newUser = await this.userRepository.save(createduser);
-        return { user: newUser, newLog: true };
+        try {
+              
+            const nickname: string = uniqueNamesGenerator({
+                dictionaries: [adjectives, colors, animals]
+            });
+            const user = await this.userRepository.findOneBy({email: userData.email});
+            if (user)
+                return { user, newLog: false };
+            const createduser = this.userRepository.create({ nickname: nickname, username: userData.login, email: userData.email, provider: UserProvider.FT, coalition: userData.color});
+            const newUser = await this.userRepository.save(createduser);
+            return { user: newUser, newLog: true };
+        } catch (error) {
+            throw new ForbiddenException();
+        }
+        //avatar: userData.image.link
     }
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {

@@ -4,6 +4,8 @@ import { Group } from "src/messages/entities/group.entity";
 import { Message } from "src/messages/entities/message.entity";
 import { UserToGroup } from "src/messages/entities/usertogroup.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/../../../.env' });
 
 export enum Userstatus {
     ONLINE = "online",
@@ -16,10 +18,12 @@ export enum UserProvider {
     NONE = ""
 }
 
-@Entity()
+@Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
+    @Column({ unique: true})
+    nickname: string;
     @Column({ unique: true})
     username: string;
     @Column({ unique: true })
@@ -32,7 +36,6 @@ export class User {
     @Exclude()
     provider: string;
     @Column({default: false})
-    // @Exclude()
     twofa: boolean;
     @Column({nullable: true})
     @Exclude()
@@ -43,10 +46,8 @@ export class User {
     @Column({nullable: true})
     @Exclude()
     recoveryCode: string;
-    @Column({ default: "/avatar.png"})
+    @Column({ default: `${process.env.SERVER_HOST}/uploads/avatar.png`})
     avatar: string;
-    @Column({ default: "/avatar.png"})
-    ft_avatar: string;
     @Column( {
         type: "enum",
         enum: Userstatus,
