@@ -58,15 +58,15 @@ export class AuthService {
         }
     }
 
-    async getToken(id: number) : Promise<string>{
-        try {
-            const user = await this.userService.getUser(id);
-            const payload = { email: user.email, sub: user.id };
-            return this.jwtService.sign(payload);
-        } catch (error) {
-            throw new ForbiddenException(error.message);
-        }
-    }
+    // async getToken(id: number) : Promise<string>{
+    //     try {
+    //         const user = await this.userService.getUser(id);
+    //         const payload = { email: user.email, sub: user.id };
+    //         return this.jwtService.sign(payload);
+    //     } catch (error) {
+    //         throw new ForbiddenException(error.message);
+    //     }
+    // }
 
     async getAccess_token(refrsh_token: string) : Promise<tokens>{
         try {
