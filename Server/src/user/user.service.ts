@@ -1,7 +1,7 @@
 import { ForbiddenException, UnauthorizedException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserProvider } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as speakeasy from "speakeasy";
 import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
@@ -94,7 +94,7 @@ export class UserService {
             const user = await this.userRepository.findOneBy({email: userData.email});
             if (user)
                 return { user, newLog: false };
-            const createduser = this.userRepository.create({ nickname: nickname, username: userData.login, email: userData.email, avatar: userData.image.link, provider: UserProvider.FT, coalition: userData.color});
+            const createduser = this.userRepository.create({ nickname: nickname, username: userData.login, email: userData.email, avatar: userData.image.link});
             const newUser = await this.userRepository.save(createduser);
             return { user: newUser, newLog: true };
         } catch (error) {
@@ -209,19 +209,12 @@ export class UserService {
             })
             winner.win++;
             looser.loss++;
-            winner.level += (winner.level === 0 ? 1 : winner.level * 0.5);
+            winner.level += (winner.level === 0 ? 1 : winner.level * 2);
             winner.achievments = [];
-            looser.achievments = [];
             const achievments : Achievment[] = await this.achievmentService.findAll();
             for (const achievment of achievments) {
-                if (winner.win >= achievment.win
-                    && winner.loss <= achievment.loss 
-                    && winner.level >= achievment.level)
+                if (winner.level >= achievment.level)
                     winner.achievments = [achievment, ...winner.achievments];
-                    if (looser.win >= achievment.win
-                        && looser.loss <= achievment.loss 
-                        && looser.level >= achievment.level)
-                        looser.achievments = [achievment, ...looser.achievments];
             }
             await this.userRepository.save(winner);
             await this.userRepository.save(looser);

@@ -12,11 +12,6 @@ export enum Userstatus {
     OFFLINE = "offline",
     PLAYING = "playing",
 }
-export enum UserProvider {
-    GOOGLE = "google",
-    FT = "42",
-    NONE = ""
-}
 
 @Entity('users')
 export class User {
@@ -28,13 +23,6 @@ export class User {
     username: string;
     @Column({ unique: true })
     email: string;
-    @Column({
-        type: "enum",
-        enum: UserProvider,
-        default: UserProvider.NONE,
-    })
-    @Exclude()
-    provider: string;
     @Column({default: false})
     twofa: boolean;
     @Column({nullable: true})
@@ -60,9 +48,6 @@ export class User {
     loss: number;
     @Column({default: 0, type: 'float'})
     level: number;
-
-    @Column({nullable: true})
-    coalition: string;
     
     @ManyToMany(() => Achievment, (achievment) => achievment.users)
     @JoinTable()

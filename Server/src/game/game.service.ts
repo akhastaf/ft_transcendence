@@ -90,8 +90,7 @@ export class GameService {
             if (s.user.id === socket.user.id)
                 return;
         }
-        if (mode === GameMode.CLASSIC)
-            this.sockets.push(socket);
+        this.sockets.push(socket);
         if (this.sockets.length < 2 && mode === GameMode.CLASSIC)
             return;
         if (mode != GameMode.CLASSIC)
@@ -406,6 +405,8 @@ export class GameService {
 
     async inviteToGame(client: SocketWithUser, userId: number, server: Server) {
         try {
+            if (this.checkPlaying(client))
+                return;
             if (this.server === null)
                 this.server = server;
             for (const g of this.inviteGames.values()) {

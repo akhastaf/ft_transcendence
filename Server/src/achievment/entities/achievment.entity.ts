@@ -12,10 +12,6 @@ export class Achievment {
     @Column()
     description: string;
     @Column()
-    win: number;
-    @Column()
-    loss: number;
-    @Column()
     level: number;
 
     @ManyToMany(() => User, (user) => user.achievments)
