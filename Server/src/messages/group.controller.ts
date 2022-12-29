@@ -61,8 +61,12 @@ export class GroupController {
 	{
 		// console.log("##########  createChannel  ##########", req.user.id);
 		// console.log("body", body);
-		if (avatar)
+		if (avatar != undefined)
 			body.avatar = this.configService.get('SERVER_HOST') + avatar;
+		else
+			body.avatar = avatar;
+		// else
+		// 	body.avatar = this.configService.get('SERVER_HOST') + "/uploads/group.jpeg";
 		const group = await this.groupsService.createGroup(req.user, body);
 		const channel = new channelModel();
 		channel.id = group.id;

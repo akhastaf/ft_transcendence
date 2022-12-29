@@ -2,7 +2,7 @@ import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Group } from "./group.entity";
 
-@Entity('Message')
+@Entity('messages')
 export class Message {
 
 	@PrimaryGeneratedColumn()

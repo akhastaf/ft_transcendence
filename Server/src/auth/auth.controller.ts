@@ -81,13 +81,13 @@ export class AuthController {
     }
 
     // for Test
-    @Get(':id')
-    async getToken(@Param('id', ParseIntPipe) id: number) : Promise<string> {
-        try {
-            return await this.authService.getToken(id);
-        } catch (error) {
-            throw new ForbiddenException(error.message);
-        }
-    }
+    // @Get(':id')
+    // async getToken(@Param('id', ParseIntPipe) id: number) : Promise<string> {
+    //     try {
+    //         return await this.authService.getToken(id);
+    //     } catch (error) {
+    //         throw new ForbiddenException(error.message);
+    //     }
+    // }
 
 }

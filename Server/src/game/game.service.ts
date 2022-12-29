@@ -42,7 +42,7 @@ export class GameService {
     }
 
     async playVsComp(socket : SocketWithUser, mode : string) : Promise<void> {
-        if (socket.user.status === Userstatus.PLAYING)
+        if (this.checkPlaying(socket))
             return;
         const gamelocal : GameLocal = this.createGame(mode as GameMode);
         const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
@@ -63,13 +63,24 @@ export class GameService {
             this.server.emit('newGame_server');
         }
     }
+    checkPlaying(socket: SocketWithUser) {
+        for (const g of this.games.values())
+        {
+            for (const p of g.players) {
+                if (p.user.id === socket.user.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     async add(socket: SocketWithUser, mode: string, server: Server): Promise<void> {
         if (this.server === null)
             this.server = server;
         if (!socket.user)
             return;
-        if (socket.user.status === Userstatus.PLAYING)
+        if (this.checkPlaying(socket))
             return;
         this.clearRoom(socket);
         if (mode === GameMode.CUSTOM)
@@ -173,13 +184,13 @@ export class GameService {
             {
                 const looser = game.players.find((p) => p.user.id != winner.user.id);
                 await this.userService.updateLevel(winner.user.id, looser.user.id);
+                this.emit(game, 'stopgame', {});
                 gameUpdated.status = GameStatus.END;
                 game.status = GameStatus.END;
                 await this.gameRepository.save(gameUpdated);
                 this.server.socketsLeave(game.room);
                 this.userService.setStatus(looser.user.id, Userstatus.ONLINE);
                 this.userService.setStatus(winner.user.id, Userstatus.ONLINE);
-                this.emit(game, 'stopgame', { winner: winner.user, looser: looser.user });
                 this.server.emit('disconnect_server', {});
                 this.games.delete(game.room);
             }
@@ -412,7 +423,12 @@ export class GameService {
         }
     }
 
-    async accept_game(client: SocketWithUser, userId: number) {
+    async accept_game(client: SocketWithUser, userId: number, server: Server) {
+        if (this.checkPlaying(client))
+        {
+            server.to(userId.toString()).emit('rejectGame_server');
+            return;
+        }
         try {
             for (const gameLocal of this.inviteGames.values()) {
                 if (gameLocal.players[0].user.id == userId) {
@@ -436,16 +452,13 @@ export class GameService {
             return;
         }
     }
-    async reject_game(client: SocketWithUser, userId: number) {
-        try {
-            for (const gameLocal of this.inviteGames.values()) {
-                if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
-                    gameLocal.players[0].socket.leave(gameLocal.room);
-                    this.inviteGames.delete(gameLocal.room);
-                }
+    async reject_game(client: SocketWithUser, userId: number, server: Server) {
+        for (const gameLocal of this.inviteGames.values()) {
+            if (gameLocal.players[0] && gameLocal.players[0].user.id === userId) {
+                gameLocal.players[0].socket.leave(gameLocal.room);
+                this.inviteGames.delete(gameLocal.room);
+                server.to(userId.toString()).emit('rejectGame_server');
             }
-        } catch (error) {
-            return;
         }
     }
 }

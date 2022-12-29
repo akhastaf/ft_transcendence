@@ -4,6 +4,8 @@ import { Message } from "./message.entity";
 import { User } from "src/user/entities/user.entity";
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from "class-transformer";
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/../../../.env' });
 
 export enum Privacy {
 	DM = 'dm',
@@ -12,7 +14,7 @@ export enum Privacy {
 	PROTECTED = 'protected'
 }  
 
-@Entity('Group')
+@Entity('groups')
 export class Group {
 
 	@PrimaryGeneratedColumn()
@@ -31,14 +33,13 @@ export class Group {
 	@Column({unique: true })
 	name: string;
 
-	@Column({default: "../../../default-user-icon.jpeg"})
+	@Column({default: `${process.env.SERVER_HOST}/uploads/group.jpeg`})
 	avatar: string;
 
 	@Column({nullable: true})
 	description: string;
 
 	@Column({nullable: true})
-	@Exclude()
 	password: string;
 
 	@CreateDateColumn()
