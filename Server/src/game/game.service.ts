@@ -103,10 +103,10 @@ export class GameService {
             const s: SocketWithUser = this.sockets.shift();
             const player: Player = this.createPlayer(s, gamelocal);
             await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
+            this.clearRoom(s);
             this.server.emit('connection', {});
             gamelocal.players.push(player);
             player.socket.join(gamelocal.room);
-            //this.server.to(player.socket.id).emit('game', gamelocal.room);
             if (!game.player1)
                 game.player1 = s.user;
             else if (!game.player2)
@@ -116,10 +116,10 @@ export class GameService {
         {
             gamelocal.status = GameStatus.PLAYING;
             game.status = GameStatus.PLAYING; 
+            this.server.emit('newGame_server');
         }
         await this.gameRepository.save(game);
         this.games.set(gamelocal.room, gamelocal)
-        this.server.emit('newGame_server');
     }
     clearRoom(socket: SocketWithUser) {
         for (const g of this.games.values())
