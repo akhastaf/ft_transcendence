@@ -1,4 +1,4 @@
-import { Game, Userstatus, UserType } from "../Types/types";
+import { Game, Userstatus } from "../Types/types";
 import { Box, MenuList, Menu, Heading, useToast } from "@chakra-ui/react"
 import { socket } from "../Services/sockets";
 import { useNavigate } from "react-router-dom";
@@ -7,36 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 const vs = require('../../images/vs.png');
 
-const Leaderboard1: React.FC<{
-        games : Game[]
-}> = ({ games }) => {
-    return <>
-
-        <div className="flex h-auto  mt-11 ">
-            <div id="down div" className="h-full flex w-full m-auto  flex-row ">
-                <div className="w-1/6"></div>
-                <div className="flex flex-col h-[40rem] w-[80rem]">
-
-                    <div className="p-4 w-full  bg-gradient-to-r from-green-400 to-blue-500 rounded-lg border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700 overflow-y-scroll scrollbar-hide">
-                        <div className="flex justify-between items-center mb-4">
-                            <h5 className="text-xl font-bold leading-none text-white dark:text-white">Current Games</h5>
-                        </div>
-                        <div className="flow-root">
-                            <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
-                                {
-                                     games?.map((game : Game) => (
-                                        <ScoreCard game= {game} key={game.id} />
-                                    ))
-                                }
-                               
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </>
-}
 
 const Leaderboard: React.FC<{
     games : Game[]
@@ -81,7 +51,7 @@ export const ScoreCard: React.FC<{
         if (game.status === "playing")
         {
             socket.emit("joingame",game.room)
-            navigate("/channels/Game/1");
+            navigate("/channels/Game/");
         }
         else
         {
@@ -102,7 +72,7 @@ export const ScoreCard: React.FC<{
             
                 <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
-                        <img className="w-12 h-12 rounded-full" src={game.player1.avatar} alt="Neil image" />
+                        <img className="w-12 h-12 rounded-full" src={game.player1.avatar} alt="player1" />
                     </div>
                     <div className="flex-1  min-w-fit">
                         <p className="text-lg font-medium arcade text-white  dark:text-white">
@@ -117,7 +87,7 @@ export const ScoreCard: React.FC<{
                     </div>
                     <Heading>{game.score1}</Heading>
                     <div className="text-bold flex-1 m-auto">
-                        <img className="w-20 h-20" src={vs} />
+                        <img className="w-20 h-20" src={vs} alt={"vs"}/>
                     </div>
                     <Heading>{game.score2}</Heading>
                     <div className="inline-flex items-center arcade  text-green-300 dark:text-white">
@@ -134,7 +104,7 @@ export const ScoreCard: React.FC<{
                             </div>
                         </div>
                         <div className="flex-shrink-0">
-                            <img className="w-12 h-12 rounded-full" src={game.player2.avatar} alt="Neil image" />
+                            <img className="w-12 h-12 rounded-full" src={game.player2.avatar} alt="player2" />
                         </div>
                     </div>
                    

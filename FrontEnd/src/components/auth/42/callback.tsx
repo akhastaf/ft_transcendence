@@ -1,4 +1,3 @@
-// import { useRouter } from "next/router";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 
@@ -7,13 +6,12 @@ import { getCurrentUser } from "../../Services/user";
 
 import useLocalStorage from "../../../hooks/useLocalStorage";
 import { toast } from "react-toastify";
-import { useAuth } from "../../Services/auth";
 import { Button, ButtonGroup, Flex, Text, Link } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { localService } from "../../../api/axios";
-import { socket, SocketContext } from "../../Services/sockets";
-import { AuthContext, useAuthq } from "../../../App";
-import { io } from "socket.io-client";
+import {  SocketContext } from "../../Services/sockets";
+import { useAuthq } from "../../../App";
+
 
 
 export default function Callback() {
@@ -21,36 +19,37 @@ export default function Callback() {
   const navigate = useNavigate();
   // eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
-  let auth = useAuth();
-  // eslint-disable-next-line
-  const [errordata, seterrordata] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+
+
   // eslint-disable-next-line
   const [userInfo, setUserInfo] = useLocalStorage("currentUser");
-
+  
   const id_user = searchParams.get("user_id");
   const a: number = (id_user) ? parseInt(id_user) : 0;
   const { token, setToken } = useAuthq();
   const r = useContext(SocketContext);
   console.log("socker = ", r);
-
+  
+  // eslint-disable-next-line
   const [at, setAt] = useState<any>()
-
+  
+  // eslint-disable-next-line
+  const access_token = searchParams.get("accessToken");
+  const twfa = searchParams.get("twofa");
+  const newU = searchParams.get("new");
   useEffect(() => {
     // const access_token = queryParams.get('accessToken');
-    const access_token = searchParams.get("accessToken");
-    const twfa = searchParams.get("twofa");
     r.auth = { token: access_token };
     if (twfa) {
-      console.log("heelo i am tfa", at);
+      // console.log("heelo i am tfa", at);
+      setAt(true);
     }
     if (access_token) {
-      console.log("aaaaaaa");
-      // localStorage.setItem(keyPrefix, JSON.stringify(value));
+
       localStorage.setItem('accessToken', access_token);
       setToken(access_token);
-
-
+      
+      
       getCurrentUser().then((res) => {
         console.log(res);
         setUserInfo(res);
@@ -59,14 +58,14 @@ export default function Callback() {
           position: toast.POSITION.TOP_CENTER,
         });
       })
-        .catch(err => console.log(err))
-      navigate("/channels");
-    }
-  }, [])
+      .catch(err => console.log(err))
+      navigate(`/channels?new=${newU}`);
+    } 
+  }, [navigate, r, setToken,  searchParams, setUserInfo, access_token, newU,twfa])
 
 
   const [reset, setReset] = useState(false);
-  const { register, handleSubmit, setError, formState: { errors } } = useForm<{ token: string }>();
+  const { register, handleSubmit } = useForm<{ token: string }>();
   const submitForm: SubmitHandler<{ token: string }> = (data) => {
     const name = data.token ? data.token : "9999";
     if (!reset)
@@ -76,7 +75,7 @@ export default function Callback() {
       localStorage.setItem('accessToken', res.data.access_token);
       getCurrentUser().then((res) => {
         console.log(res);
-        setUserInfo(res);
+        setUserInfo(res); 
         localStorage.setItem("currentUser", JSON.stringify(res));
         toast.success("You login success !!", {
           position: toast.POSITION.TOP_CENTER,
@@ -90,7 +89,7 @@ export default function Callback() {
   }
   else
   {
-    const reset = localService.post("/auth/2fa/reset", {recovery_code : token, id : a}).then ((res) => {
+    localService.post("/auth/2fa/reset", {recovery_code : token, id : a}).then ((res) => {
       setAt(res.data);
       localStorage.setItem('accessToken', res.data.access_token);
       getCurrentUser().then((res) => {
@@ -102,7 +101,7 @@ export default function Callback() {
         });
       })
         .catch(err => console.log(err))
-      navigate("/channels");
+      navigate('/channels');
       console.log("enabled ,", res.data);
 
     })
@@ -111,7 +110,7 @@ export default function Callback() {
 
   return (
     <>
-
+    {at &&<>
       <div
         className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"
 
@@ -152,6 +151,7 @@ export default function Callback() {
         </div>
       </div>
       <div className="opacity-80 fixed inset-0 z-40 bg-black"></div>
+             </> }
     </>
   );
 }

@@ -5,7 +5,7 @@ import { Gamestate, Net } from "../Types/types";
 
             const Game : React.FC <{
                 id : string,
-            }> = ({id}) => {
+            }> = () => {
                 const socket = useContext(SocketContext);
                 const canvasRef = useRef(null)
                 var canvas : any;
@@ -13,14 +13,15 @@ import { Gamestate, Net } from "../Types/types";
                 var net : Net;
                 
                 useEffect(() => {
-                    canvas = canvasRef.current
+                    
+                    canvas = canvasRef.current;
                     ctx = canvas.getContext("2d"); 
 
                     net = {
                             x: canvas!.width / 2 - 1,
                             y: 0,
                             width: 3,
-                            height: 15,
+                            height: 15, 
                             color: 'white'
                         }
                     drawRect(0, 0, canvas!.width, canvas!.height, 'black');
@@ -30,7 +31,7 @@ import { Gamestate, Net } from "../Types/types";
                       drawText('Game over', canvas?.width / 2, canvas?.height / 2, 2, '#0F9B8E');
                     })
                     socket.on('gamestate', (gamestate) => {
-                        render(gamestate);
+                        render(gamestate); 
                      });
                     //  console.log('after');
                 },[])
@@ -89,28 +90,6 @@ import { Gamestate, Net } from "../Types/types";
                     drawCircle(gamestate.ball.x * sizeX, gamestate.ball.y * sizeY, gamestate.ball.radius * sizeX, 'white');
                 }
                 
-                
-                // useEffect(() => {
-                //     // console.log("hello world id = ", id)
-                //     // socket.emit('joingame', "classic");
-                //     // game(socket);
-                //     canvas?.addEventListener('mousemove', movePaddle);
-
-                //     function movePaddle(event:MouseEvent): void {
-                //       const rect: DOMRect | undefined = canvas?.getBoundingClientRect();
-                //       // const y = event.clientY - rect!.top - user.height/2;
-                //       if (rect != undefined)
-                //         socket.emit('input', { eventY: event.clientY, top: rect!.top, width: rect!.width, height: rect!.height });
-                //     }
-                //     socket.on('gamestate', (gamestate) => {
-                //         console.log("aaa");
-                //         render(gamestate);
-                //      });
-                //      socket.on('stopgame', winer => {
-                //        console.log("dadahbduabdabjdbajb");
-                //      })
-                //      console.log('after');
-                // })
     return <>
         <Flex flexDir={"column"} justifyContent={"center"} alignItems={"center"} w={"100%"} gap={"100px"}>
          <Flex flexDir={"column"} justifyContent={"center"} alignItems={"center"} w={"100%"} id="game">

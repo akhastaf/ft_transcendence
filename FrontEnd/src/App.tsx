@@ -17,14 +17,9 @@ import {
 import Home from './components/Home';
 import Callback from './components/auth/42/callback';
 import EditProfile from './components/EditProfile';
-import useLocalStorage from './hooks/useLocalStorage';
-import { UserType } from './components/Types/types';
 import {socket, SocketContext} from './components/Services/sockets'
-import { useAuth } from './components/Services/auth';
-import { current } from '@reduxjs/toolkit';
-import { ButtonGroup, Flex, useToast, Button } from '@chakra-ui/react';
+import { Flex, useToast, Button } from '@chakra-ui/react';
 import NotFound from './NotFound';
-import {  Modal } from 'react-bootstrap';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 
 export interface gameInvite {
@@ -46,7 +41,7 @@ export const AuthProvider = ({children} :  { children: JSX.Element }) => {
 }
 export const useAuthq = () => useContext(AuthContext)
 
-const App : React.FC <{}> = ({}) => {
+const App : React.FC <{}> = () => {
   
   const toast = useToast();
     
@@ -76,7 +71,7 @@ const App : React.FC <{}> = ({}) => {
               })
               socket.off();}
         })
-    },[messageRef])
+    },[messageRef,socket, toast])
     // console.log('Render lifecycle')
     return (
       <>
@@ -124,7 +119,7 @@ const App : React.FC <{}> = ({}) => {
                 </Route>
                 <Route path='channels/ROOM/:id' element={<> <Home state="ROOM" /> </>} >
                 </Route>
-                <Route path='channels/Game/:id' element={<> <Home state="GAME" /> </>} >
+                <Route path='channels/Game/' element={<> <Home state="GAME" /> </>} >
                 </Route>
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
                 <Route path="*" element={<NotFound />} />
@@ -146,17 +141,15 @@ export const InviteModal : React.FC <{
   // const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const navigate = useNavigate();
 
   const accept = () => {
       socket.emit("acceptGame_client", user, (data : any) => {
       })
-      navigate("/channels/Game/1");
+      navigate("/channels/Game/");
   }
   const decline = () => {
       socket.emit("rejectGame_client", user, (data : any) => {
-            // navigate("/channels/GAME/1"); 
       })
   }
 
@@ -216,16 +209,16 @@ export const RequireAuth = ({ children } : { children: JSX.Element } ) => {
  */
 export const RequireNoAuth = ({ children } : { children: JSX.Element }) => {
   const user : any = localStorage.getItem("currentUser");
-  // console.log("not req", auth);
-  console.log("user in no req = ",user)
-  const location = useLocation();
+
+
+
 
   if (isUserLoggedIn(user) === true)
     return <Navigate to={"/channels"} />;
 
     if (children)
     {
-      console.log("i am here = ", children)
+      console.log("i am here = ", children) 
         return children;
     }
     return <Outlet />;

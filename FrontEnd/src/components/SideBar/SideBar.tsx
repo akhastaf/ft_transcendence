@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 // import { io, Socket } from "socket.io-client";
 // import { getAllRomsAndUsersApi } from "../Services/room";
 import { ChatType, Privacy, Role, userModel, UserType } from "../Types/types";
-import { CogIcon, MicrophoneIcon, PhoneIcon, PlusIcon } from '@heroicons/react/outline';
+import { CogIcon, PlusIcon } from '@heroicons/react/outline';
 // import ChannelIcon from '../ChannelIcon';
 // import {IoCompassOutline } from 'react-icons/io5';
 import MemberCard from './MemberCard';
@@ -133,7 +133,7 @@ const SideBar: React.FC<{
         {/* <div className="flex items-center p-2 mb-2"> */}
         {
 
-          users?.length > 0 && users?.map((user: userModel) => {
+          users?.length > 0 &&  users?.map((user: userModel) => {
             if (user.name !== currentUser?.username)
 
               return (
@@ -154,9 +154,11 @@ const SideBar: React.FC<{
                   choosenChat={choosenChat}
                   setUsersState={setUsersState}
                   usersState={usersState}
-                // onlineUsers={onlineUsers}
+
                 />
               );
+              else
+                  return <></>;
 
 
           })
@@ -186,21 +188,15 @@ const SideBar: React.FC<{
             className="h-10 rounded-full"
             onClick={logoutHandler}
           />
-          <h4 className="text-white text-xs font-medium">
+          <h1 className="text-white text-sm min-w-[100px] font-medium">
             {currentUser?.username}{" "}
             {/* <span className="text-[#b9bbbe] block">
                   #{currentUser.id.substring(0, 4)}
                 </span> */}
-          </h4>
+          </h1>
         </div>
 
         <div className="text-gray-400 flex items-center">
-          <div className="hover:bg-[#3A3C43] p-2 rounded-md">
-            <MicrophoneIcon className="h-5 icon " />
-          </div>
-          <div className="hover:bg-[#3A3C43] p-2 rounded-md">
-            <PhoneIcon className="h-5 icon" />
-          </div>
           <div onClick={openModal} className="hover:bg-[#3A3C43] p-2 rounded-md">
             <CogIcon className="h-5 icon" />
             {showModal ? <SideBarE usersState={usersState} setUsersState={setUsersState} setShowModal={setShowModal} currentUser={currentUser} logoutHandler={logoutHandler} /> : null}
@@ -222,7 +218,7 @@ export const ChannelSetting: React.FC<{
 }> = ({ setShowModal, id }) => {
 
   
-  const { register, trigger ,handleSubmit, setError, formState: { errors } } = useForm<{oldPassword : string, newPassword : string} >();
+  const { register ,handleSubmit, formState: { errors } } = useForm<{oldPassword : string, newPassword : string} >();
   const [privacy, setPrivacy] = useState(Privacy.PROTECTED);
   
   const closeModal = () => {
@@ -290,7 +286,7 @@ export const ChannelSetting: React.FC<{
     setPrivacy(res);
     console.log("res = ", res, " same", privacy)
   }
-  )},[])
+  )},[id, privacy])
   const submitForm : SubmitHandler<{oldPassword : string, newPassword : string}> = (data) => {
     console.log("sub 1 = ")
     // let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
@@ -426,16 +422,15 @@ export const AddUsers: React.FC<{
 
   const [notJoined, setNotJoined] = useState<userModel[]>();
   // const [s,setS] = useState(:)
-  var boo : boolean = false;
-  var test : userModel[] = [];
+
 
   useEffect(() => {
     GetFriends().then((res) => {
         setNotJoined(res.filter((friend : userModel) => a(friend.id,users)))
       } )
 
-      console.log("res = ", notJoined);
-  },[users])
+      // console.log("res = ", notJoined);
+  },[users, notJoined])
   //   GetFriends().then((res) => {
   //     console.log("res = ", res);
   //     setNotJoined(res)

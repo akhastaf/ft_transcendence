@@ -60,6 +60,7 @@ localService.interceptors.response.use((response: AxiosResponse) => {
    
     
    }
+   if (errMessage.includes('For'))
     return Promise.reject(error);
 });
 

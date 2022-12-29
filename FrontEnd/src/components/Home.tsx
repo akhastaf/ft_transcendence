@@ -1,30 +1,130 @@
-import {  useContext, useEffect, useState } from 'react';
+import {  useContext, useEffect, useRef, useState } from 'react';
 import React from "react";
 import { Dms, getAllRooms, getRoomUsers } from './Services/room'
 
 import {  useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import SideBar from './SideBar/SideBar';
 import ChannelList from './SideBar/ChannelList';
-import { ChatType, MessageModal, Privacy, Role, roomModal, RoomType , Userstatus, UserType } from './Types/types';
+import { ChatType, MessageModal, Privacy, profileUpdate, Role, roomModal, RoomType , Userstatus, UserType } from './Types/types';
 import ChatHeader from './ChatSide/ChatHeader';
 import { localService } from '../api/axios'
 import MessagesSection from './ChatSide/MessagesSection';
-import { getAUser, getCurrentUser, getMyRole } from './Services/user';
+import { getAUser, getCurrentUser, getMyRole, updateInfo } from './Services/user';
 import MessageInput from './ChatSide/MessageInput';
 import GameHome from './Game/GameHome';
 import { SocketContext } from './Services/sockets'
 import ChannelsDisplay from './pages/ChannelsDisplay';
 import { getDmMessages, getRoomMessages } from './Services/messages';
-import { toast } from 'react-toastify';
 
-import { Flex, Box } from '@chakra-ui/react';
+
+import { Flex, Box, ButtonGroup, Button, useToast } from '@chakra-ui/react';
 import Game from './Game/Game';
+import { IoCloseCircleSharp } from 'react-icons/io5';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 
 
 
 	
+const SettingModal: React.FC<{
+    setState: React.Dispatch<React.SetStateAction<boolean>>;
+    username: string 
+    avatar : string
+    tfa : boolean
+    Subject: string
+    usersState : boolean,
+    setUsersState : React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ usersState,setUsersState,setState, tfa,username, Subject, avatar }) => {
 
+    const toast = useToast();
+    // let up = useContext(updates);
+    const { register, handleSubmit } = useForm<profileUpdate>();
+    const closeModal = () => {
+
+        setState(false);
+
+    };
+    const avatarRef = useRef<HTMLInputElement>(null);
+    const [imageFile, setImageFile] = useState<any>(avatar);
+
+
+   
+    const upload = (event : any) =>
+   {
+        let image_as_files = event.target.files[0];
+        setImageFile(image_as_files)
+  	}
+    const submitForm : SubmitHandler<profileUpdate> = (data) => {
+
+        let formData = new FormData();
+        const name = data?.name ? data.name : username;
+        console.log("name from profile = ", name, "printi all data =", data);
+    	formData.append('username', name);
+    	formData.append('avatar', imageFile);
+        
+    	formData.append('twofa', tfa ? "true" : "false");
+        console.log("formdata" , data?.name, "avatar ", imageFile);
+        console.log("form data = ", formData);
+        updateInfo(formData).then((data) => {
+            toast({
+				title: `Info update`,
+				description: `Your Profile Info have been updated`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
+              setUsersState(!usersState);
+            })
+            closeModal();
+    }
+    const m: string = (username) ? username : "";
+
+    return <>
+        <div
+            className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"
+            onClick={() => { closeModal(); }}
+        >
+            <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
+                {/* <div className="w-[30rem] my-6 mx-auto h-[25rem]   " > */}
+                    <Flex gap={12} onClick={e => { e.stopPropagation(); }} bg={"#36393f"} flexDir={"column"} justifyContent={"space-between"} w={"30rem"} alignItems={"center"} h={"25rem"}>
+                    <form className="w-full h-full" onSubmit={handleSubmit(submitForm)}>
+                        <Flex  h={"100%"} flexDir={"column"} justifyContent={"space-between"} alignItems={"center"} gap={8}>
+                        <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"center"}>
+                            <button
+                                className="p-1 ml-auto bg-transparant  text-black  float-right text-3xl leading-none font-semibold"
+                                onClick={closeModal}
+                            >
+                                <IoCloseCircleSharp className="text-emerald-400" />
+                            </button>
+                            <h2 className="text-center text-xl font-bold text-white">Modify Your {Subject} </h2>
+                            <h4 className="text-center text-white">Enter Your New {Subject} and Password </h4>
+                        </Flex>
+                                <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
+                                    <label htmlFor="newUserName">{Subject}</label>
+                                         <input {...register("name")}  type="text" placeholder={m} />
+                                    <label htmlFor="Password">Change Avatar</label>
+                                    <input onChange={upload} ref={avatarRef} type="file" id="img" name="img" accept="image/*" />
+               
+
+                                
+                                </Flex>
+                        <Flex w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-end"} alignItems={"center"} bg={"#2f3136"}>
+                        <ButtonGroup pr={"3%"}>
+                                    <Button colorScheme={'whatsapp'}   onClick={closeModal} > Cancel </Button>
+                                    <Button  colorScheme={'whatsapp'} type="submit" > Sumbit </Button>
+                                </ButtonGroup>
+                        </Flex>
+                        </Flex>
+                        </form>
+                    </Flex>
+
+                {/* </div> */}
+            </div>
+        </div>
+        <div className="opacity-80 fixed inset-0 z-40 bg-black"></div>
+    </>
+    // </>
+}
 				
 const Home: React.FC<{
 	state: string
@@ -43,14 +143,21 @@ const Home: React.FC<{
 		const [myRole, setMyRole] = useState<Role>(Role.MEMBER);
 		const [usersState, setUsersState] = useState<boolean>(false);
 		// eslint-disable-next-line
-						const [searchParams] = useSearchParams();
+		const [searchParams] = useSearchParams();
 
 
 
 	const [users, setUsers] = useState<any>([]);
 	// eslint-disable-next-line
+	const newU = searchParams.get("new");
+	const [showModal, setShowModal] = useState<boolean>(false);
 
+	useEffect(()=> {
+		if (newU && newU === "true")
+			setShowModal(true);
+	},[newU])
 
+	
 	const [rooms, setRooms] = useState<any>([
 		{
 			id: "1",
@@ -59,8 +166,7 @@ const Home: React.FC<{
 	password: "1234567",
 	createdBy: null,
 	members: null,
-	createdAt: new Date,
-	// avatar: "aaaa",
+	createdAt: new Date(),
 	updatedAt: Date,
 	messages: ["aaaaa"],
 	notifications: 1,
@@ -113,7 +219,7 @@ const Home: React.FC<{
 
 		})
 
-		}, [rooms, usersState]);
+		}, [rooms, usersState,socket]);
 
 		// eslint-disable-next-line
 		const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
@@ -139,7 +245,7 @@ const Home: React.FC<{
 
 		socket.on("sendMessage_server", (data) =>{
 			setMessageRef(data);
-			socket.off();
+			// socket.off();
 		})
 		if (state === "HomeGAME" || state === "allChannels" || state === "GAME")
 		{
@@ -182,6 +288,7 @@ const Home: React.FC<{
 						}
 						).catch(err => console.log(err))
 						;
+				socket.off("createDm_client");
 			});
 			setMyRole(Role.MEMBER)
 		}
@@ -199,15 +306,13 @@ const Home: React.FC<{
 						setMyRole(res)
 						setWrongId("in");
 						console.log("i am in");
-						return ;
+						return 0;
 					})
 					// .catch(err => console.log(err))
 					console.log("ha qq", wrongId);
 				}
+				return 0 ;
 			})
-			console.log("ha ", wrongId);
-			// if (wrongId !== "in")
-			// 	navigate("/");
 		})
 		getRoomUsers(id2)
 				.then((res) => {
@@ -226,7 +331,7 @@ const Home: React.FC<{
 		}
 
 
-	},[ id2, state ,messageRef, users?.friends, usersState, ])
+	},[ id2, state ,messageRef, users?.friends, usersState, socket, wrongId])
 
 
 
@@ -273,7 +378,7 @@ const Home: React.FC<{
 			navigate("/channels/ROOM/" + room.id);
 		}
 	}
-
+	const toast = useToast();
 	// eslint-disable-next-line 
 	useEffect(() => {
 		getAllRooms()
@@ -311,9 +416,13 @@ const Home: React.FC<{
 	
 		localStorage.removeItem("currentUser")
 		localStorage.removeItem("accessToken")
-		toast.success("You are Disconnected", {
-			position: toast.POSITION.TOP_CENTER,
-		  });
+		toast({
+			title: `User Status`,
+			description: `Disconnect . See you soon`,
+			status: 'success',
+			duration: 9000,
+			isClosable: true,
+		  })
 		navigate("/");
 
 		// ! probably need to contact socket with message 'logout' then forward to first page
@@ -445,12 +554,9 @@ const Home: React.FC<{
 							/>
 						}
 					</Flex>
-					{/* </Flex> */}
-					{/* </div>  */}
-	
-					{/* </div>  */}
 			</div>
 			</div>
+			{showModal ? <SettingModal usersState={usersState} tfa={userInfo?.twofa} setUsersState={setUsersState} avatar={userInfo?.avatar} Subject="Username" username={userInfo?.username} setState={setShowModal} /> : null}
 		</>
 	)
 }

@@ -47,7 +47,7 @@ const BlockList : React.FC <{
                          <h5 className="text-xl font-bold leading-none text-white dark:text-white">Blocked Users</h5>
                     </div>
                     <div className="flow-root">
-                         <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
+                         <ul  className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
                                 (!blocked) ? <li className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</li> : 
                                 blocked?.map((blocked: userModel) => (
@@ -55,25 +55,6 @@ const BlockList : React.FC <{
 
                                 ))
                             }
-                         {/* <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/> */}
                          </ul>
                      </div>
                      </div>
@@ -94,7 +75,7 @@ const BlockCard : React.FC <{
           <li className="py-3 sm:py-4">
                 <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
-                        <img className="w-12 h-12 rounded-full" src={currentUser.avatar} alt="Neil image"/>
+                        <img className="w-12 h-12 rounded-full" src={currentUser.avatar} alt="user"/>
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-lg font-medium arcade text-white truncate dark:text-white">

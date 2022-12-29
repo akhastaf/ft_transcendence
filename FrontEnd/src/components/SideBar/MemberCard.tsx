@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar, RadioGroup, Radio, Box, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack, Heading } from '@chakra-ui/react'
+import React, { useContext, useEffect, useState } from 'react';
+import { useToast, Menu, MenuItem, MenuButton, MenuList, Button, Avatar, RadioGroup, Radio, ButtonGroup, MenuGroup, MenuDivider, Flex, Stack, Heading } from '@chakra-ui/react'
 // import { toast, ToastContainer } from 'react-toastify';
 import { AddFriend, BlockFriend, getBlockedList, GetFriends, setADmin, setStatus, unsetADmin, unsetStatus } from '../Services/user';
 import { ChatType, Role, Status, userModel } from '../Types/types';
@@ -130,14 +130,8 @@ const MemberCard: React.FC<{
 					isClosable: true,
 				  })
 			})
-			navigate("/channels/Game/1");
+			navigate("/channels/Game/");
 	}
-	
-
-
-
-	const Memberstat = user.status === "online" ? "online text-green-400" : user.status === "offline" ? "offline text-red-500" : "in-game text-blue-500";
-	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
 	return (<App1 inviteToGame={inviteToGame} kickMember={kickMember} setAdmin ={setAdmin} unsetAdmin={unsetAdmin} setAdminAction={setadminAction} unsetAdminAction={unsetadminAction} isShown={isShown} role={role} user={user} coll={coll} onClick={onClick} setIsShown={setIsShown} state={state} />);
 };
 
@@ -163,126 +157,88 @@ const App1: React.FC<{
 
 }> = ({ inviteToGame, setAdmin, unsetAdmin, isShown, user, onClick, coll , role, setIsShown, state, setAdminAction, unsetAdminAction, kickMember}) => {
 	// Show or hide the custom context menu
-	const [isShow, setIsShow] = useState(false);
 	const toast = useToast();
 
 
 	// The position of the custom context menu
-	const [position, setPosition] = useState({ x: 0, y: 0 });
+	const [position] = useState({ x: 0, y: 0 });
 
 	// Show the custom context menu
-	const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
-		// Disable the default context menu
-		event.preventDefault();
-
-		setIsShown(false);
-		const newPosition = {
-			x: event.pageX,
-			y: event.pageY,
-		};
-
-		setPosition(newPosition);
-		setIsShown(true);
-
-	};
-
-	// Hide the custom context menu
-	const hideContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
-		setIsShown(false);
-	};
-	
 	const [blocked, setBlocked] = useState<any[]>();
 	const [friends, setFriends] = useState<any[]>();
 
 
-	const checkIfFriend = (id : number) => {
-		
-		GetFriends().then((res)=> {
-			setFriends(res)
-		}).catch(err => console.log(err))
-		// setIsFriend(checkIfFriend(user.id));
-		// setIsBlocked(checkIfBlocked(user.id));
-		// const check = ((friends && friends.filter(friend => parseInt(friend.id) === id)) ? true : false)
-		friends?.map((friend) => {
-			if (friend.id === id)
-				setIsFriend(true);
-		})
-		// return check;
-	}
-	const checkIfBlocked = (id : number) => {
-		getBlockedList().then((res)=> {
-			setBlocked(res)
-		}).catch(err => console.log(err))
-		blocked?.map((block) => {
-			if (block.id === id)
-				setIsBlocked(true);
-		})
-	}
-
+	
 	// Do what you want when an option in the context menu is selected
-	const [selectedValue, setSelectedValue] = useState<String>();
+	
 	const [isblocked, setIsBlocked] = useState<boolean>(false);
 	const [isFriend, setIsFriend] = useState<boolean>(false);
 	const [FBUpdate, setFBUpdate] = useState<boolean>(false);
-	const [che, setChe] = useState<boolean>(false);
 	
-	const doSomething = (selectedValue: String) => {
-		setSelectedValue(selectedValue);
-	};
-
+	
 	const AddFriendf = (id : number) => {
 		console.log("id of friend = ",id )
 		AddFriend(id).then((res) =>
 		{
-			// console.log("res ====== ", res);
 			toast({
 				title: 'New Friend Unlocked',
 				description: "You are Now Friends",
 				status: 'success',
 				duration: 9000,
 				isClosable: true,
-			  })
-		
+			})
+			
 		}).catch(err => console.log(err))
 		setIsShown(false)
 		setFBUpdate(!FBUpdate)
 	}
-
-
+	
+	
 	const BlockFriend1 = (id :  number) => {
-		console.log("id of blocked = ",id )
-			BlockFriend(id).then((res) =>{
-
-			})
-			setIsShown(false)
-
-			setFBUpdate(!FBUpdate)
-	}
-
-	
-	// const mute = (id: number) => {
-	// 	let formData = new FormData();
-	// 	formData.append("id_user", id.toString());
-	// 	formData.append("id_group", id)
-	// }
-
-	const ban = (id: number) => {
+		BlockFriend(id).then((res) =>{
+			
+		})
+		setIsShown(false)
 		
+		setFBUpdate(!FBUpdate)
 	}
-
 	
-
+	
+	
+	
+	
 	const [pro, setPro] = useState(false);
-
+	
 	useEffect (() => {
-		checkIfFriend(user.id);
-		checkIfBlocked(user.id);
-	}, [FBUpdate])
+		const checkIfFriend = (id : number) => {
+			
+			GetFriends().then((res)=> {
+				setFriends(res)
+			}).catch(err => console.log(err))
+			// setIsFriend(checkIfFriend(user.id));
+			// setIsBlocked(checkIfBlocked(user.id));
+			// const check = ((friends && friends.filter(friend => parseInt(friend.id) === id)) ? true : false)
+			friends?.map((friend) => {
+				if (friend.id === id)
+					setIsFriend(true);
+				return 0;
+			})
+			// return check;
+		}
+		const checkIfBlocked = (id : number) => {
+			getBlockedList().then((res)=> {
+				setBlocked(res)
+			}).catch(err => console.log(err))
+			blocked?.map((block) => {
+				if (block.id === id)
+					setIsBlocked(true);
+				return 0 ;
+			})
+		}
+		checkIfFriend(user?.id);
+		checkIfBlocked(user?.id);
+	}, [FBUpdate, user?.id, blocked, friends])
 
-	useEffect (() => {
-		checkIfFriend(user.id);
-		checkIfBlocked(user.id);
-	})
 
 	const Memberstat = user.status === "online" ? "text-green-400" : user.status === "offline" ? "text-red-500" : "text-blue-500";
 	const MemberColl = coll === "bios" ? "text-[#02cdd1]" : coll === "freax" ? "text-[#f5bc39]" : coll === "comodore" ? "text-[#235a16]" : coll === "Pandora" ? "text-[#b61282]" : "None";
@@ -402,9 +358,6 @@ const MemberWork : React.FC <{
 
 }> = ({nameService, function1, id, function2, AdminAction, flag , user, message, onClick}) =>
 {
-	// var currentDate = new Date();
-	// var time_in_minut = 20;
-	// currentDate.setTime(currentDate.getTime() + time_in_minut *60*1000);
 	const f = () => {
 		console.log(id)
 		if (message && user)
@@ -416,18 +369,9 @@ const MemberWork : React.FC <{
 		if (onClick)
 		{
 			onClick(true)
-			console.log("true")
 		}
-		
-		// setRefreshVar(!refreshVar);
 		refreshVar = !refreshVar;
 	}
-
-
-  const [showModal, setShowModal] = useState(false);
-    const [showSettingModal, setSettingModal] = useState(false);
-    
-
 
 	return (<>
 		{
@@ -450,7 +394,6 @@ const WalkthroughPopover: React.FC <{
 	AdminAction? : (id: number, status: string, time: string) => void
 
 }>  = ({nameService, AdminAction , id}) => {
-	const initialFocusRef = useRef()
 	const [value, setValue] = React.useState('5')
 
 	const f = () => {

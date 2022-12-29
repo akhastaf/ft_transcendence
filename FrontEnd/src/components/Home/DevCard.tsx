@@ -7,7 +7,10 @@ import {
     Tooltip,
   } from "@material-tailwind/react";
  
-  const logo = require("../../images/me.jpeg");
+  const me = require("../../images/me.jpeg");
+  const asmaa = require("../../images/asmaa.jpg");
+  const Abderazzak = require("../../images/abderezak.jpg");
+  const fatimezehra = require("../../images/fatimezehra.jpeg");
    
   // export default function DevCard() {
   //   return (
@@ -74,10 +77,10 @@ const TeamSection : React.FC <{
           <p className="font-light text-gray-500 lg:mb-16 sm:text-xl dark:text-gray-400">Explore the team Working</p>
       </div> 
       <div className="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
-        <CardSection key="1" name="Asmaa Khalidy" task="Backend & Team Leader" description="" img="https://cdn.intra.42.fr/users/0a8f342564f03949e2e12fccfd1221ea/akhalidy.jpg"/>
-        <CardSection key="2" name="Mohamed Khames" task="Frontend" description="" img={logo}/>
-        <CardSection key="3" name="Abderazzak khastaf" task="Backend" description="" img="https://cdn.intra.42.fr/users/7acb4a69cac6111b34bed26b772269c6/akhastaf.jpg"/>
-        <CardSection key="4" name="Fatima Ezzahra Naciri Ben Saghir" task="Game Dev" description="" img="https://cdn.intra.42.fr/users/c4378e971bf8fae231ffad0925499904/fnaciri-.jpg"/>
+        <CardSection key="1" name="Asmaa Khalidy" task="Backend & Team Leader" description="" img={asmaa}/>
+        <CardSection key="2" name="Mohamed Khames" task="Frontend" description="" img={me}/>
+        <CardSection key="3" name="Abderazzak khastaf" task="Backend" description="" img={Abderazzak}/>
+        <CardSection key="4" name="Fatima Ezzahra Naciri Ben Saghir" task="Game Dev" description="" img={fatimezehra}/>
       </div>
       </div>
       </section>
@@ -93,7 +96,7 @@ const TeamSection : React.FC <{
     return <>
      <div className="items-center  bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                  <img className="w-full h-[20rem] rounded-lg sm:rounded-none sm:rounded-l-lg object-cover" src={img} alt={`${name} " photo"`}/>
+                  <img className="w-[250px] h-[20rem] rounded-lg sm:rounded-none sm:rounded-l-lg object-cover" src={img} alt={`${name} " photo"`}/>
               </a>
               <div className="p-5">
                   <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">

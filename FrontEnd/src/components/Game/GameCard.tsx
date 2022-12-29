@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Card, CardHeader, CardBody, CardFooter, Image, Stack, Heading, Text, Divider, Button } from '@chakra-ui/react';
+import { Card, CardBody, Image, Stack, Heading, Text, Divider, Button } from '@chakra-ui/react';
 import { useContext } from 'react';
 import { SocketContext } from '../Services/sockets';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ const CardMode : React.FC  <{
   const navigate = useNavigate()
   const startGame = () => {
     socket.emit('add',  string);
-    navigate("/channels/GAME/1");
+    navigate("/channels/GAME/");
   }
   return (
 <Card maxW='sm' className={"bg-gradient-to-r from-green-400 to-blue-500"}>
