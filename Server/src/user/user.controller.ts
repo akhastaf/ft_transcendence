@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UnauthorizedException,  UseGuards, UseInterceptors, ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -43,8 +43,13 @@ export class UserController {
     }
 
     @Post('2fa/verify')
-    async verify2fa(@Req() req: RequestWithUser, @Body() twofaVerificationDTO : TwofaVerificationDTO) : Promise<any> {
-        return this.userService.verify2fa(req.user, twofaVerificationDTO);
+    async verify2fa(@Req() req: RequestWithUser, @Body() twofaVerificationDTO : TwofaVerificationDTO) {
+        try {
+            console.log('twofa', twofaVerificationDTO);
+            return await this.userService.verify2fa(req.user, twofaVerificationDTO);
+        } catch (error) {
+            throw new ForbiddenException(error.message)
+        }
     }
 
     @Get()

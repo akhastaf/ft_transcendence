@@ -108,6 +108,7 @@ export class UserService {
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {
         try {
+        console.log(updateUserDTO);
             await this.userRepository.update(user.id, updateUserDTO);
             if (!user.twofa && updateUserDTO.twofa)
             {
@@ -125,9 +126,9 @@ export class UserService {
     }
 
     async verify2fa(user: User, twofaVerificationDTO: TwofaVerificationDTO) : Promise<any> {
+        if (user.twofa)
+            throw new ForbiddenException('2 factor authentication alredy verified');
         try {
-            if (user.twofa)
-                throw new ForbiddenException('2 factor authentication alredy verified');
             const verified = speakeasy.totp.verify({ secret: user.secret_tmp, encoding: 'base32', token: twofaVerificationDTO.token, window: 6});
             if (verified)
             {
@@ -135,9 +136,8 @@ export class UserService {
                 await this.userRepository.update(user.id, { twofa: true ,secret: user.secret_tmp, recoveryCode: recoveryCode});
                 return { recoveryCode };
             }
-            throw new ForbiddenException('token is invalide');
         } catch (error) {
-            throw new ForbiddenException();
+            throw new ForbiddenException('token is invalide');
         }
     }
 
