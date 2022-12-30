@@ -19,9 +19,6 @@ const AddChannel: React.FC<{
 
   const [privacy, setPrivacy] = useState("Public");
   const avatarRef = useRef<HTMLInputElement>(null);
-  const privateRef = useRef<HTMLSelectElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const formVadlid = useState(false);
 
   const { register, handleSubmit, setError, formState: { errors } } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) =>
@@ -33,17 +30,13 @@ const AddChannel: React.FC<{
     closeModal();
 
   };
-  let [currentImage , SetCurrentImage] = useState<any>();
-  const [imagePreview, setImagePreview] = useState<any>();
   const [imageFile, setImageFile] = useState<any>();
 
    const upload = (event : any) =>
    {
 
-    let image_as_base64 = URL.createObjectURL(event.target.files[0])
       let image_as_files = event.target.files[0];
 
-        setImagePreview(image_as_base64)
         setImageFile(image_as_files)
   }
 
@@ -51,8 +44,8 @@ const AddChannel: React.FC<{
 
     setShowModal(false);
 
-  };
-  
+  }; 
+   
   const showdiv = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPrivacy(event.target.value);
   }
@@ -401,12 +394,4 @@ const AddChannel: React.FC<{
 
 
 
-export default AddChannel
-
-function setImage(arg0: any[]) {
-  throw new Error('Function not implemented.');
-}
-function setFiles(arg0: any[]) {
-  throw new Error('Function not implemented.');
-}
-
+export default AddChannel;

@@ -5,7 +5,7 @@ import React, {useEffect, useState} from 'react'
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { ScoreCard } from '../Game/LeaderBoad';
 import { getCurrentUser, getUserAchivements, getUsergame } from '../Services/user';
-import { Achievements, Game, UserType } from '../Types/types';
+import { Game, UserType } from '../Types/types';
 
 
 
@@ -42,7 +42,7 @@ const Achievement: React.FC <{}>
                 }}>
         {
           user?.achievements ? user.achievements?.map((achi) => (
-            <Box>
+            <Box key={achi.id}>
             <Heading size='xs' textTransform='uppercase'>
               {achi.type}
             </Heading>

@@ -209,35 +209,36 @@ const App1: React.FC<{
 	
 	const [pro, setPro] = useState(false);
 	
-	useEffect (() => {
-		const checkIfFriend = (id : number) => {
+	// useEffect (() => {
+	// 	const checkIfFriend = (id : number) => {
 			
-			GetFriends().then((res)=> {
-				setFriends(res)
-			}).catch(err => console.log(err))
-			// setIsFriend(checkIfFriend(user.id));
-			// setIsBlocked(checkIfBlocked(user.id));
-			// const check = ((friends && friends.filter(friend => parseInt(friend.id) === id)) ? true : false)
-			friends?.map((friend) => {
-				if (friend.id === id)
-					setIsFriend(true);
-				return 0;
-			})
-			// return check;
-		}
-		const checkIfBlocked = (id : number) => {
-			getBlockedList().then((res)=> {
-				setBlocked(res)
-			}).catch(err => console.log(err))
-			blocked?.map((block) => {
-				if (block.id === id)
-					setIsBlocked(true);
-				return 0 ;
-			})
-		}
-		checkIfFriend(user?.id);
-		checkIfBlocked(user?.id);
-	}, [FBUpdate, user?.id, blocked, friends])
+	// 		GetFriends().then((res)=> {
+	// 			setFriends(res)
+	// 		}).catch(err => console.log(err))
+			
+	// 		friends?.map((friend) => {
+	// 			if (friend.id === id)
+	// 				setIsFriend(true);
+	// 			return 0;
+	// 		})
+	// 		// return check;
+	// 	}
+	// 	const checkIfBlocked = (id : number) => {
+	// 		getBlockedList().then((res)=> {
+	// 			setBlocked(res)
+	// 		}).catch(err => console.log(err))
+	// 		blocked?.map((block) => {
+	// 			if (block.id === id)
+	// 				setIsBlocked(true);
+	// 			return 0 ;
+	// 		})
+	// 	}
+	// 	checkIfFriend(user?.id);
+	// 	checkIfBlocked(user?.id);
+	// }, [FBUpdate, user?.id, blocked, friends])
+
+
+
 
 
 	const Memberstat = user.status === "online" ? "text-green-400" : user.status === "offline" ? "text-red-500" : "text-blue-500";
@@ -265,34 +266,31 @@ const App1: React.FC<{
 				</MenuButton>
 				<MenuList>
 					<MenuGroup title='Member'>
-					{ !isFriend && <MenuItem><MemberWork nameService={"Send Friend Request"} id={user.id} function1={AddFriendf}/></MenuItem>}
-					{ <MenuItem><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
-					<MenuItem ><MemberWork nameService={"Check Profil"} id={user.id} onClick={setPro} /> </MenuItem>
-					<MenuItem><MemberWork nameService={"Invite to Game"} id={user.id} function1={inviteToGame}/> </MenuItem>
-					{!isblocked && <MenuItem> <MemberWork nameService={"Block"} id={user.id} function1={BlockFriend1}/> </MenuItem>}
+					{ !isFriend && <MenuItem as={Button} onClick={() => {AddFriendf(user.id)}} ><MemberWork nameService={"Send Friend Request"} id={user.id} /></MenuItem>}
+					{ <MenuItem as = {Button} onClick={() => onClick(user.name)} ><MemberWork nameService={"Send Message"} id={user.id} user={user} message={onClick}/> </MenuItem>}
+					<MenuItem as={Button} onClick={() => setPro(true)} ><MemberWork nameService={"Check Profil"} id={user.id}  /> </MenuItem>
+					<MenuItem as={Button} onClick={() => inviteToGame(user.id)}><MemberWork nameService={"Invite to Game"} id={user.id}/> </MenuItem>
+					{!isblocked && <MenuItem as={Button} onClick={() => BlockFriend1(user.id)}> <MemberWork nameService={"Block"} id={user.id} /> </MenuItem>}
 					</MenuGroup>
-					{
-						(user.role === Role.ADMIN) &&  <MenuItem> <MemberWork nameService={"i am fucking admin"} id={user.id} function1={kickMember}/></MenuItem>
-					}
 					{((role === Role.ADMIN && user.role === "member") || (role === Role.OWNER && user.role !== "owner")) && <>
 					<MenuDivider />
 					<MenuGroup title='Admin'>
 					{
-						(user.action === "active") ?  <MenuItem closeOnSelect={false}><MemberWork nameService={"Mute"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
-						: (user.action === "muted")  ? <MenuItem><MemberWork nameService={"unMute"} id={user.id}  function1={unsetAdminAction}/></MenuItem> : null
+						(user.action === "active") ?  <MenuItem as={Button} closeOnSelect={false}><MemberWork nameService={"Mute"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem>
+						: (user.action === "muted")  ? <MenuItem as={Button} onClick={() => unsetAdminAction(user.id)}><MemberWork nameService={"unMute"} id={user.id}  function1={unsetAdminAction}/></MenuItem> : null
 					}
 					{
 						(user.action === "active") ?  <MenuItem closeOnSelect={false}><MemberWork nameService={"Ban"} id={user.id} flag={1} AdminAction={setAdminAction}/></MenuItem> 
-						: (user.action === "banned") ?  <MenuItem><MemberWork nameService={"unBan"} id={user.id}  function1={unsetAdminAction}/></MenuItem> : null
+						: (user.action === "banned") ?  <MenuItem as={Button} onClick={() => unsetAdminAction(user.id)}><MemberWork nameService={"unBan"} id={user.id}  function1={unsetAdminAction}/></MenuItem> : null
 					}
-					<MenuItem ><MemberWork nameService={"Kick"} id={user.id} function1={kickMember}/></MenuItem>
+					<MenuItem as={Button} onClick={() => kickMember(user.id)}><MemberWork nameService={"Kick"} id={user.id} function1={kickMember}/></MenuItem>
 					</MenuGroup></>
 					}
 					{(role === Role.OWNER && user.role !== "owner") && <>
 					<MenuDivider />
 					<MenuGroup title='Owner'>
-					{user.role === "member" && <MenuItem><MemberWork nameService={"Set As Admin"} id={user.id} function1={setAdmin}/></MenuItem>}
-					{user.role === "admin" && <MenuItem><MemberWork nameService={"unSet As Admin"} id={user.id} function1={unsetAdmin}/></MenuItem>}
+					{user.role === "member" && <MenuItem as={Button} onClick={()=> setAdmin(user.id)}><MemberWork nameService={"Set As Admin"} id={user.id} function1={setAdmin}/></MenuItem>}
+					{user.role === "admin" && <MenuItem as={Button} onClick={()=>unsetAdmin(user.id)}><MemberWork nameService={"unSet As Admin"} id={user.id} function1={unsetAdmin}/></MenuItem>}
 					{/* <MenuItem><MemberWork nameService={"Set As Owner"} id={user.id} function1={AddFriend}/></MenuItem> */}
 					</MenuGroup> </>
 					}

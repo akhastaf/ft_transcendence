@@ -23,7 +23,7 @@ import { Gamestate, Net } from "../Types/types";
                             width: 3,
                             height: 15, 
                             color: 'white'
-                        }
+                        } 
                     drawRect(0, 0, canvas!.width, canvas!.height, 'black');
                     canvas?.addEventListener('mousemove', movePaddle);
                     socket.on('stopgame', (end) => {

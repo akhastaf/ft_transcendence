@@ -1,4 +1,6 @@
+import { List, Text } from "@chakra-ui/react"
 import { IoCloseCircleSharp } from "react-icons/io5"
+import { BlockFriend } from "../Services/user"
 import { UserType } from "../Types/types"
 
 
@@ -31,31 +33,12 @@ const FriendList : React.FC <{
                     <div className="flow-root">
                          <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
-                                (currentUser?.friends?.length === 0) ? <li className="text-black arcade"> You Have No Friends Yet</li> :
+                                (currentUser?.friends?.length === 0) ? <Text className="text-black arcade"> You Have No Friends Yet</Text> :
                                 currentUser?.friends?.map((friend: UserType) => (
-                                   <li> <FriendCard currentUser={friend}/></li>
+                                   <List key={friend.id.toString()}> <FriendCard currentUser={friend}/></List>
 
                                 ))
                             }
-                         {/* <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/>
-                         <FriendCard currentUser={currentUser}/> */}
                          </ul>
                      </div>
                      </div>

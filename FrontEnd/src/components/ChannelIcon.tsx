@@ -7,27 +7,12 @@ import { setChannelInfo } from '../features/channelSlice';
 import {  RoomType } from './Types/types';
 
 
-const image = require('../images/yoko.png');
 
 const ChannelIcon: React.FC<{
 	room: RoomType;
 	onClick: (room: RoomType) => void;
 }> = ({ room, onClick }) => {
 
-  const dispatch = useDispatch();
-  const switchChat = () => {
-    dispatch(setChannelInfo); // what is dispatch
-		// console.log("aaaaaa");
-	}
-
-  useEffect(() => 
-  {
-    // console.log(room.name);
-    // console.log(room._id);
-    // console.log(room.password);
-    // console.log(room.name);
-
-  },[])
 
   return (
     <>
@@ -36,7 +21,7 @@ const ChannelIcon: React.FC<{
       {/* {dmNotifications > 0 && (
 		  				<div className="notification-bubble">
 		  					{dmNotifications}
-		  				</div>
+		  				</div> 
 		  			)} */}
       <Avatar size="md"
         onClick={onClick.bind(null, room)} 

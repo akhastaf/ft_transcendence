@@ -1,3 +1,4 @@
+import { Heading, List } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { IoCloseCircleSharp } from "react-icons/io5"
 import { getBlockedList } from "../Services/user"
@@ -21,7 +22,7 @@ const BlockList : React.FC <{
     useEffect(() => {
     getBlockedList().then ((res) => {
         setBlocked(res);
-        console.log(res);
+        // console.log(res);
     })
     .catch(err=> console.log(err));
     },[]);
@@ -49,9 +50,9 @@ const BlockList : React.FC <{
                     <div className="flow-root">
                          <ul  className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
-                                (!blocked) ? <li className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</li> : 
+                                (!blocked) ? <Heading className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</Heading> : 
                                 blocked?.map((blocked: userModel) => (
-                                   <li> <BlockCard currentUser={blocked}/></li>
+                                   <List key={blocked.id} > <BlockCard currentUser={blocked}/></List>
 
                                 ))
                             }
