@@ -189,7 +189,7 @@ const SideBar: React.FC<{
             onClick={logoutHandler}
           />
           <h1 className="text-white text-sm min-w-[100px] font-medium">
-            {currentUser?.username}{" "}
+            {currentUser?.nickname}{" "}
             {/* <span className="text-[#b9bbbe] block">
                   #{currentUser.id.substring(0, 4)}
                 </span> */}

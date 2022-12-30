@@ -1,10 +1,10 @@
-import { Flex, VStack , Image, Stack, Heading, Button, Text, Box, Menu, MenuList, StackDivider, Avatar} from '@chakra-ui/react';
+import { Flex, VStack , Image, Stack, Heading, Button, Text, Box, Menu, MenuList, StackDivider, Avatar, useToast} from '@chakra-ui/react';
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
 import React, {useEffect, useState} from 'react'
 
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { ScoreCard } from '../Game/LeaderBoad';
-import { getCurrentUser, getUserAchivements, getUsergame } from '../Services/user';
+import { AddFriend, getCurrentUser, getUserAchivements, getUsergame } from '../Services/user';
 import { Game, UserType } from '../Types/types';
 
 
@@ -41,7 +41,7 @@ const Achievement: React.FC <{}>
                     },
                 }}>
         {
-          user?.achievements ? user.achievements?.map((achi) => (
+          user?.achievments ? user.achievments?.map((achi) => (
             <Box key={achi.id}>
             <Heading size='xs' textTransform='uppercase'>
               {achi.type}
@@ -103,38 +103,23 @@ export const LeaderBoad1: React.FC <{
 }
 
 
-const Leaderboard: React.FC<{
-    currentUser: UserType
-}> = ({ currentUser }) => {
-    return <>
-        <Box position={"relative"} h={"40rem"} w={"30rem"} >
-        <Menu isOpen={true}>
-            <MenuList w={"30rem"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
-                <Box w={"100%"} h={"100%"} overflowY={"auto"} css={{
-                    "&::-webkit-scrollbar": {
-                        width: "4px",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                        width: "6px",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                        background: "#8ccef0",
-                        borderRadius: "24px",
-                    },
-                }}>
-                    
-                  
-
-                </Box>
-            </MenuList>
-            </Menu>
-            </Box>
-    </>
-}
-
 export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos}) => {
 
-
+  const toast = useToast();
+  const AddFriendf = (id : number) => {
+		console.log("id of friend = ",id )
+		AddFriend(id).then((res) =>
+		{
+			toast({
+				title: 'New Friend Unlocked',
+				description: "You are Now Friends",
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			})
+			
+		}).catch(err => console.log(err))
+	}
 
     return (<Card
         direction={{ base: 'column', sm: 'row' }}
@@ -152,7 +137,7 @@ export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos})
       
         <Stack>
           <CardBody>
-            <Heading size='md'>{user.username}</Heading>
+            <Heading size='md'>{user.nickname}</Heading>
             <Flex flexDir={"row"} justifyContent={"space-between"} align={"center"}>
             <Flex flexDir={"column"}>
             <Text py='2'>
@@ -166,14 +151,14 @@ export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos})
             </Text>
             </Flex>
             {
-              pos && <Button>ADD Friend</Button>
+              pos && <Button onClick={() => AddFriendf(parseInt(user.id))}>ADD Friend</Button>
             }
             </Flex>
           </CardBody>
       
           <CardFooter>
           <Text py='2'>
-            Recent Achivement : {user?.achievements ? user?.achievements.at(-1)?.type : "No Achievement Yet"}
+            Recent Achivement : {user?.achievments ? user?.achievments.at(-1)?.type : "No Achievement Yet"}
             </Text>
           </CardFooter>
         </Stack>

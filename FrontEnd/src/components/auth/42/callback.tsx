@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { getCurrentUser } from "../../Services/user";
 
-import useLocalStorage from "../../../hooks/useLocalStorage";
+// import useLocalStorage from "../../../hooks/useLocalStorage";
 import { toast } from "react-toastify";
 import { Button, ButtonGroup, Flex, Text, Link } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -22,7 +22,7 @@ export default function Callback() {
 
 
   // eslint-disable-next-line
-  const [userInfo, setUserInfo] = useLocalStorage("currentUser");
+  // const [userInfo, setUserInfo] = useLocalStorage("currentUser");
   
   const id_user = searchParams.get("user_id");
   const a: number = (id_user) ? parseInt(id_user) : 0;
@@ -52,7 +52,7 @@ export default function Callback() {
       
       getCurrentUser().then((res) => {
         console.log(res);
-        setUserInfo(res);
+        // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
         toast.success("You login success !!", {
           position: toast.POSITION.TOP_CENTER,
@@ -62,7 +62,7 @@ export default function Callback() {
 
       navigate(`/channels?new=${newU}`);
     } 
-  }, [navigate, r, setToken,  searchParams, setUserInfo, access_token, newU,twfa])
+  }, [navigate, r, setToken,  searchParams, access_token, newU,twfa])
 
 
   const [reset, setReset] = useState(false);
@@ -76,7 +76,7 @@ export default function Callback() {
       localStorage.setItem('accessToken', res.data.access_token);
       getCurrentUser().then((res) => {
         console.log(res);
-        setUserInfo(res); 
+        // setUserInfo(res); 
         localStorage.setItem("currentUser", JSON.stringify(res));
         toast.success("You login success !!", {
           position: toast.POSITION.TOP_CENTER,
@@ -95,7 +95,7 @@ export default function Callback() {
       localStorage.setItem('accessToken', res.data.access_token);
       getCurrentUser().then((res) => {
         console.log(res);
-        setUserInfo(res);
+        // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
         toast.success("You login success !!", {
           position: toast.POSITION.TOP_CENTER,
@@ -133,7 +133,7 @@ export default function Callback() {
                 <input className="text-black px-10" {...register("token", { required: true })} type="text" /></>
                 }
 
-                <Flex w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-end"} alignItems={"center"} bg={"#2f3136"}>
+                <Flex  gap={"100px"} w={"100%"} h={"15%"} flexDir={"row"} justifyContent={"flex-start"} alignItems={"center"} bg={"#2f3136"}>
                   <Text>
                     <Link color='teal.500'  onClick={ () => setReset(true)}>
                     Reset TWO Factor Auth 

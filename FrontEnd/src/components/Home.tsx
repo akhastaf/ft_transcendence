@@ -37,6 +37,7 @@ const SettingModal: React.FC<{
 }> = ({ usersState,setUsersState,setState, tfa,username, Subject, avatar }) => {
 
     const toast = useToast();
+	const navigate = useNavigate();
     // let up = useContext(updates);
     const { register, handleSubmit } = useForm<profileUpdate>();
     const closeModal = () => {
@@ -59,7 +60,7 @@ const SettingModal: React.FC<{
         let formData = new FormData();
         const name = data?.name ? data.name : username;
         console.log("name from profile = ", name, "printi all data =", data);
-    	formData.append('username', name);
+    	formData.append('nickname', name);
     	formData.append('avatar', imageFile);
         
     	formData.append('twofa', tfa ? "true" : "false");
@@ -75,6 +76,7 @@ const SettingModal: React.FC<{
 			  })
               setUsersState(!usersState);
             })
+			navigate("/channels");
             closeModal();
     }
     const m: string = (username) ? username : "";
@@ -172,6 +174,7 @@ const Home: React.FC<{
 	notifications: 1,
 		}
 	]);
+
 	const [userInfo, setUserInfo] = useState<UserType>({
 		id: "",
 		username: "wqqewqeq",
@@ -179,6 +182,7 @@ const Home: React.FC<{
 		updatedAt: new Date(),
 		avatar: "",
 		email: "",
+		nickname : "",
 		phoneNumber: null,
 		friends: [],
 		bloked: [],
@@ -187,7 +191,7 @@ const Home: React.FC<{
 		win : 0, 
 		loss : 0,
 		level : 0,
-		achievements : [],
+		achievments : [],
 
 	});
 
@@ -198,7 +202,6 @@ const Home: React.FC<{
 			getCurrentUser()
 				.then((user) => {
 					setUserInfo(user);
-					// console.log("hello = ", userInfo);
 
 				})
 				.catch((err) => console.log(err));
@@ -354,6 +357,12 @@ const Home: React.FC<{
 		setUsersState(!usersState);
 	})
 	socket.on("addUser_server", (data) => {
+		setUsersState(!usersState);
+	})
+	socket.on("unsetAdmin_server", (data) => {
+		setUsersState(!usersState);
+	})
+	socket.on("addAdmin_server", (data) => {
 		setUsersState(!usersState);
 	})
 	})

@@ -60,9 +60,9 @@ const Settings: React.FC<{
         {
             selected === "Block List" && <BlockList closeModal={closeModal} currentUser={currentUser} />
         }
-        {
+        {/* {
             selected === "Friend Request" && <FriendListRequest closeModal={closeModal} currentUser={currentUser} />
-        }
+        } */}
         {/*{
             selected === "Disconnect" && <FriendList currentUser={currentUser} />
         } */}
@@ -130,20 +130,12 @@ const UserCard: React.FC<{
                                         className="h-24 rounded-full"
                                     />
                                     <h1 className="arcade  text-white pt-12 "> {currentUser?.username}</h1>
-                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser?.id}</h1>
+                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + (parseInt(currentUser?.id) * 1420 + 300)}</h1>
                                 </div>
-
-
-                                {/* <div className="flex flex-row pt-5 pb-5"> 
-                                    <BasicButtons  onClick={changeImage} text="Modify Your Profil" />
-                                </div> */}
                             </div>
                             <div id="mail setting" className="border-5 rounded-lg h-[15rem] m-auto w-2/3 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
                                 <SettingInfo usersState={usersState} setUsersState={setUsersState} type="mail" CurrentUser={currentUser} />
                                 <SettingInfo1 type="mail" CurrentUser={currentUser} />
-                                {/* <Progress colorScheme='green' height='32px' value={20} > Level 1</Progress> */}
-                                {/* <SettingInfo2 type="mail" CurrentUser={currentUser} /> */}
-
 
                             </div>
                         </div>
@@ -152,10 +144,6 @@ const UserCard: React.FC<{
                             <div className="w-full border-b border-gray-500"></div>
                         </div>
                         <div className="flex flex-col">
-                            {/* <span className="float-left font-bold left-0 text-md text-white">Password and Authentification</span>
-                            <div className="ml-0 mt-5 w-[20rem]">
-                                <BasicButtons1 classNam="" text="Change Password" onClick={ChangePassword} />
-                            </div> */}
                             <div className="mt-5">
                                 <h2> Two Factor Authentification </h2>
                             </div>
@@ -167,7 +155,6 @@ const UserCard: React.FC<{
                             </div>
                             <div className="ml-0 mt-5 w-[20rem]">
                                 <BasicButtons1 classNam="" text={`${state} Two Factor Authentification`} onClick={Enable2fa} />
-                                {tfaModal ? <TfaModal setUsersState={setUsersState} usersState={usersState} qrcodeUrl={qrCode} base32={secret} setState={setTfaModal} /> : null}
                             </div>
                         </div>
                         <div className="my-10 inset-0 flex items-center">
@@ -185,7 +172,6 @@ const UserCard: React.FC<{
                             </div>
                             <div className="ml-0 mt-5 w-[20rem]">
                                 <BasicButtons1 classNam="bg-red" text="Delete Accout" onClick={Enable2fa} />
-                                {/* <BasicButtons1 classNam="" text="Enable Two Factor Authentification" onClick={ChangePassword} /> */}
                             </div>
                         </div>
 
@@ -194,6 +180,7 @@ const UserCard: React.FC<{
                 </div>
             </div>
         </Flex>
+            {tfaModal ? <TfaModal setUsersState={setUsersState} usersState={usersState} qrcodeUrl={qrCode} base32={secret} setState={setTfaModal} /> : null}
     </>
 };
 
@@ -219,12 +206,12 @@ const SettingInfo: React.FC<{
                 <h1> Username</h1>
                 <div className="flex flex-row ml-5 gap-1">
                     <h2 className="arcade text-white">{CurrentUser?.username} </h2>
-                    <h2 className="arcade text-gray-400"> {"#" + CurrentUser?.id} </h2>
+                    <h2 className="arcade text-gray-400"> {"#" + (parseInt(CurrentUser?.id) * 1420 + 300)} </h2>
                 </div>
             </div>
             <div className="m-auto">
                 <BasicButtons onClick={changeUserName} text="Modify" />
-                {state ? <SettingModal usersState={usersState} tfa={CurrentUser?.twofa} setUsersState={setUsersState} avatar={CurrentUser?.avatar} Subject="Username" username={CurrentUser?.username} setState={setState} /> : null}
+                {state ? <SettingModal usersState={usersState} tfa={CurrentUser?.twofa} setUsersState={setUsersState} avatar={CurrentUser?.avatar} Subject="Nickname" username={CurrentUser?.nickname} setState={setState} /> : null}
             </div>
         </div>
 
@@ -298,7 +285,7 @@ const SettingModal: React.FC<{
         let formData = new FormData();
         const name = data?.name ? data.name : username;
         console.log("name from profile = ", name, "printi all data =", data);
-        formData.append('username', name);
+        formData.append('nickname', name);
         formData.append('avatar', imageFile);
 
         formData.append('twofa', tfa ? "true" : "false");
@@ -396,10 +383,10 @@ const TfaModal: React.FC<{
 
         const name = data.token ? data.token : "9999";
         localService.post("user/2fa/verify", { token: name }).then((res) => {
-            console.log("res == ", res)
+            console.log("res == ", res.data)
             setTok(res.data.recoveryCode);
             toast({
-                title: `Important : Save this Number to reset 2fa : ${tok} `,
+                title: `Important : Save this Number to reset 2fa : ${res.data.recoveryCode} `,
                 containerStyle: {
                     border: '20px solid red',
                 },

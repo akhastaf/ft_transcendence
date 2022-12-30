@@ -1,5 +1,7 @@
 import { Box, Flex, Heading } from "@chakra-ui/react";
 import { useContext, useEffect, useRef, MouseEvent } from "react";
+import { SiDocker } from "react-icons/si";
+import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../Services/sockets";
 import { Gamestate, Net } from "../Types/types";
 
@@ -8,6 +10,7 @@ import { Gamestate, Net } from "../Types/types";
             }> = () => {
                 const socket = useContext(SocketContext);
                 const canvasRef = useRef(null)
+                const navigate = useNavigate()
                 var canvas : any;
                 var ctx : any;
                 var net : Net;
@@ -33,6 +36,9 @@ import { Gamestate, Net } from "../Types/types";
                     socket.on('gamestate', (gamestate) => {
                         render(gamestate); 
                      });
+                    socket.on('rejectGame_server', (then) => {
+                        navigate("/channels");
+                    })
                     //  console.log('after');
                 },[])
                 
@@ -98,9 +104,7 @@ import { Gamestate, Net } from "../Types/types";
                 <Box>
                     <Heading color={"#ffffff"}> Use Your Mouse to Move </Heading>
                 </Box>
-            <button onClick={() => {socket.emit('add',  "classic");}}>
-              Play Game
-            </button>
+
       </Flex>
     </>
 }

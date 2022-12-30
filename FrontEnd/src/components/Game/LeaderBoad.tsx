@@ -76,7 +76,7 @@ export const ScoreCard: React.FC<{
                     </div>
                     <div className="flex-1  min-w-fit">
                         <p className="text-lg font-medium arcade text-white  dark:text-white">
-                            {game.player1.username}
+                            {game.player1.nickname}
                         </p>
                         {/* <p className="text-sm  text-beige_color dark:text-gray-400">
                             {game.player1.email}
@@ -94,7 +94,7 @@ export const ScoreCard: React.FC<{
 
                         <div className="flex-1 pr-10 min-w-5">
                             <p className="text-lg font-medium arcade text-white truncate dark:text-white">
-                                {game.player2.username}
+                                {game.player2.nickname}
                             </p>
                             {/* <p className="text-sm  text-beige_color truncate dark:text-gray-400">
                                 {game.player2.email}

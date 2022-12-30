@@ -16,6 +16,7 @@ const Profile : React.FC <{
     const [userInfo, setUserInfo] = useState<UserType>({
         id: "",
 		username: "",
+        nickname : "",
 		createdAt: new Date(),
 		updatedAt: new Date(),
 		avatar: "",
@@ -28,7 +29,7 @@ const Profile : React.FC <{
         level : 0,
         win : 0,
         loss : 0,
-        achievements : [],
+        achievments : [],
     })
     const [fon , setFon] = useState(true);
     useEffect(() => {

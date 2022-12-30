@@ -64,7 +64,7 @@ const MemberCard: React.FC<{
 		})
 
 	}
-
+	const socket = useContext(SocketContext)
 
 	const unsetadminAction = (id: number) => {
 
@@ -84,29 +84,36 @@ const MemberCard: React.FC<{
 		setUsersState(!usersState);
 	
 		
-		setADmin(id, parseInt(choosenChat._id)).then(() => console.log("new admin is set"))
-		toast({
-			title: `user update`,
-			description: `User ${user.name} is an admin`,
-			status: 'success',
-			duration: 9000,
-			isClosable: true,
-		  })
-	}
+		// setADmin(id, parseInt(choosenChat._id)).then(() => console.log("new admin is set"))
+		socket.emit("addAdmin_client", {id_user : id, id_group : parseInt(choosenChat._id)} ,(data : any) =>
+		{ 
+			toast({
+				title: `user update`,
+				description: `User ${user.name} is an admin`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
+			})
+	}	
 	const unsetAdmin = (id: number) => {
 		setUsersState(!usersState);
-		unsetADmin(id, parseInt(choosenChat._id)).then(() => console.log("admin is unset"))
-		toast({
-			title: `user update`,
-			description: `User ${user.name} is no longer an admin`,
-			status: 'success',
-			duration: 9000,
-			isClosable: true,
-		  })
+		// unsetADmin(id, parseInt(choosenChat._id)).then(() => console.log("admin is unset"))\
+		socket.emit("unsetAdmin_client", {id_user : id, id_group : parseInt(choosenChat._id)} ,(data : any) =>
+		{ 
+			toast({
+				title: `user update`,
+				description: `User ${user.name} is no longer an admin`,
+				status: 'success',
+				duration: 9000,
+				isClosable: true,
+			  })
+			})
+		
 	}
 
 
-	const socket = useContext(SocketContext);
+	// const socket = useContext(SocketContext); 
 	const kickMember = (id : number) => {
 		socket.emit("removeUser_client", {id_user : id, id_group : parseInt(choosenChat._id)},
 		(data : any) => {

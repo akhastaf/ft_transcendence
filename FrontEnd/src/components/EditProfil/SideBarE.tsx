@@ -5,7 +5,7 @@ import { UserType } from "../Types/types";
 // import SideBar from "../SideBar/SideBar";
 import {IoIosLogOut} from "react-icons/io";
 import Settings1 from "./Settings";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 // import Button from '@mui/material/Button';
 
 
@@ -51,7 +51,7 @@ const SideBarE: React.FC<{
                                  <SettingCard setSelected={setSelected} selected={selected} text="My Profile"/>
                                  <SettingCard setSelected={setSelected} selected={selected} text="Friend List"/>
                                  <SettingCard setSelected={setSelected} selected={selected}  text="Block List"/>
-                                 <SettingCard setSelected={setSelected} selected={selected}  text="Friend Request"/>
+                                 {/* <SettingCard setSelected={setSelected} selected={selected}  text="Friend Request"/> */}
                                  <div className="bg-rose-600 border-2 border-rose-600 hover:bg-rose-800">
                                  <SettingCard setSelected={setSelected} selected={selected} logout={logoutHandler} text="Disconnect"/>
                                 </div>
@@ -128,11 +128,9 @@ export const  BasicButtons: React.FC < {
     onClick: () => void
 }> = ({text, onClick}) => {
     return (
-    //   <Stack spacing={2} direction="row">
-        // <Button variant="text">Text</Button>
-        <button onClick={onClick} type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"> {text}</button>
-        // <Button variant="outlined">Outlined</Button>
-    //   </Stack
+
+        <Button onClick={onClick} colorScheme={"whatsapp"} type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"> {text}</Button>
+
     );
   }
 
@@ -154,12 +152,8 @@ export const  BasicButtons2: React.FC < {
     onClick: () => void
 }> = ({text, onClick , classNam}) => {
     return (
-    //   <Stack spacing={2} direction="row">
-        // <Button variant="text">Text</Button>
         <button onClick={onClick} type="button" className={`text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm text-center  
         mb-2`}> {text}</button>
-        // <Button variant="outlined">Outlined</Button>
-    //   </Stack
     );
   }
 

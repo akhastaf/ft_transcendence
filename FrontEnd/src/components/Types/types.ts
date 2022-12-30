@@ -77,6 +77,7 @@ export type Achievements = {
 export type UserType = {
 	id: string;
 	username: string;
+	nickname : string;
 	createdAt: Date;
 	updatedAt: Date;
 	avatar: string;
@@ -91,7 +92,7 @@ export type UserType = {
 	win : number,
 	loss : number,
 	level : number
-	achievements: Achievements[];
+	achievments: Achievements[];
 }
 
 export type AuthUserType = {

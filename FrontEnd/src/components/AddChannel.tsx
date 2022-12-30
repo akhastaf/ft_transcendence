@@ -143,9 +143,6 @@ const AddChannel: React.FC<{
                       // setError("password", { type: "9", message : "Must not be empty field" },  { shouldFocus: true });
         }} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Create</button>
                     </div>
-                    {/* <div>
-                      OR <a onClick={(e)=> { e.preventDefault(); setState("JOIN")}} className='underline text-blue-600 hover:text-blue-800 visited:text-purple-600'> Join Channel</a>
-                    </div> */}
                   </form>
                 </div>
               </div>

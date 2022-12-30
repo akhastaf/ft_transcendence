@@ -65,12 +65,12 @@ const ChannelCard: React.FC<{
                 <button onClick={joinRoom} className="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-emerald-500 rounded-lg hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Join Channel
                     <svg aria-hidden="true" className="ml-2 -mr-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                    {
-                        state && <PasswordInput setState={setState} room={room} />
-                    }
                 </button>
             </div>
         </div>
+                    {
+                        state && <PasswordInput setState={setState} room={room} />
+                    }
 
     </>
 }
@@ -87,11 +87,12 @@ const PasswordInput : React.FC <{
     const toast = useToast();
 
     const joinRoomHandler = (room: roomModal, password?: string) => {
+        
 		socket.emit("joinGroup_client", {
 			id_group: room.id,
 			password: password,
 		}, (data : any) => {
-            console.log("data - ", data)
+           
             if (data === false)
             {
                 toast({
@@ -103,9 +104,9 @@ const PasswordInput : React.FC <{
                 })
                 closeModal();
             }
-            // console.log(data);
         });
         socket.on("joinGroup_server", (data) => {
+            // console.log("data", data)
             closeModal();
             navigate(`/channels/ROOM/${room.id}`);
             toast({
@@ -126,16 +127,13 @@ const PasswordInput : React.FC <{
 
     const submitForm : SubmitHandler<{password : string}> = (data) => {
          joinRoomHandler(room, data.password);
-        
-
     }
 
     return <>
     <div
         className="justify-center items-center  flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none"
-        onClick={() => { closeModal(); }}
     >
-        <div className="flex items-center " onClick={e => { e.stopPropagation(); }} >
+        <div className="flex items-center " >
             <div className="w-[30rem] my-6 mx-auto h-[25rem]   " >
                 <div className="border-0 rounded-lg lg:rounded-r-lg justify-between h-[30rem] shadow-lg  flex flex-col w-full bg-discord_serverBg outline-none focus:outline-none" onClick={e => { e.stopPropagation(); }}>
                     <div className="sm:mx-auto w-full h-2/6 ">
