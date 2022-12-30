@@ -21,6 +21,7 @@ import {socket, SocketContext} from './components/Services/sockets'
 import { Flex, useToast, Button } from '@chakra-ui/react';
 import NotFound from './NotFound';
 import { IoCloseCircleSharp } from 'react-icons/io5';
+import ForbiddenRoom from './Forbidden';
 
 export interface gameInvite {
     id : number;
@@ -123,6 +124,7 @@ const App : React.FC <{}> = () => {
                 </Route>
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
                 <Route path="*" element={<NotFound />} />
+                <Route path="/Forbidden" element={<ForbiddenRoom />} />
             </Route>
           </Routes>
             </SocketContext.Provider>

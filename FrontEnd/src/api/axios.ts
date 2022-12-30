@@ -57,10 +57,16 @@ localService.interceptors.response.use((response: AxiosResponse) => {
     
     localStorage.removeItem("accessToken");
     localStorage.removeItem("currentUser");
-   
+    window.location.assign(`${process.env.REACT_APP_ClientHostName}/`);
     
+    
+}
+console.log("error =", error);
+if (error.response.data.statusCode === 403)
+{
+       window.location.assign(`${process.env.REACT_APP_ClientHostName}/Forbidden`);
+
    }
-   if (errMessage.includes('For'))
     return Promise.reject(error);
 });
 
