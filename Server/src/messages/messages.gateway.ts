@@ -83,6 +83,8 @@ export class MessagesGateway {
 	//*** 3- leaveGroup
 	//*** 4- addUser
 	//*** 5- removeUser
+	//*** 6- addAdmin
+	//*** 7- unsetAdmin
 
 	// * ######################################################################################################################
 	
@@ -213,43 +215,84 @@ export class MessagesGateway {
 		}
 	}
 
+	// *** 6- addAdmin
+	@SubscribeMessage('addAdmin_client')
+	async addAdmin(@MessageBody() data: addUserDto, @ConnectedSocket() client: SocketWithUserId) {
+		try
+		{
+			return await this.groupsService.setAdmin(client.data.id, data);
+		}
+		catch (err)
+		{
+			throw new WsException(err.message);
+		}
+	}
+
+	// *** 7- unsetAdmin
+	@SubscribeMessage('unsetAdmin_client')
+	async unsetAdmin(@MessageBody() data: addUserDto, @ConnectedSocket() client: SocketWithUserId) {
+		try
+		{
+			return await this.groupsService.unsetAdmin(client.data.id, data);
+		}
+		catch (err)
+		{
+			throw new WsException(err.message);
+		}
+	}
+
+
 	//* ################################################# Client connected ###############################################################
 
 	handleConnection(@ConnectedSocket() client: SocketWithUserId)
 	{
-		client.data.id = client.userId;
-		if (!this.connectedList.has(client.data.id))
+		try
 		{
-			this.connectedList.add(client.data.id);
-			this.messagesService.setStatus(client.data.id, Userstatus.ONLINE);
+			client.data.id = client.userId;
+			if (!this.connectedList.has(client.data.id))
+			{
+				this.connectedList.add(client.data.id);
+				this.messagesService.setStatus(client.data.id, Userstatus.ONLINE);
+			}
+			console.log("connected", client.data.id);
+			console.log('connectedlist ', this.connectedList);
+			client.join(client.data.id.toString());
+			console.log("rooom size of ", client.data.id, this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
+			//! I may should add that the user is connected:
+			// this.server.to(client.userId.toString()).emit('connection', client.userId);
+			this.server.emit('connection', this.connectedList);
+			//* rooms and sids : https://socket.io/docs/v3/rooms/#:~:text=The%20%22room%22%20feature,subset%20of)%20clients
+			// const rooms = this.server.of("/").adapter.rooms;
+			// const sids = this.server.of("/").adapter.sids;
+			// console.log("rooms", rooms);
+			// console.log("sids", sids);
 		}
-		console.log("connected", client.data.id);
-		console.log('connectedlist ', this.connectedList);
-		client.join(client.data.id.toString());
-		console.log("rooom size of ", client.data.id, this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
-		//! I may should add that the user is connected:
-		// this.server.to(client.userId.toString()).emit('connection', client.userId);
-		this.server.emit('connection', this.connectedList);
-		//* rooms and sids : https://socket.io/docs/v3/rooms/#:~:text=The%20%22room%22%20feature,subset%20of)%20clients
-		// const rooms = this.server.of("/").adapter.rooms;
-		// const sids = this.server.of("/").adapter.sids;
-		// console.log("rooms", rooms);
-		// console.log("sids", sids);
+		catch (err)
+		{
+			throw new WsException(err.message);
+		}
 	}
 
 	@SubscribeMessage('disconnect_client')
 	async handleDisconnect(@ConnectedSocket() client: SocketWithUserId)
 	{
-		console.log('disconnect ', client.userId);
-		client.leave(client.userId.toString());
-		if (this.server.sockets.adapter.rooms.get(client.data.id.toString()) == undefined)//(client.rooms.size === 0) // io.sockets.adapter.rooms.get(roomName).size
+		try
 		{
-			await this.gameService.removePlayer(client);
-			this.connectedList.delete(client.data.id);
-			this.messagesService.setStatus(client.data.id, Userstatus.OFFLINE);
-			this.server.emit('disconnect_server', this.connectedList);
+			console.log('disconnect ', client.userId);
+			client.leave(client.userId.toString());
+			if (this.server.sockets.adapter.rooms.get(client.data.id.toString()) == undefined)//(client.rooms.size === 0) // io.sockets.adapter.rooms.get(roomName).size
+			{
+				await this.gameService.removePlayer(client);
+				this.connectedList.delete(client.data.id);
+				this.messagesService.setStatus(client.data.id, Userstatus.OFFLINE);
+				this.server.emit('disconnect_server', this.connectedList);
+			}
+			console.log('connectedlist ', this.connectedList);
 		}
-		console.log('connectedlist ', this.connectedList);
+		catch (err)
+		{
+			throw new WsException(err.message);
+		}
 	}
 }
 //*: Halima you should check if the owner want to leave a group => Done
