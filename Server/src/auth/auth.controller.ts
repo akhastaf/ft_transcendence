@@ -22,21 +22,30 @@ export class AuthController {
         return req.user;
     }
 
+    
     @Get('login/42/return')
     @UseGuards(FTAuthGuard)
+    @UseFilters(new HttpExceptionFilter(new ConfigService()))
     async ftcallback(@Req() req : any, @Res() res: Response)
     {
-        const {user, newLog} = await this.authService.register(req.user);
-        const access: tokens = await this.authService.login(user);
-        if (!user.twofa)
-        {
-            const expireIn = new Date();
-            expireIn.setMonth(expireIn.getMonth() + 3);
-            res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
-            res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
+        try {
+            const {user, newLog} = await this.authService.register(req.user);
+            const access: tokens = await this.authService.login(user);
+            if (!user.twofa)
+            {
+                const expireIn = new Date();
+                expireIn.setMonth(expireIn.getMonth() + 3);
+                res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
+                res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?accessToken=${access["access_token"]}&newlog=${newLog}`);
+            }
+            else
+                   res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&twofa=true`);
+        } catch (error) {
+            res.status(401).json({
+                statusCode: 401,
+                message: 'Unauthorized'
+            });
         }
-		else
-       		res.redirect(`${this.configService.get('CLIENT_HOST')}/callback?user_id=${user.id}&twofa=true`);
     }
     
     @UseGuards(JWTGuard)
@@ -47,24 +56,39 @@ export class AuthController {
     }
     @Post('2fa')
     async verify(@Body() verifydto: Verify2FaDTO, @Res() res: Response) :Promise<any> {
-        const access: tokens = await this.authService.verify(verifydto);
-        const expireIn = new Date();
-        expireIn.setMonth(expireIn.getMonth() + 3);
-        res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
-        res.status(200).json({
-            access_token: access.access_token
-        });
+        try {
+            console.log('2fa');
+            const access: tokens = await this.authService.verify(verifydto);
+            const expireIn = new Date();
+            expireIn.setMonth(expireIn.getMonth() + 3);
+            res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
+            res.status(200).json({
+                access_token: access.access_token
+            });
+        } catch (error) {
+            res.status(403).json({
+                statusCode: 403,
+                message: error.message
+            });
+        }
     }
 
     @Post('2fa/reset')
     async reset2Fa(@Body() reset2FaDTO: Reset2FaDto, @Res() res: Response) :Promise<any> {
-        const access: tokens =  await this.authService.reset2Fa(reset2FaDTO);
-        const expireIn = new Date();
-        expireIn.setMonth(expireIn.getMonth() + 3);
-        res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
-        res.status(200).json({
-            access_token: access.access_token
-        });
+        try {
+            const access: tokens =  await this.authService.reset2Fa(reset2FaDTO);
+            const expireIn = new Date();
+            expireIn.setMonth(expireIn.getMonth() + 3);
+            res.cookie('refresh_token', access.refresh_token, { httpOnly: true, expires: expireIn });
+            res.status(200).json({
+                access_token: access.access_token
+            });
+        } catch (error) {
+            res.status(403).json({
+                statusCode: 403,
+                message: error.message
+            });
+        }
     }
     @Get('refresh_token')
     async getAccess_token(@Req() req: Request, @Res() res: Response) {
@@ -76,7 +100,10 @@ export class AuthController {
             res.cookie('refresh_token', tokens.refresh_token, { httpOnly: true, expires: expireIn })
             res.status(200).send({ access_token: tokens.access_token });
         }
-        throw new UnauthorizedException('refresh_token not exist')
+        res.status(401).json({
+            statusCode: 401,
+            message: 'refresh_token not exist'
+        });
     }
 
     // for Test

@@ -40,8 +40,10 @@ export class AuthService {
             const verified = speakeasy.totp.verify({ secret: user.secret, encoding: 'base32', token: verifydto.token, window: 6});
             if (verified)
                 return this.login(user);
-            throw new BadRequestException("2fa dose not match");
+            console.log('error 2fa');
+            throw new ForbiddenException("2fa dose not match");
         } catch (error) {
+            console.log(error.message);
             throw new ForbiddenException(error.message);
         }
     }
