@@ -108,7 +108,6 @@ export class UserService {
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {
         try {
-        console.log(updateUserDTO);
             await this.userRepository.update(user.id, updateUserDTO);
             if (!user.twofa && updateUserDTO.twofa)
             {
