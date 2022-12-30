@@ -1,5 +1,6 @@
+
 import { HttpService } from "@nestjs/axios";
-import { Injectable} from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-oauth2";
 import { stringify } from "querystring";
@@ -27,13 +28,13 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
     async validate(
         accessToken: string,
         refreshToken: string) : Promise<any> {
-            const { data } = await this.http.axiosRef.get('https://api.intra.42.fr/v2/me', {
-				headers: { Authorization: `Bearer ${ accessToken }` },
-			});
-            const coalition : any = await this.http.axiosRef.get(`https://api.intra.42.fr//v2/users/${data.id}/coalitions`, {
-                headers: { Authorization: `Bearer ${ accessToken }` },
-            });
-            data.coalition = coalition.color;
-            return data;
+            try {
+                const { data } = await this.http.axiosRef.get('https://api.intra.42.fr/v2/me', {
+                    headers: { Authorization: `Bearer ${ accessToken }` },
+                });
+                return data;
+            } catch (error) {
+                throw new UnauthorizedException()
+            }
         }
 }

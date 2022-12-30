@@ -16,13 +16,17 @@ export class AuthService {
         private jwtService: JwtService) {}
 
     async login(user :any): Promise<any> {
-        const payload = { email: user.email, sub: user.id };
-        return {
-            access_token: this.jwtService.sign(payload),
-            refresh_token: this.jwtService.sign(payload, {
-                secret: this.configService.get('JWT_REFRESH_SECRET'),
-                expiresIn: '90d'
-            })
+        try {
+            const payload = { email: user.email, sub: user.id };
+            return {
+                access_token: this.jwtService.sign(payload),
+                refresh_token: this.jwtService.sign(payload, {
+                    secret: this.configService.get('JWT_REFRESH_SECRET'),
+                    expiresIn: '90d'
+                })
+            }
+        } catch (error) {
+            throw new ForbiddenException(error.message);
         }
     }
 
@@ -31,21 +35,29 @@ export class AuthService {
     }
 
     async verify(verifydto: Verify2FaDTO) : Promise<any> {
-        const user = await this.userService.getUser(verifydto.id);
-        const verified = speakeasy.totp.verify({ secret: user.secret, encoding: 'base32', token: verifydto.token, window: 6});
-        if (verified)
-            return this.login(user);
-        throw new BadRequestException("2fa dose not match");
+        try {
+            const user = await this.userService.getUser(verifydto.id);
+            const verified = speakeasy.totp.verify({ secret: user.secret, encoding: 'base32', token: verifydto.token, window: 6});
+            if (verified)
+                return this.login(user);
+            throw new BadRequestException("2fa dose not match");
+        } catch (error) {
+            throw new ForbiddenException(error.message);
+        }
     }
     async reset2Fa(reset2FaDto : Reset2FaDto) : Promise<any> {
-        const user = await this.userService.getUser(reset2FaDto.id);
-        const verified = user.recoveryCode === reset2FaDto.recovery_code;
-        if (verified)
-        {
-            await this.userService.reset2Fa(user);
-            return this.login(user);
+        try {
+            const user = await this.userService.getUser(reset2FaDto.id);
+            const verified = user.recoveryCode === reset2FaDto.recovery_code;
+            if (verified)
+            {
+                await this.userService.reset2Fa(user);
+                return this.login(user);
+            }
+            throw new ForbiddenException("recovery code dose not match");
+        } catch (error) {
+            throw new ForbiddenException(error.message);
         }
-        throw new ForbiddenException("recovery code dose not match");
     }
 
     async getUser(token: string) : Promise<User|null> {
@@ -55,16 +67,6 @@ export class AuthService {
             return user;
         } catch (error) {
             return null;
-        }
-    }
-
-    async getToken(id: number) : Promise<string>{
-        try {
-            const user = await this.userService.getUser(id);
-            const payload = { email: user.email, sub: user.id };
-            return this.jwtService.sign(payload);
-        } catch (error) {
-            throw new ForbiddenException(error.message);
         }
     }
 

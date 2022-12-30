@@ -7,7 +7,7 @@ export class UpdateUserDTO {
     @IsOptional()
     @IsString()
     @Length(3, 15)
-    username?: string;
+    nickname?: string;
     @ApiPropertyOptional()
     @IsOptional()
     @IsBoolean()

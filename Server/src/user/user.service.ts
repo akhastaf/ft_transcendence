@@ -1,7 +1,7 @@
 import { ForbiddenException, UnauthorizedException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserProvider } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as speakeasy from "speakeasy";
 import { TwofaVerificationDTO } from './dto/twofa-verification.dto';
@@ -9,6 +9,9 @@ import { ConfigService } from '@nestjs/config';
 import { AchievmentService } from 'src/achievment/achievment.service';
 import { Achievment } from 'src/achievment/entities/achievment.entity';
 import { v4 as uuidv4} from "uuid";
+import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator';
+
+
 @Injectable()
 export class UserService {
     constructor (
@@ -19,15 +22,19 @@ export class UserService {
     ) { }
     
     async getUsers(): Promise<User[]> {
-        return await this.userRepository.find({
-            relations: {
-                friends: true,
-                bloked: true,
-                groups:true,
-                achievments:true,
-                usertogroup: true
-            }
-        });
+        try {
+            return await this.userRepository.find({
+                relations: {
+                    friends: true,
+                    bloked: true,
+                    groups:true,
+                    achievments:true,
+                    usertogroup: true
+                }
+            });
+        } catch (error) {
+            throw new ForbiddenException();
+        }
     } 
     
     
@@ -83,13 +90,20 @@ export class UserService {
 
     async create(userData: any): Promise<any> 
     {
-        const user = await this.userRepository.findOneBy({email: userData.email});
-        if (user)
-            return { user, newLog: false };
-      
-        const createduser = this.userRepository.create({ username: userData.login, email: userData.email, avatar: userData.image.link, provider: UserProvider.FT, coalition: userData.color});
-        const newUser = await this.userRepository.save(createduser);
-        return { user: newUser, newLog: true };
+        try {
+              
+            const nickname: string = uniqueNamesGenerator({
+                dictionaries: [adjectives, colors, animals]
+            });
+            const user = await this.userRepository.findOneBy({email: userData.email});
+            if (user)
+                return { user, newLog: false };
+            const createduser = this.userRepository.create({ nickname: nickname, username: userData.login, email: userData.email, avatar: userData.image.link});
+            const newUser = await this.userRepository.save(createduser);
+            return { user: newUser, newLog: true };
+        } catch (error) {
+            throw new ForbiddenException();
+        }
     }
 
     async updateUser(user: User, updateUserDTO: UpdateUserDTO) : Promise<any> {
@@ -111,27 +125,35 @@ export class UserService {
     }
 
     async verify2fa(user: User, twofaVerificationDTO: TwofaVerificationDTO) : Promise<any> {
-        if (user.twofa)
-            throw new ForbiddenException('2 factor authentication alredy verified');
-        const verified = speakeasy.totp.verify({ secret: user.secret_tmp, encoding: 'base32', token: twofaVerificationDTO.token, window: 6});
-        if (verified)
-        {
-            const recoveryCode: string = uuidv4();
-            await this.userRepository.update(user.id, { twofa: true ,secret: user.secret_tmp, recoveryCode: recoveryCode});
-            return { recoveryCode };
+        try {
+            if (user.twofa)
+                throw new ForbiddenException('2 factor authentication alredy verified');
+            const verified = speakeasy.totp.verify({ secret: user.secret_tmp, encoding: 'base32', token: twofaVerificationDTO.token, window: 6});
+            if (verified)
+            {
+                const recoveryCode: string = uuidv4();
+                await this.userRepository.update(user.id, { twofa: true ,secret: user.secret_tmp, recoveryCode: recoveryCode});
+                return { recoveryCode };
+            }
+            throw new ForbiddenException('token is invalide');
+        } catch (error) {
+            throw new ForbiddenException();
         }
-        throw new ForbiddenException('token is invalide');
     }
 
     async getFriends(user: User) : Promise<User[]>{
-        return (await this.userRepository.findOne({
-            where: {
-                id: user.id,
-            },
-            relations: {
-                friends: true,
-            }
-        })).friends;
+        try {
+            return (await this.userRepository.findOneOrFail({
+                where: {
+                    id: user.id,
+                },
+                relations: {
+                    friends: true,
+                }
+            })).friends;
+        } catch (error) {
+            throw new ForbiddenException('user not found');
+        }
     }
     async addFriend(user: User, id: number) : Promise<User>{
         try {
@@ -152,14 +174,18 @@ export class UserService {
         }
     }
     async getBlocked(user: User) : Promise<User[]>{
-        return (await this.userRepository.findOne({
-            where: {
-                id: user.id
-            },
-            relations: {
-                bloked: true,
-            }
-        })).bloked;
+        try {
+            return (await this.userRepository.findOneOrFail({
+                where: {
+                    id: user.id
+                },
+                relations: {
+                    bloked: true,
+                }
+            })).bloked;
+        } catch (error) {
+            throw new ForbiddenException('user not find');
+        }
     }
     async blockFriend(user: User, id: number) : Promise<User>{
         try {
@@ -199,27 +225,25 @@ export class UserService {
             })
             winner.win++;
             looser.loss++;
-            winner.level += (winner.level === 0 ? 0.25 : winner.level * 0.25);
-            if (looser.level > 0,20)
-            looser.loss =- 0,20;
+            winner.level += Math.ceil((winner.level === 0 ? 1 : winner.level * 0.1));
             winner.achievments = [];
-            looser.achievments = [];
             const achievments : Achievment[] = await this.achievmentService.findAll();
             for (const achievment of achievments) {
-                if (winner.win >= achievment.win
-                    && winner.loss <= achievment.loss 
-                    && winner.level >= achievment.level)
+                if (winner.level >= achievment.level && this.hasNotAchivement(achievment, winner))
                     winner.achievments = [achievment, ...winner.achievments];
-                    if (looser.win >= achievment.win
-                        && looser.loss <= achievment.loss 
-                        && looser.level >= achievment.level)
-                        looser.achievments = [achievment, ...looser.achievments];
             }
             await this.userRepository.save(winner);
             await this.userRepository.save(looser);
         } catch (error) {
             throw new ForbiddenException(error.message);
         }
+    }
+    hasNotAchivement(achievment: Achievment, winner: User) {
+        for (const ach of winner.achievments) {
+            if (ach.id === achievment.id)
+                return false;
+        }
+        return true;
     }
 
     async reset2Fa(user: User) {

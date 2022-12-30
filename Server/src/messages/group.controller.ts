@@ -61,8 +61,12 @@ export class GroupController {
 	{
 		// console.log("##########  createChannel  ##########", req.user.id);
 		// console.log("body", body);
-		if (avatar)
+		if (avatar != undefined)
 			body.avatar = this.configService.get('SERVER_HOST') + avatar;
+		else
+			body.avatar = avatar;
+		// else
+		// 	body.avatar = this.configService.get('SERVER_HOST') + "/uploads/group.jpeg";
 		const group = await this.groupsService.createGroup(req.user, body);
 		const channel = new channelModel();
 		channel.id = group.id;
@@ -197,11 +201,11 @@ export class GroupController {
 		return true;
 	}
 
-	@Delete(':id')
-	async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-		// console.log("deleteChannel", id);
-		return await this.groupsService.deleteGroup(req.user.id, id);
-	}
+	// @Delete(':id')
+	// async deleteChannel(@Req() req: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+	// 	// console.log("deleteChannel", id);
+	// 	return await this.groupsService.deleteGroup(req.user.id, id);
+	// }
 	// @Patch()
 	// async updateChannel(@Req() req: RequestWithUser, @Body() data: UpdateGroupDto) {
 	// 	console.log("updateChannel : ", data);

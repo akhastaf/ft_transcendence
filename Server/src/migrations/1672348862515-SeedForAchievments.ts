@@ -2,7 +2,7 @@ import { Achievment } from "src/achievment/entities/achievment.entity";
 import { MigrationInterface, QueryRunner } from "typeorm"
 import { AchievmentSeed } from "./seeds/achievment.seed";
 
-export class SeedForAchievments1672001192400 implements MigrationInterface {
+export class SeedForAchievments1672348862515 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const achivments = queryRunner.manager.getRepository(Achievment).create(AchievmentSeed);
@@ -12,4 +12,5 @@ export class SeedForAchievments1672001192400 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.clearTable('achievment');
     }
+
 }

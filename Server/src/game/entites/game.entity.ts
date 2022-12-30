@@ -14,7 +14,7 @@ export enum GameMode {
 }
 
 
-@Entity()
+@Entity('games')
 export class Game {
     @PrimaryGeneratedColumn()
     id: number;

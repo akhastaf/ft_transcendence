@@ -2,7 +2,7 @@ import { User } from "src/user/entities/user.entity";
 import { MigrationInterface, QueryRunner } from "typeorm"
 import { ComputerSeed } from "./seeds/computer.seed";
 
-export class SeedForUserComputer1672001192300 implements MigrationInterface {
+export class SeedForUserComputer1672348809407 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const computer = queryRunner.manager.getRepository(User).create(ComputerSeed);
@@ -12,4 +12,5 @@ export class SeedForUserComputer1672001192300 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         // await queryRunner.clearTable('achievment');
     }
+
 }

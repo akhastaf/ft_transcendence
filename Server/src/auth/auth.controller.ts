@@ -24,7 +24,6 @@ export class AuthController {
 
     @Get('login/42/return')
     @UseGuards(FTAuthGuard)
-    @UseFilters(new HttpExceptionFilter())
     async ftcallback(@Req() req : any, @Res() res: Response)
     {
         const {user, newLog} = await this.authService.register(req.user);
@@ -81,13 +80,13 @@ export class AuthController {
     }
 
     // for Test
-    @Get(':id')
-    async getToken(@Param('id', ParseIntPipe) id: number) : Promise<string> {
-        try {
-            return await this.authService.getToken(id);
-        } catch (error) {
-            throw new ForbiddenException(error.message);
-        }
-    }
+    // @Get(':id')
+    // async getToken(@Param('id', ParseIntPipe) id: number) : Promise<string> {
+    //     try {
+    //         return await this.authService.getToken(id);
+    //     } catch (error) {
+    //         throw new ForbiddenException(error.message);
+    //     }
+    // }
 
 }

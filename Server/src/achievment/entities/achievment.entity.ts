@@ -1,7 +1,7 @@
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity()
+@Entity('achievments')
 export class Achievment {
     @PrimaryGeneratedColumn()
     id: number;
@@ -11,10 +11,6 @@ export class Achievment {
     icon: string;
     @Column()
     description: string;
-    @Column()
-    win: number;
-    @Column()
-    loss: number;
     @Column()
     level: number;
 

@@ -26,7 +26,7 @@ import { Gamestate, Net } from "../Types/types";
                         } 
                     drawRect(0, 0, canvas!.width, canvas!.height, 'black');
                     canvas?.addEventListener('mousemove', movePaddle);
-                    socket.on('stopgame', (end) => {
+                    socket.on('stopgame', () => {
                       console.log("Game over");
                       drawText('Game over', canvas?.width / 2, canvas?.height / 2, 2, '#0F9B8E');
                     })
