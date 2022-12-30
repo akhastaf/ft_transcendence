@@ -6,20 +6,24 @@ import {LeaderBoad1} from "../EditProfil/Profile"
 
 import {Flex, VStack, Box} from '@chakra-ui/react'
 import { getGames } from "../Services/game"
+import { socket } from "../Services/sockets"
 
 const GameHome : React.FC <{
     currentUser: UserType
 }> = () => {
-    const [games, setGames] = useState<any>(
-
-    );
+    const [games, setGames] = useState<any>();
+    const [update, setUpdate] = useState<any>(false);
     useEffect(() => {
+        socket.on("newGame_server", (data)=> {
+            setUpdate(!update)
+        })
     getGames().then((res) => {
         setGames(res);
         console.log("rgames = ", res);
     })
 
-    },[])
+    },[update])
+
 
     return <>
        
@@ -48,13 +52,5 @@ const GameHome : React.FC <{
     </>
 }
 
-
-
-const GameModes : React.FC <{
-
-}> = ({}) =>
-{
-    return <></>
-}
 
 export default GameHome;

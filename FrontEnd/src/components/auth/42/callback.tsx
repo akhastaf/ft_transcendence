@@ -36,7 +36,7 @@ export default function Callback() {
   // eslint-disable-next-line
   const access_token = searchParams.get("accessToken");
   const twfa = searchParams.get("twofa");
-  const newU = searchParams.get("new");
+  const newU = searchParams.get("newlog");
   useEffect(() => {
     // const access_token = queryParams.get('accessToken');
     r.auth = { token: access_token };
@@ -59,6 +59,7 @@ export default function Callback() {
         });
       })
       .catch(err => console.log(err))
+
       navigate(`/channels?new=${newU}`);
     } 
   }, [navigate, r, setToken,  searchParams, setUserInfo, access_token, newU,twfa])

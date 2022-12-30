@@ -40,13 +40,13 @@ const Profile : React.FC <{
     getCurrentUser().then((res) => {
         console.log("res = ", res);
     res.friends?.map((friend : any) => {
-        console.log("user c id = ", user.id, "friend id = ", friend.id)
-        if (parseInt(friend.id) == user.id)
+        if (parseInt(friend.id) === user.id)
         {
             setFon(false);
         }
+        return 0;
     })})
-},[])
+},[user])
    
     return <>
       <div

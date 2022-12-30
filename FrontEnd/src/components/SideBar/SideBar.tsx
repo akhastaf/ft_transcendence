@@ -137,7 +137,7 @@ const SideBar: React.FC<{
             if (user.name !== currentUser?.username)
 
               return (
-                <MemberCard
+                <MemberCard 
                   onClick={() =>
                     selectedUserDM({
                       username: user.name,
@@ -158,7 +158,7 @@ const SideBar: React.FC<{
                 />
               );
               else
-                  return <></>;
+                  return <div key={user.id.toString()}></div>;
 
 
           })
@@ -449,6 +449,7 @@ export const AddUsers: React.FC<{
 				duration: 9000,
 				isClosable: true,
 			  })
+      setShowModal(false);
     })
   }
 
@@ -474,7 +475,7 @@ export const AddUsers: React.FC<{
               {
                notJoined?.map((user : userModel) => (
                   <>
-                    <Flex key={user.id} h={"50px"} w={"100%"} boxShadow="-1px 5px 30px #10111bd6" bgColor={"blue.900"} _hover={{bgColor:"blue.900", transitionDuration:"0.5s"}} flexDir={"row"} gap={5} justifyContent={"center"} alignItems={"center"}>
+                    <Flex key={user.id.toString()} h={"50px"} w={"100%"} boxShadow="-1px 5px 30px #10111bd6" bgColor={"blue.900"} _hover={{bgColor:"blue.900", transitionDuration:"0.5s"}} flexDir={"row"} gap={5} justifyContent={"center"} alignItems={"center"}>
                       <Flex flexDir={"row"} gap={5} justifyContent={"space-between"} alignItems={"center"} >
                       <Avatar size={"sm"} src={user.avatar} />
                       <Box ml='3'>

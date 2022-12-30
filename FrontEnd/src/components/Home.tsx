@@ -267,7 +267,6 @@ const Home: React.FC<{
 
 
 			socket.emit("createDm_client", parseInt(id2), (data : any) => {
-				console.log("aaaa");
 				setDmId(data.id);
 				setChoosenChat(() => ({ username: "Direct Messages", _id: id2}));
 				
@@ -305,11 +304,8 @@ const Home: React.FC<{
 						getMyRole(parseInt(id2)).then((res) => {
 						setMyRole(res)
 						setWrongId("in");
-						console.log("i am in");
 						return 0;
 					})
-					// .catch(err => console.log(err))
-					console.log("ha qq", wrongId);
 				}
 				return 0 ;
 			})
@@ -351,11 +347,13 @@ const Home: React.FC<{
 			setUsersState(!usersState);
 	})
 	socket.on("disconnect_server", (data) => {
-		console.log("i am disco")
 		setUsersState(!usersState);
 	})
 	socket.on("connection", (data) => {
-		console.log("i am co")
+
+		setUsersState(!usersState);
+	})
+	socket.on("addUser_server", (data) => {
 		setUsersState(!usersState);
 	})
 	})
@@ -407,8 +405,17 @@ const Home: React.FC<{
 			// setRooms([...rooms, room.data])
 			setNewChannel(!NewChannel);
 		})
-			.catch((err) =>
-				console.log(err.response.data.message));
+			.catch((err) => {
+				toast({
+					title: `Channels Update`,
+					description: `Room Creation Error`,
+					status: 'error',
+					duration: 9000,
+					isClosable: true,
+				  })
+				
+				console.log(err.response);
+				})
 	};
 
 	const logoutHandler = () => {
