@@ -18,8 +18,8 @@ export class GameService {
     server : Server| null = null;
     constructor(private configService: ConfigService, private userService: UserService, @InjectRepository(Game) private gameRepository: Repository<Game>,) {}
     
-    async getAllGames() {
-        return this.gameRepository.find({
+    async getAllGames(): Promise<Game[]> {
+        return await this.gameRepository.find({
             order: {
                 updatedAt: 'DESC'
             }
@@ -42,25 +42,29 @@ export class GameService {
     }
 
     async playVsComp(socket : SocketWithUser, mode : string) : Promise<void> {
-        if (this.checkPlaying(socket))
+        try {
+            if (this.checkPlaying(socket))
+                return;
+            const gamelocal : GameLocal = this.createGame(mode as GameMode);
+            const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
+            if (mode === GameMode.CUSTOM) {
+                const p: Player = this.createPlayer(socket, gamelocal);
+                await this.userService.setStatus(p.user.id, Userstatus.PLAYING);
+                const com = await this.userService.getUserByEmail(this.configService.get('COMP_EMAIL'));
+                const comp : Player = this.createPlayerComp(com, gamelocal);
+                gamelocal.players.push(p);
+                gamelocal.players.push(comp);
+                game.player1 = p.user;
+                game.player2 = com;
+                gamelocal.status = GameStatus.PLAYING;
+                game.status = GameStatus.PLAYING;
+                p.socket.join(gamelocal.room);
+                await this.gameRepository.save(game);
+                this.games.set(gamelocal.room, gamelocal)
+                this.server.emit('newGame_server');
+            }
+        } catch (error) {
             return;
-        const gamelocal : GameLocal = this.createGame(mode as GameMode);
-        const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
-        if (mode === GameMode.CUSTOM) {
-            const p: Player = this.createPlayer(socket, gamelocal);
-            await this.userService.setStatus(p.user.id, Userstatus.PLAYING);
-            const com = await this.userService.getUserByEmail(this.configService.get('COMP_EMAIL'));
-            const comp : Player = this.createPlayerComp(com, gamelocal);
-            gamelocal.players.push(p);
-            gamelocal.players.push(comp);
-            game.player1 = p.user;
-            game.player2 = com;
-            gamelocal.status = GameStatus.PLAYING;
-            game.status = GameStatus.PLAYING;
-            p.socket.join(gamelocal.room);
-            await this.gameRepository.save(game);
-            this.games.set(gamelocal.room, gamelocal)
-            this.server.emit('newGame_server');
         }
     }
     checkPlaying(socket: SocketWithUser) {
@@ -76,60 +80,69 @@ export class GameService {
     }
 
     async add(socket: SocketWithUser, mode: string, server: Server): Promise<void> {
-        if (this.server === null)
-            this.server = server;
-        if (!socket.user)
-            return;
-        if (this.checkPlaying(socket))
-            return;
-        this.clearRoom(socket);
-        if (mode === GameMode.CUSTOM)
-            return this.playVsComp(socket, mode);
-        for (const s of this.sockets)
-        {
-            if (s.user.id === socket.user.id)
+        try {
+            
+            if (this.server === null)
+                this.server = server;
+            if (!socket.user)
                 return;
-        }
-        this.sockets.push(socket);
-        if (this.sockets.length < 2 && mode === GameMode.CLASSIC)
+            if (this.checkPlaying(socket))
+                return;
+            this.clearRoom(socket);
+            if (mode === GameMode.CUSTOM)
+                return this.playVsComp(socket, mode);
+            for (const s of this.sockets)
+            {
+                if (s.user.id === socket.user.id)
+                    return;
+            }
+            this.sockets.push(socket);
+            if (this.sockets.length < 2 && mode === GameMode.CLASSIC)
+                return;
+            if (mode != GameMode.CLASSIC)
+                mode = GameMode.CLASSIC;
+            const gamelocal : GameLocal = this.createGame(mode as GameMode);
+            const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
+            while (this.sockets.length && gamelocal.players.length < 2)
+            {
+                const s: SocketWithUser = this.sockets.shift();
+                const player: Player = this.createPlayer(s, gamelocal);
+                await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
+                this.clearRoom(s);
+                this.server.emit('connection', {});
+                gamelocal.players.push(player);
+                player.socket.join(gamelocal.room);
+                if (!game.player1)
+                    game.player1 = s.user;
+                else if (!game.player2)
+                    game.player2 = s.user;
+            }
+            if (gamelocal.players.length === 2)
+            {
+                gamelocal.status = GameStatus.PLAYING;
+                game.status = GameStatus.PLAYING; 
+                this.server.emit('newGame_server');
+            }
+            await this.gameRepository.save(game);
+            this.games.set(gamelocal.room, gamelocal);
+        } catch (error) {
             return;
-        if (mode != GameMode.CLASSIC)
-            mode = GameMode.CLASSIC;
-        const gamelocal : GameLocal = this.createGame(mode as GameMode);
-        const game: Game = this.gameRepository.create({ score1: 0, score2: 0, status: GameStatus.WAITING, room: gamelocal.room, mode: mode});
-        while (this.sockets.length && gamelocal.players.length < 2)
-        {
-            const s: SocketWithUser = this.sockets.shift();
-            const player: Player = this.createPlayer(s, gamelocal);
-            await this.userService.setStatus(player.user.id, Userstatus.PLAYING);
-            this.clearRoom(s);
-            this.server.emit('connection', {});
-            gamelocal.players.push(player);
-            player.socket.join(gamelocal.room);
-            if (!game.player1)
-                game.player1 = s.user;
-            else if (!game.player2)
-                game.player2 = s.user;
         }
-        if (gamelocal.players.length === 2)
-        {
-            gamelocal.status = GameStatus.PLAYING;
-            game.status = GameStatus.PLAYING; 
-            this.server.emit('newGame_server');
-        }
-        await this.gameRepository.save(game);
-        this.games.set(gamelocal.room, gamelocal)
     }
     clearRoom(socket: SocketWithUser) {
-        for (const g of this.games.values())
-        {
-            for (const s of g.spectators)
+        try {
+            for (const g of this.games.values())
             {
-                if (s.user.id === socket.user.id) {
-                    socket.leave(g.room);
-                    g.spectators.splice(g.spectators.findIndex((sp) => sp.user.id === socket.user.id), 1);
+                for (const s of g.spectators)
+                {
+                    if (s.user.id === socket.user.id) {
+                        socket.leave(g.room);
+                        g.spectators.splice(g.spectators.findIndex((sp) => sp.user.id === socket.user.id), 1);
+                    }
                 }
             }
+        } catch (error) {
+            return;
         }
     }
     createPlayerComp(comp : User, game: GameLocal): Player {

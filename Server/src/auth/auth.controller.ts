@@ -24,7 +24,6 @@ export class AuthController {
 
     @Get('login/42/return')
     @UseGuards(FTAuthGuard)
-    @UseFilters(new HttpExceptionFilter())
     async ftcallback(@Req() req : any, @Res() res: Response)
     {
         const {user, newLog} = await this.authService.register(req.user);

@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { SocketIoAdapter } from './messages/socket-io-adapter';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
+import { HttpExceptionFilter } from './auth/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
@@ -19,6 +20,7 @@ async function bootstrap() {
     whitelist: true,
     transform: true
   }));
+  app.useGlobalFilters(new HttpExceptionFilter(configService));
   app.use(cookieParser());
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
