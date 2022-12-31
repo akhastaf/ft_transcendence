@@ -48,21 +48,19 @@ export default function Callback() {
 
       localStorage.setItem('accessToken', access_token);
       setToken(access_token);
-      
+      console.log(" all done");
       
       getCurrentUser().then((res) => {
         console.log(res);
         // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
-        toast.success("You login success !!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        navigate(`/channels?new=${newU}`);
+      
       })
       .catch(err => console.log(err))
 
-      navigate(`/channels?new=${newU}`);
     } 
-  }, [navigate, r, setToken,  searchParams, access_token, newU,twfa])
+  },[r, setToken,  searchParams, access_token, newU,twfa])
 
 
   const [reset, setReset] = useState(false);
