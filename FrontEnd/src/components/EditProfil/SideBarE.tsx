@@ -80,7 +80,6 @@ const SettingCard : React.FC <{
 
     modif = (text === selected && text !== "Disconnect") ? "bg-emerald-600" : (text !== "Disconnect") ?  " hover:bg-[#5c5e62]" : null;
     useEffect (() => {
-        // console.log(modif);
     });
     return (<>
 

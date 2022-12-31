@@ -93,6 +93,7 @@ export default function Callback() {
         // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
         navigate('/channels');
+
       })
         .catch(err => console.log(err))
       console.log("enabled ,", res.data);

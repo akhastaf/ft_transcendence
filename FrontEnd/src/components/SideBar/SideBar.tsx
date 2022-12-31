@@ -92,7 +92,6 @@ const SideBar: React.FC<{
 
   };
   const openModal2 = () => {
-    // console.log("hello world!");
     setSettingModal1(true);
     // Navigate("/EditInfo");
 
@@ -101,7 +100,6 @@ const SideBar: React.FC<{
   const toast = useToast();
   const leaveGroup = () => {
     socket.emit("leaveGroup_client", { id_group: parseInt(choosenChat._id) }, (data: any) => {
-      console.log("leave group ", data)
       if (data === true) {
         toast({
           title: `Channels update`,
@@ -110,7 +108,6 @@ const SideBar: React.FC<{
           duration: 9000,
           isClosable: true,
         })
-        console.log("aaaaa = ", data);
         navigate("/channels");
       }
 
@@ -175,7 +172,7 @@ const SideBar: React.FC<{
       </div>
       {state === "ROOM" && <div className="flex flex-col flex-grow justify-end">
         <div className="mb-5 mx-auto">
-          <BasicButtons text={"Leave Group"} onClick={() => { console.log(" i left"); leaveGroup() }} />
+          <BasicButtons text={"Leave Group"} onClick={() => { leaveGroup() }} />
         </div>
       </div>}
       <div className="bg-[#292b2f] p-2 flex justify-between items-center space-x-8">
@@ -230,10 +227,8 @@ export const ChannelSetting: React.FC<{
   const toast = useToast();
   const submitForm1: SubmitHandler<{ oldPassword: string }> = (data) => {
 
-    console.log("sub 2 = ", data.oldPassword);
     if (data.oldPassword) {
       deletePassword(parseInt(id), data.oldPassword).then((res) => {
-        console.log("res in del = ", res)
         if (res) {
           toast({
             title: `Channel update`,
@@ -247,7 +242,7 @@ export const ChannelSetting: React.FC<{
       }).catch(err => {
         toast({
           title: `Channel update`,
-          description: err.response.data.message,
+          description: err.response.data!.message,
           status: 'error',
           duration: 9000,
           isClosable: true,
@@ -271,12 +266,10 @@ export const ChannelSetting: React.FC<{
   useEffect(() => {
     getPrivacy(parseInt(id)).then((res) => {
       setPrivacy(res);
-      console.log("res = ", res, " same", privacy)
     }
     )
   }, [id, privacy])
   const submitForm: SubmitHandler<{ oldPassword: string, newPassword: string }> = (data) => {
-    console.log("sub 1 = ")
     // let p : Privacy = (privacy === "Public") ? Privacy.PUBLIC : (privacy === "Protected") ? Privacy.PROTECTED : Privacy.PRIVATE;
     if (privacy === Privacy.PUBLIC || privacy === Privacy.PRIVATE) {
       ChangePrivacy(parseInt(id), data.newPassword).then((res) => {
@@ -292,7 +285,7 @@ export const ChannelSetting: React.FC<{
         toast({
           title: `Channel update`,
           description: err.response.data.message,
-          status: 'info',
+          status: 'error',
           duration: 9000,
           isClosable: true,
         })
@@ -347,7 +340,7 @@ export const ChannelSetting: React.FC<{
               {(privacy === Privacy.PUBLIC || privacy === Privacy.PRIVATE) ? <>
                 <Flex flexDir={"column"} justifyContent={"space-between"} alignItems={"flex-start"} gap={5}>
                   <label htmlFor="newUserName">New Password</label>
-                  <input className="text-black" {...register("newPassword", { minLength: { value: 8, message: "password must be more than 3 characters" }, maxLength: { value: 20, message: "password must be less than 20 characters" } })} type="password" />
+                  <input className="text-black" {...register("newPassword", { minLength: { value: 8, message: "password must be more than 8 characters" }, maxLength: { value: 20, message: "password must be less than 20 characters" } })} type="password" />
                 </Flex>
                 <Flex px={"30px"} alignItems={"center"} justifyItems={"center"} >
                   <Heading color={"red"} as='h5' size='sm' >Ps : Setting A Password will change the Privacy to Protected</Heading>
@@ -361,7 +354,7 @@ export const ChannelSetting: React.FC<{
                   </div>}
                   <label htmlFor="newUserName">New Password</label>
                   <Flex gap={"20px"} flexDir={"row"} justifyContent={"space-between"} alignItems={"center"}>
-                    <input className="w-[10rem] text-black" {...register("newPassword", { minLength: { value: 8, message: "password must be more than 3 characters" }, maxLength: { value: 20, message: "password must be less than 20 characters" } })} type="password" />
+                    <input className="w-[10rem] text-black" {...register("newPassword", { minLength: { value: 8, message: "password must be more than 8 characters" }, maxLength: { value: 20, message: "password must be less than 20 characters" } })} type="password" />
 
                     <Text>Or </Text>
                     <Button colorScheme={'red'} onClick={handleSubmit(submitForm1)} > Delete Passoword </Button>
@@ -398,11 +391,9 @@ export const ChannelSetting: React.FC<{
 
 const a = (id: number, users: userModel[]) => {
   for (const user of users) {
-    console.log("friend id == ", id, "user id == ", user.id);
     if (user.id === id)
       return false;
   }
-  console.log("i made it here");
   return true;
 }
 export const AddUsers: React.FC<{
@@ -421,11 +412,8 @@ export const AddUsers: React.FC<{
     GetFriends().then((res) => {
       setNotJoined(res.filter((friend: userModel) => a(friend.id, users)))
     })
-
-    // console.log("res = ", notJoined);
   }, [users, notJoined])
   //   GetFriends().then((res) => {
-  //     console.log("res = ", res);
   //     setNotJoined(res)
   //   })
   // },[]);

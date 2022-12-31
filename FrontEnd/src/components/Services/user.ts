@@ -2,7 +2,6 @@ import { localService } from "../../api/axios";
 import { Status } from "../Types/types";
 
 export const getCurrentUser = (): Promise<any> => {
-	// return localService.get("/user/"+id).then(res => res.data).catch(err => console.log(err));
 	return localService.get("user/me").then(res=> res.data).catch(err => Promise.reject(err));
 };
 export const getAUser = (id: number): Promise<any> => {
@@ -32,7 +31,6 @@ export const setADmin = (id_user : number, id_group : number) : Promise<any> => 
 	return localService.post("channels/set-admin/" ,{id_user, id_group}).then((res) => res.data).catch(err => Promise.reject(err));
 }
 export const unsetADmin = (id_user : number, id_group : number) : Promise<any> => {
-	// console.log("aaaa");
 	return localService.post("channels/unset-admin/", {id_user, id_group} ).then((res) => res.data).catch(err => Promise.reject(err));
 }
 export const ChangePrivacy = (id_group : number , password : string) : Promise<any> => {
@@ -50,7 +48,6 @@ export const deletePassword = (id_group : number , password : string) : Promise<
 // 	return localService.post("channels/set-status/", data ).then((res) => res.data).catch(err => console.log(err));
 // }
 export const setStatus = (id :number , id_group : number , status : Status, until : Date) : Promise<any> => {
-	console.log(" id = ", id, "id_group = " , id_group, " status = ", status, " until = ", until)
 	return localService.post("channels/set-status/", 
 	{
 		id_user : id,
@@ -62,7 +59,6 @@ export const setStatus = (id :number , id_group : number , status : Status, unti
 
 
 export const unsetStatus = (id_user : number , id_group : number) : Promise<any> => {
-	console.log("aaaaaaaa");
 	return localService.post("channels/unset-status/", {id_user, id_group} ).then((res) => res.data).catch(err => Promise.reject(err));
 }
 

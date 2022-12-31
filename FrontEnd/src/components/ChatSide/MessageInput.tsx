@@ -23,8 +23,6 @@ const MessageInput: React.FC <{
 
     useEffect(() =>
     {
-        // console.log(isMemberOfRoom);
-        // console.log(`chosenChat = ${choosenChat._id}`)
     },[]);
     return (<>
 

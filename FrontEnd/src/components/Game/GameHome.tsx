@@ -19,7 +19,6 @@ const GameHome : React.FC <{
         })
     getGames().then((res) => {
         setGames(res);
-        console.log("rgames = ", res);
     })
 
     },[update])

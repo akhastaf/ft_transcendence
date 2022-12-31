@@ -56,14 +56,11 @@ const App : React.FC <{}> = () => {
         socket.on("inviteToGame_server", (data : gameInvite ) => {
             setShow(true);
             setUser1(data);
-            // console.log("sift lik message")
         })
         socket.on("sendMessage_server", (data : any) => {
         if (data)
          {
-            console.log("dasad = ", data);
             // setMessageRef(data);
-            // console.log("sift lik message")
             toast({
               title: `user jah message`,
               description: `jak message`,
@@ -78,7 +75,6 @@ const App : React.FC <{}> = () => {
         }
     // }, [messageRef, socket, toast])
     }, [])
-    // console.log('Render lifecycle')
     return (
       <>
         <Router>
@@ -199,7 +195,6 @@ export const RequireAuth = ({ children } : { children: JSX.Element } ) => {
 
   const user : any = localStorage.getItem("currentUser");
 
-  // console.log("req", user);
   const location = useLocation();
 
   if (isUserLoggedIn(user) === false)
@@ -225,7 +220,6 @@ export const RequireNoAuth = ({ children } : { children: JSX.Element }) => {
 
     if (children)
     {
-      console.log("i am here = ", children) 
         return children;
     }
     return <Outlet />;
@@ -261,7 +255,6 @@ export const RequireNoAuth = ({ children } : { children: JSX.Element }) => {
 // }
 
 const isUserLoggedIn = (userData: any): boolean => {
-  // console.log(userData)
 	if (
 		userData &&
 		userData !== null

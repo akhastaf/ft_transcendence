@@ -18,7 +18,6 @@ const Achievement: React.FC <{}>
     useEffect(() => {
       getCurrentUser().then((res) => {
         setUser(res);
-        // console.log("achivement = ", res, "set achi ", achievements);
       })
     },[])
     return <>
@@ -105,7 +104,6 @@ export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos})
 
   const toast = useToast();
   const AddFriendf = (id : number) => {
-		console.log("id of friend = ",id )
 		AddFriend(id).then((res) =>
 		{
 			toast({
@@ -116,7 +114,7 @@ export const Fcard : React.FC <{user : UserType, pos : boolean}> = ({user, pos})
 				isClosable: true,
 			})
 			
-		}).catch(err => console.log(err))
+		}).catch(err => {})
 	}
 
     return (<Card
