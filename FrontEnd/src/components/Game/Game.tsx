@@ -30,7 +30,6 @@ import { Gamestate, Net } from "../Types/types";
                     drawRect(0, 0, canvas!.width, canvas!.height, 'black');
                     canvas?.addEventListener('mousemove', movePaddle);
                     socket.on('stopgame', () => {
-                      console.log("Game over");
                       drawText('Game over', canvas?.width / 2, canvas?.height / 2, 2, '#0F9B8E');
                     })
                     socket.on('gamestate', (gamestate) => {
@@ -43,7 +42,6 @@ import { Gamestate, Net } from "../Types/types";
                         socket.off(); 
                         canvas?.removeEventListener("mousedown", movePaddle, true);
                     }
-                    //  console.log('after');
                 },[])
                 
                 function drawRect(x: number, y : number, w : number, h: number, color: string): void {

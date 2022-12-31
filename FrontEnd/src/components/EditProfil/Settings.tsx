@@ -94,7 +94,6 @@ const UserCard: React.FC<{
         const tfa: string = (twofa === true) ? "false" : "true";
         formData.append("twofa", tfa);
         updateInfo(formData).then((data) => {
-            console.log("data = ", data);
             if (twofa === false) {
                 setQrCode(data.secret.otpauthURL);
                 setSecret(data.secret.base32);
@@ -284,15 +283,11 @@ const SettingModal: React.FC<{
 
         let formData = new FormData();
         const name = data?.name ? data.name : username;
-        console.log("name from profile = ", name, "printi all data =", data);
         formData.append('nickname', name);
         formData.append('avatar', imageFile);
 
         formData.append('twofa', tfa ? "true" : "false");
-        console.log("formdata", data?.name, "avatar ", imageFile);
-        console.log("form data = ", formData);
         updateInfo(formData).then((data) => {
-            // console.log(data);
             // updates = !updates;
             toast({
                 title: `Info update`,
@@ -305,7 +300,7 @@ const SettingModal: React.FC<{
         }).catch(err => {
             toast({
                 title: `Error`,
-                description: err.response.data.message,
+                description: err.response.data!.message,
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
@@ -391,7 +386,6 @@ const TfaModal: React.FC<{
 
         const name = data.token ? data.token : "9999";
         localService.post("user/2fa/verify", { token: name }).then((res) => {
-            console.log("res == ", res.data)
             setTok(res.data.recoveryCode);
             toast({
                 title: `Important : Save this Number to reset 2fa : ${res.data.recoveryCode} `,
@@ -407,7 +401,6 @@ const TfaModal: React.FC<{
                 duration: 9000,
                 isClosable: true,
             })
-            console.log("enabled");
             setState(false);
             setUsersState(!usersState);
             

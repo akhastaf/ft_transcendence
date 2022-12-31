@@ -25,7 +25,6 @@ const ChannelList: React.FC <{
 	const [showModal, setShowModal] = useState(false);
 
     const openModal = () => {
-        // console.log("hello world!");
         setShowModal(true);
     };
 	const HomeSweetHome = () => {
@@ -49,7 +48,6 @@ const ChannelList: React.FC <{
 			 {
 				
 				rooms && rooms?.map((room: RoomType, index: number) => (
-					// console.log(room.name);
 					<ChannelIcon 
 						room={room}
 						onClick={selectRoomHandler}

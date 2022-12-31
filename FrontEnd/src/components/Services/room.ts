@@ -1,7 +1,6 @@
 import { localService } from "../../api/axios";
 
 export const getAllRooms = (): Promise<any> => {
-	// console.log(localService.defaults.headers.common['Authorization']);
 	return localService.get("/channels").then((res) => {  return res.data}).catch((err) => Promise.reject(err));
 };
 
@@ -22,7 +21,7 @@ export const AllRooms = (): Promise<any> =>{
 }
 
 // export const getRoomId = (id : number): Promise<any> =>{
-// 	return localService.get("channels/"+id).then((res) => res.data).catch(err => console.log(err) );
+// 	return localService.get("channels/"+id).then((res) => res.data).catch(err => {});
 // }
 
 export const Dms = (): Promise<any> => {

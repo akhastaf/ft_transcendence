@@ -37,9 +37,7 @@ const Profile : React.FC <{
     .then((res) => {
         setUserInfo(res);
     })
-    // console.log("user = ", userInfo);
     getCurrentUser().then((res) => {
-        console.log("res = ", res);
     res.friends?.map((friend : any) => {
         if (parseInt(friend.id) === user.id)
         {

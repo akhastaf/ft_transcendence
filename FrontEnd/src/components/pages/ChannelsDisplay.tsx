@@ -16,7 +16,7 @@ const ChannelsDisplay: React.FC<{
     const [rooms, Setrooms] = useState<roomModal[]>([]);
 
     useEffect(() => {
-        AllRooms().then((res) => Setrooms(res)).catch(err => console.log(err));
+        AllRooms().then((res) => Setrooms(res)).catch(err => {});
     }, [])
 
 
@@ -106,16 +106,15 @@ const PasswordInput : React.FC <{
             }
         });
         socket.on("joinGroup_server", (data) => {
-            // console.log("data", data)
             closeModal();
             navigate(`/channels/ROOM/${room.id}`);
-            toast({
-                title: `Room join`,
-                description: `New Room joined`,
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-              })
+            // toast({
+            //     title: `Room join`,
+            //     description: `New Room joined`,
+            //     status: 'success',
+            //     duration: 9000,
+            //     isClosable: true,
+            //   })
         })
 	};
     const { register, handleSubmit } = useForm<{password: string}>();

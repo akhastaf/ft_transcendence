@@ -50,7 +50,6 @@ export const AuthProvider = ({ children }) => {
 
       return true;
     } catch (error) {
-      console.log(error);
       setUser(null);
       setisLoading(false);
       return false;

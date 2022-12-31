@@ -254,10 +254,10 @@ export class MessagesGateway {
 				this.connectedList.add(client.data.id);
 				this.messagesService.setStatus(client.data.id, Userstatus.ONLINE);
 			}
-			console.log("connected", client.data.id);
-			console.log('connectedlist ', this.connectedList);
+			// console.log("connected", client.data.id);
+			// console.log('connectedlist ', this.connectedList);
 			client.join(client.data.id.toString());
-			console.log("rooom size of ", client.data.id, this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
+			// console.log("rooom size of ", client.data.id, this.server.sockets.adapter.rooms.get(client.data.id.toString()).size );
 			//! I may should add that the user is connected:
 			// this.server.to(client.userId.toString()).emit('connection', client.userId);
 			this.server.emit('connection', this.connectedList);
@@ -278,7 +278,7 @@ export class MessagesGateway {
 	{
 		try
 		{
-			console.log('disconnect ', client.userId);
+			// console.log('disconnect ', client.userId);
 			client.leave(client.userId.toString());
 			await this.gameService.removePlayer(client);
 			if (this.server.sockets.adapter.rooms.get(client.data.id.toString()) === undefined)//(client.rooms.size === 0) // io.sockets.adapter.rooms.get(roomName).size
@@ -287,7 +287,7 @@ export class MessagesGateway {
 				this.messagesService.setStatus(client.data.id, Userstatus.OFFLINE);
 				this.server.emit('disconnect_server', this.connectedList);
 			}
-			console.log('connectedlist ', this.connectedList);
+			// console.log('connectedlist ', this.connectedList);
 		}
 		catch (err)
 		{

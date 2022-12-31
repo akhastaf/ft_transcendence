@@ -43,11 +43,9 @@ const Leaderboard: React.FC<{
 export const ScoreCard: React.FC<{
     game : Game
 }> = ({ game }) => {
-    // console.log("res score == ", game);
     const toast = useToast();
     const navigate = useNavigate();
     const watchGame = () => {
-        console.log("game = ", game.room)
         if (game.status === "playing")
         {
             socket.emit("joingame",game.room)

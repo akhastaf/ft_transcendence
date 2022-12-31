@@ -35,9 +35,7 @@ export const localService = axios.create({
 
 localService.interceptors.request.use((config: AxiosRequestConfig) => {
     if (config) {
-        // console.log("hello i am inside the intecptor");
         const token = localStorage.getItem("accessToken");
-        // console.log(" i am in the intercept = ", token);
         if (token && config.headers) {
             config.headers["Authorization"] = "Bearer " + token;
         }
@@ -61,7 +59,6 @@ localService.interceptors.response.use((response: AxiosResponse) => {
     
     
 }
-console.log("error =", error);
 if (error.response.data.statusCode === 403)
 {
        //window.location.assign(`${process.env.REACT_APP_ClientHostName}/Forbidden`);

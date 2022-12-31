@@ -59,13 +59,10 @@ const SettingModal: React.FC<{
 
         let formData = new FormData();
         const name = data?.name ? data.name : username;
-        console.log("name from profile = ", name, "printi all data =", data);
     	formData.append('nickname', name);
     	formData.append('avatar', imageFile);
         
     	formData.append('twofa', tfa ? "true" : "false");
-        console.log("formdata" , data?.name, "avatar ", imageFile);
-        console.log("form data = ", formData);
         updateInfo(formData).then((data) => {
             toast({
 				title: `Info update`,
@@ -212,7 +209,7 @@ const Home: React.FC<{
 					setUserInfo(user);
 
 				})
-				.catch((err) => console.log(err));
+				.catch((err) => {});
 
 
 
@@ -220,13 +217,11 @@ const Home: React.FC<{
 
 
 		socket.on("joinGroup_sever", (data) => {
-			console.log(data);
 			getAllRooms()
 				.then((res) => {
-					// console.log("her spam");
 					setRooms(res);
 				})
-				.catch(err => console.log(""));
+				.catch(err => {});
 
 		})
 
@@ -261,12 +256,10 @@ const Home: React.FC<{
 		if (state === "HomeGAME" || state === "allChannels" || state === "GAME")
 		{
 			Dms().then((res) => {
-				console.log("users =       ", res);
 
 				setUsers(res)
 				
-			}).catch(err => console.log(err))
-			// console.log("aaaaaaaaaaaaaa");
+			}).catch(err => {})
 			setChoosenChat(() => ({username: "", _id: ""}))
 			setSelectedUserDM(() => ({_id: "",
 			username: "" }))
@@ -290,13 +283,13 @@ const Home: React.FC<{
 						let sorted = res.sort((d1 : MessageModal, d2 : MessageModal) => (d1.date > d2.date ? 1 : d1.date < d2.date ? - 1 : 0));
 						setMessages1(sorted);
 					})
-					.catch((err) => console.log(err));
+					.catch((err) => {});
 					getRoomUsers(data.id)
 						.then((res) => {
 		
 							setUsers(res);
 						}
-						).catch(err => console.log(err))
+						).catch(err => {})
 						;
 				socket.off("createDm_client");
 			});
@@ -326,14 +319,14 @@ const Home: React.FC<{
 
 					setUsers(res);
 				}
-				).catch(err => console.log(err))
+				).catch(err => {})
 				;
 			getRoomMessages(parseInt(id2))
 			.then ((res) => {
 				let sorted = res?.sort((d1 : MessageModal, d2 : MessageModal) => (d1.date > d2.date ? 1 : d1.date < d2.date ? - 1 : 0));
 				setMessages1(sorted);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => {});
 
 		}
 
@@ -346,15 +339,12 @@ const Home: React.FC<{
 	// eslint-disable-next-line
 	useEffect(() => {
 	socket.on("joinGroup_server", (data) => {
-			// console.log("server joined");
 			setUsersState(!usersState);
 	})
 	socket.on("leaveGroup_server", (data) => {
-			// console.log("server joined");
 			setUsersState(!usersState);
 	})
 	socket.on("removeUser_server", (data) => {
-			// console.log("server joined");
 			setUsersState(!usersState);
 	})
 	socket.on("disconnect_server", (data) => {
@@ -400,14 +390,13 @@ const Home: React.FC<{
 			.then((room) => {
 				setRooms(room);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => {});
 
 		// ! getAllFriends aka users  (in bac)
 	},[state, NewChannel]);
 
 
 	const createRoomHandler = (roomName: string, private1: Privacy, avatar: any, password?: string, description?: string) => {
-		console.log("avatar =" ,avatar);
 
 		let formData = new FormData();
     	formData.append('name', roomName);
@@ -430,8 +419,6 @@ const Home: React.FC<{
 					duration: 9000,
 					isClosable: true,
 				  })
-				
-				console.log(err.response);
 				})
 	};
 

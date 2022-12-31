@@ -49,8 +49,6 @@ const MemberCard: React.FC<{
 		var currentDate = new Date();
 		var time_in_minut = time;
 		currentDate.setTime(currentDate.getTime() + parseInt(time_in_minut) * 60 * 1000);
-		// console.log("i am in the muted fucntion dasdasdasfasdkhhasb")
-		// console.log(" i am here time = ddd", currentDate);
 		const e: Status = (status === 'Ban') ? Status.BANNED : (status === 'Mute') ? Status.MUTED : Status.ACTIVE;
 		setStatus(id, parseInt(choosenChat._id), e, currentDate).then((res) => {
 			setUsersState(!usersState);
@@ -100,7 +98,6 @@ const MemberCard: React.FC<{
 		setUsersState(!usersState);
 
 
-		// setADmin(id, parseInt(choosenChat._id)).then(() => console.log("new admin is set"))
 		socket.emit("addAdmin_client", { id_user: id, id_group: parseInt(choosenChat._id) }, (data: any) => {
 			toast({
 				title: `user update`,
@@ -113,7 +110,6 @@ const MemberCard: React.FC<{
 	}
 	const unsetAdmin = (id: number) => {
 		setUsersState(!usersState);
-		// unsetADmin(id, parseInt(choosenChat._id)).then(() => console.log("admin is unset"))\
 		socket.emit("unsetAdmin_client", { id_user: id, id_group: parseInt(choosenChat._id) }, (data: any) => {
 			toast({
 				title: `user update`,
@@ -198,7 +194,6 @@ const App1: React.FC<{
 
 
 	const AddFriendf = (id: number) => {
-		console.log("id of friend = ", id)
 		AddFriend(id).then((res) => {
 			toast({
 				title: 'New Friend Unlocked',
@@ -208,7 +203,7 @@ const App1: React.FC<{
 				isClosable: true,
 			})
 
-		}).catch(err => console.log(err))
+		}).catch(err => {})
 		setIsShown(false)
 		setFBUpdate(!FBUpdate)
 	}

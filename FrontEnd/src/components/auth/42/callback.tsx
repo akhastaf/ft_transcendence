@@ -6,7 +6,7 @@ import { getCurrentUser } from "../../Services/user";
 
 // import useLocalStorage from "../../../hooks/useLocalStorage";
 import { toast } from "react-toastify";
-import { Button, ButtonGroup, Flex, Text, Link } from "@chakra-ui/react";
+import { Button, ButtonGroup, Flex, Text, Link, useToast } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { localService } from "../../../api/axios";
 import {  SocketContext } from "../../Services/sockets";
@@ -17,6 +17,7 @@ import { useAuthq } from "../../../App";
 export default function Callback() {
   //   const router = useRouter();
   const navigate = useNavigate();
+  const toast = useToast();
   // eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -28,7 +29,6 @@ export default function Callback() {
   const a: number = (id_user) ? parseInt(id_user) : 0;
   const { token, setToken } = useAuthq();
   const r = useContext(SocketContext);
-  console.log("socker = ", r);
   
   // eslint-disable-next-line
   const [at, setAt] = useState<any>()
@@ -41,50 +41,54 @@ export default function Callback() {
     // const access_token = queryParams.get('accessToken');
     r.auth = { token: access_token };
     if (twfa) {
-      // console.log("heelo i am tfa", at);
       setAt(true);
     }
     if (access_token) {
 
       localStorage.setItem('accessToken', access_token);
       setToken(access_token);
-      console.log(" all done");
       
       getCurrentUser().then((res) => {
-        console.log(res);
         // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
         navigate(`/channels?new=${newU}`);
       
       })
-      .catch(err => console.log(err))
+      .catch(err => {})
 
     } 
   },[r, setToken,  searchParams, access_token, newU,twfa])
 
 
   const [reset, setReset] = useState(false);
+
   const { register, handleSubmit } = useForm<{ token: string }>();
   const submitForm: SubmitHandler<{ token: string }> = (data) => {
     const name = data.token ? data.token : "9999";
     if (!reset)
     {
     const retur = localService.post("auth/2fa/", { token: name, id: a }).then((res) => {
-      setAt(res.data);
-      localStorage.setItem('accessToken', res.data.access_token);
-      getCurrentUser().then((res) => {
-        console.log(res);
-        // setUserInfo(res); 
-        localStorage.setItem("currentUser", JSON.stringify(res));
-        toast.success("You login success !!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      })
-        .catch(err => console.log(err))
-      navigate("/channels");
-      console.log("enabled ,", res.data);
+        setAt(res.data);
+        localStorage.setItem('accessToken', res.data.access_token);
+        getCurrentUser().then((res) => {
+          // setUserInfo(res); 
+          localStorage.setItem("currentUser", JSON.stringify(res));
+          // toast.success("You login success !!", {
+          //   position: toast.POSITION.TOP_CENTER,
+          // });
+        }).catch(err => {
+          console.log(err);
+        })
+        navigate("/channels");
+    }).catch(err => {
+      toast({
+        title: `Error`,
+        description: err.response.data!.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        })
     })
-    console.log("hello ", retur);
   }
   else
   {
@@ -92,17 +96,25 @@ export default function Callback() {
       setAt(res.data);
       localStorage.setItem('accessToken', res.data.access_token);
       getCurrentUser().then((res) => {
-        console.log(res);
         // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
-        toast.success("You login success !!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        // toast.success("You login success !!", {
+        //   position: toast.POSITION.TOP_CENTER,
+        // });
       })
-        .catch(err => console.log(err))
+        .catch(err => {
+          
+        })
       navigate('/channels');
-      console.log("enabled ,", res.data);
 
+    }).catch (err => {
+      toast({
+        title: `Error`,
+        description: err.response.data!.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        })
     })
   }
 }
