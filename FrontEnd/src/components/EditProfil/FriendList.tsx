@@ -1,6 +1,7 @@
 import { List, Text } from "@chakra-ui/react"
+import { useState } from "react"
 import { IoCloseCircleSharp } from "react-icons/io5"
-import { BlockFriend } from "../Services/user"
+import { BlockFriend, getCurrentUser } from "../Services/user"
 import { UserType } from "../Types/types"
 
 
@@ -8,6 +9,13 @@ const FriendList : React.FC <{
     currentUser : UserType
     closeModal: () => void
 }> = ({currentUser, closeModal}) => {
+
+    const [userInfo, setUserInfo] = useState<UserType>();
+
+
+    getCurrentUser().then((res) => {
+        setUserInfo(res);
+    })
     return(
     <>
 
@@ -33,8 +41,8 @@ const FriendList : React.FC <{
                     <div className="flow-root">
                          <ul role="list" className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
-                                (currentUser?.friends?.length === 0) ? <Text className="text-black arcade"> You Have No Friends Yet</Text> :
-                                currentUser?.friends?.map((friend: UserType) => (
+                                (userInfo?.friends?.length === 0) ? <Text className="text-black arcade"> You Have No Friends Yet</Text> :
+                                userInfo?.friends?.map((friend: UserType) => (
                                    <List key={friend.id.toString()}> <FriendCard currentUser={friend}/></List>
 
                                 ))
@@ -73,13 +81,13 @@ const FriendCard : React.FC <{
                         {currentUser.status}
                     </div>
                     <div className="inline-flex items-center arcade text-base font-bold text-green-300 dark:text-white">
-                        won : 15
+                        won : {currentUser.win}
                     </div>
                     <div className="inline-flex items-center arcade text-base font-bold text-red-500 dark:text-white">
-                        lost : 2
+                        lost : {currentUser.loss}
                     </div>
                     <div className="inline-flex items-center whitespace-pre arcade text-base font-bold text-yellow-500 dark:text-white">
-                        Best Achievement : 6 wins straight
+                        Best Achievement : {currentUser?.achievments ? currentUser?.achievments?.at(-1)?.type : "No Achivement yet"}
                     </div>
                 </div>
             </li>

@@ -197,12 +197,12 @@ const SideBar: React.FC<{
 
         <div className="text-gray-400 flex items-center">
           <div onClick={openModal} className="hover:bg-[#3A3C43] p-2 rounded-md">
+            {showModal ? <SideBarE usersState={usersState} setUsersState={setUsersState} setShowModal={setShowModal} currentUser={currentUser} logoutHandler={logoutHandler} /> : null}
             <CogIcon className="h-5 icon" />
           </div>
         </div>
       </div>
     </div>
-            {showModal ? <SideBarE usersState={usersState} setUsersState={setUsersState} setShowModal={setShowModal} currentUser={currentUser} logoutHandler={logoutHandler} /> : null}
   </>)
 
 }

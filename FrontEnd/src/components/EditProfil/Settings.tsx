@@ -130,7 +130,7 @@ const UserCard: React.FC<{
                                         className="h-24 rounded-full"
                                     />
                                     <h1 className="arcade  text-white pt-12 "> {currentUser?.username}</h1>
-                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + (parseInt(currentUser?.id) * 1420 + 300)}</h1>
+                                    <h1 className="arcade  text-gray-400  pt-12 "> # {" " + currentUser?.nickname }</h1>
                                 </div>
                             </div>
                             <div id="mail setting" className="border-5 rounded-lg h-[15rem] m-auto w-2/3 border-discord_secondSideBar bg-discord_serverBg flex flex-col justify-around ">
@@ -203,10 +203,10 @@ const SettingInfo: React.FC<{
         <div className="w-full flex flex-row ml-3">
             <div className="w-2/3 flex flex-col ">
 
-                <h1> Username</h1>
+                <h1> NickName / username</h1>
                 <div className="flex flex-row ml-5 gap-1">
-                    <h2 className="arcade text-white">{CurrentUser?.username} </h2>
-                    <h2 className="arcade text-gray-400"> {"#" + (parseInt(CurrentUser?.id) * 1420 + 300)} </h2>
+                    <h2 className="arcade text-white">{CurrentUser?.nickname} </h2>
+                    <h2 className="arcade text-gray-400"> {"#" + CurrentUser?.username} </h2>
                 </div>
             </div>
             <div className="m-auto">

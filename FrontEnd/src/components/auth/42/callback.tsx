@@ -76,12 +76,9 @@ export default function Callback() {
         console.log(res);
         // setUserInfo(res); 
         localStorage.setItem("currentUser", JSON.stringify(res));
-        toast.success("You login success !!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        navigate("/channels");
       })
         .catch(err => console.log(err))
-      navigate("/channels");
       console.log("enabled ,", res.data);
     })
     console.log("hello ", retur);
@@ -95,12 +92,9 @@ export default function Callback() {
         console.log(res);
         // setUserInfo(res);
         localStorage.setItem("currentUser", JSON.stringify(res));
-        toast.success("You login success !!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        navigate('/channels');
       })
         .catch(err => console.log(err))
-      navigate('/channels');
       console.log("enabled ,", res.data);
 
     })

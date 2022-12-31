@@ -1,7 +1,7 @@
 import { Heading, List } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { IoCloseCircleSharp } from "react-icons/io5"
-import { getBlockedList } from "../Services/user"
+import { getBlockedList, getCurrentUser } from "../Services/user"
 import { userModel, UserType } from "../Types/types"
 
 
@@ -10,22 +10,11 @@ const BlockList : React.FC <{
     closeModal: () => void
 }> = ({currentUser, closeModal}) => {
 
-    const [blocked , setBlocked] = useState<any>([{
-    
-            id: 1,
-            name: "random",
-            avatar: "none",
-            status : "off",
-            notifications: 0,
+    const [blocked , setBlocked] = useState<UserType>()
 
-    }]);
-    useEffect(() => {
-    getBlockedList().then ((res) => {
+    getCurrentUser().then((res) => {
         setBlocked(res);
-        // console.log(res);
     })
-    .catch(err=> console.log(err));
-    },[]);
     return(
     <>
 <div className="flex h-full flex-col gap-5 ">
@@ -50,8 +39,8 @@ const BlockList : React.FC <{
                     <div className="flow-root">
                          <ul  className=" divide-y divide-gray-200 dark:divide-gray-700">
                             {
-                                (!blocked) ? <Heading className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</Heading> : 
-                                blocked?.map((blocked: userModel) => (
+                                (!blocked?.bloked) ? <Heading className="text-black arcade"> You Have No blocked Users Yet, Be More Toxic</Heading> : 
+                                blocked?.bloked.map((blocked: UserType) => (
                                    <List key={blocked.id} > <BlockCard currentUser={blocked}/></List>
 
                                 ))
@@ -69,7 +58,7 @@ const BlockList : React.FC <{
 
 
 const BlockCard : React.FC <{
-    currentUser : userModel
+    currentUser : UserType
 }> = ({currentUser}) => {
     return(
     <>
@@ -80,24 +69,12 @@ const BlockCard : React.FC <{
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-lg font-medium arcade text-white truncate dark:text-white">
-                            {currentUser.name}
+                            {currentUser.username}
                         </p>
                         <p className="text-sm  text-beige_color truncate dark:text-gray-400">
                             {currentUser.status}
                         </p>
                     </div>
-                    {/* <div className="inline-flex items-center arcade text-base font-semibold text-gray-900 dark:text-white">
-                        {currentUser.isOnline}
-                    </div>
-                    <div className="inline-flex items-center arcade text-base font-bold text-green-300 dark:text-white">
-                        won : 15
-                    </div>
-                    <div className="inline-flex items-center arcade text-base font-bold text-red-500 dark:text-white">
-                        lost : 2
-                    </div>
-                    <div className="inline-flex items-center whitespace-pre arcade text-base font-bold text-yellow-500 dark:text-white">
-                        Best Achievement : 6 wins straight
-                    </div> */}
                 </div>
             </li>
     </>)
