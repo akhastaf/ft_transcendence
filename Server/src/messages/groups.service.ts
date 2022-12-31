@@ -809,7 +809,7 @@ export class GroupsService {
 			}
 			const group = is_member.group;
 			if (group.privacy === Privacy.PROTECTED || group.privacy === Privacy.DM)
-				throw new Error("You can't set pwd");
+				throw new ForbiddenException("You can't set pwd");
 			group.password = await bcrypt.hash(data.password, 10);
 			group.privacy = Privacy.PROTECTED;
 			return await this.groupRepository.save(group) && true;

@@ -14,16 +14,17 @@ import { GameModule } from './game/game.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     AuthModule,
     UserModule,
     AchievmentModule,
     GameModule,
-    MessagesModule
+    MessagesModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/',
+    }),
    ],
   controllers: [],
   providers: [],
@@ -31,3 +32,11 @@ import { GameModule } from './game/game.module';
 export class AppModule {
   constructor() {}
 }
+
+
+// <div>
+// <p>
+//   <span>
+//   </span>
+// </p>
+// </div>

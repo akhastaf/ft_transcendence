@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { AchievmentService } from 'src/achievment/achievment.service';
 import { Achievment } from 'src/achievment/entities/achievment.entity';
 import { v4 as uuidv4} from "uuid";
-import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator';
+import { uniqueNamesGenerator, Config, names } from 'unique-names-generator';
 
 
 @Injectable()
@@ -93,7 +93,7 @@ export class UserService {
         try {
               
             const nickname: string = uniqueNamesGenerator({
-                dictionaries: [adjectives, colors, animals]
+                dictionaries: [names]
             });
             const user = await this.userRepository.findOneBy({email: userData.email});
             if (user)
