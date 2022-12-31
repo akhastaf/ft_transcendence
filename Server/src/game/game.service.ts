@@ -242,7 +242,7 @@ export class GameService {
     }
 
     @Interval(1000 / 60 )
-    play():void {
+    play() : void {
         for (const game of this.games.values()) {
             if (game.status === GameStatus.PLAYING)
                 this.update(game);

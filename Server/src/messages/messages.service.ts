@@ -114,8 +114,8 @@ export class MessagesService {
 			return await this.userRepository.save(user);
 		}
 		catch (e) {
-			throw new NotFoundException(e.message);
-			console.log("setStatus: Error");
+			//throw new NotFoundException(e.message);
+			// console.log("setStatus: Error");
 		}
 	}
 }
