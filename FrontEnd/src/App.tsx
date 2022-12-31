@@ -50,6 +50,7 @@ const App : React.FC <{}> = () => {
     const [show, setShow] = useState(false);
     const [user1, setUser1] = useState<gameInvite>({id : -1, username : ""});
     const [messageRef, setMessageRef] = useState<{name : string, message : string}>({ name: "", message: ""});
+
     useEffect(() => {
       
         socket.on("inviteToGame_server", (data : gameInvite ) => {
@@ -58,21 +59,25 @@ const App : React.FC <{}> = () => {
             // console.log("sift lik message")
         })
         socket.on("sendMessage_server", (data : any) => {
-          if (data)
+        if (data)
          {
             console.log("dasad = ", data);
-            setMessageRef(data);
+            // setMessageRef(data);
             // console.log("sift lik message")
             toast({
               title: `user jah message`,
               description: `jak message`,
               status: 'success',
-              duration: 5000,
+              duration: 1500,
               isClosable: true,
               })
-              socket.off();}
-        })
-    },[messageRef,socket, toast])
+            }
+            })
+        return () => {
+            socket.off();
+        }
+    // }, [messageRef, socket, toast])
+    }, [])
     // console.log('Render lifecycle')
     return (
       <>

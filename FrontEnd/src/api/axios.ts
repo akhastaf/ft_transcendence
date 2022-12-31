@@ -64,7 +64,7 @@ localService.interceptors.response.use((response: AxiosResponse) => {
 console.log("error =", error);
 if (error.response.data.statusCode === 403)
 {
-       window.location.assign(`${process.env.REACT_APP_ClientHostName}/Forbidden`);
+       //window.location.assign(`${process.env.REACT_APP_ClientHostName}/Forbidden`);
 
    }
     return Promise.reject(error);

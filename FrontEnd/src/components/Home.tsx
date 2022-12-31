@@ -75,9 +75,17 @@ const SettingModal: React.FC<{
 				isClosable: true,
 			  })
               setUsersState(!usersState);
-            })
-			navigate("/channels");
-            closeModal();
+			  navigate("/channels");
+			  closeModal();
+            }).catch(err => {
+				toast({
+					title: `Info update`,
+					description: err.response.data.message,
+					status: 'error',
+					duration: 9000,
+					isClosable: true,
+				  })
+			})
     }
     const m: string = (username) ? username : "";
 
@@ -551,6 +559,7 @@ const Home: React.FC<{
 								state === "ROOM" && 
 								messages1 && (
 									<MessagesSection
+									
 										messages={messages1}
 										choosenChat={choosenChat}
 								isMemberOfRoom={isMemberOfRoom}
@@ -564,6 +573,7 @@ const Home: React.FC<{
 						}
 						{
 							(state === "DM" || state === "ROOM") &&  <MessageInput
+								id="dm-or-room-input"
 								choosenChat={choosenChat}
 								isMemberOfRoom={isMemberOfRoom}
 								sendMessage={sendMessageHandler}

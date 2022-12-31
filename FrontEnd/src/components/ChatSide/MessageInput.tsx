@@ -5,10 +5,11 @@ import { ChatType, RoomType } from "../Types/types";
 
 const MessageInput: React.FC <{
     // joinRoomHandler: (room: RoomType) => void;
+	id: string;
     choosenChat: ChatType;
     isMemberOfRoom:  boolean
     sendMessage: (a: string) => void;
-}> = ({ choosenChat, isMemberOfRoom, sendMessage}) => {
+}> = ({ id, choosenChat, isMemberOfRoom, sendMessage}) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
 	const onSubmitForm = (e: any) => {
@@ -25,7 +26,7 @@ const MessageInput: React.FC <{
         // console.log(isMemberOfRoom);
         // console.log(`chosenChat = ${choosenChat._id}`)
     },[]);
-    return <>
+    return (<>
 
 	<div className="fixed inset-x-0 bottom-0  h-16 ml-96 mr-20">
 			{!isMemberOfRoom && (
@@ -46,7 +47,8 @@ const MessageInput: React.FC <{
 					<input
 						type="text"
 						className="form-control main-input"
-						id="exampleFormControlInput1"
+						// id="exampleFormControlInput1"
+						id={id}
 						placeholder={`Message @${choosenChat.username}`}
 						ref={inputRef}
 				
@@ -54,7 +56,7 @@ const MessageInput: React.FC <{
 				</form>
 			)}
 		</div>
-    </>
+    </>)
 }
 
 export default MessageInput;

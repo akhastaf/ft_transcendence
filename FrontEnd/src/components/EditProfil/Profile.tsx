@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react'
 
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { ScoreCard } from '../Game/LeaderBoad';
-import { AddFriend, getCurrentUser, getUserAchivements, getUsergame } from '../Services/user';
+import { AddFriend, getCurrentUser, getUsergame } from '../Services/user';
 import { Game, UserType } from '../Types/types';
 
 
@@ -68,10 +68,8 @@ export const LeaderBoad1: React.FC <{
 
         // const [games, setGame] = useState<>()
 
-
-
-    return <>
-   <Card  h={"100%"} w={"100%"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
+  return <>
+   <Card h={"100%"} w={"100%"} bgGradient={'linear(to-r, green.200, pink.500)'} mt={"1%"} rounded={10} border={"none"} borderColor={"blue.200"} p={"2%"}>
   <CardHeader>
     <Heading size='md'>Recent Games</Heading>
   </CardHeader>
@@ -175,7 +173,9 @@ const Profil : React.FC <{currentUser : UserType, closeModal : () => void}> = ({
       setUser1(res);
       getUsergame(res.id).then((res) => {
         setGames(res);
-    })
+        }).catch((err) => {
+
+        })
     })
 
 

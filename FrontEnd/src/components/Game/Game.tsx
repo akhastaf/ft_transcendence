@@ -39,6 +39,10 @@ import { Gamestate, Net } from "../Types/types";
                     socket.on('rejectGame_server', (then) => {
                         navigate("/channels");
                     })
+                    return () => {
+                        socket.off(); 
+                        canvas?.removeEventListener("mousedown", movePaddle, true);
+                    }
                     //  console.log('after');
                 },[])
                 

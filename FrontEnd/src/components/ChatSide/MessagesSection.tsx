@@ -42,11 +42,12 @@ const MessagesSection : React.FC <{
 			))}
 			<div ref={messageListRef} />
 		</div>
-		<MessageInput
+		{/* <MessageInput
+		id="unique-id-for-input"
 								choosenChat={choosenChat}
 								isMemberOfRoom={isMemberOfRoom}
 								sendMessage={sendMessage}
-			/>
+			/> */}
     </div>
     </>)
 }
